@@ -18,7 +18,7 @@ import java.util.function.Supplier;
 
 public class ObjectRegistry {
 
-    private static final Logger LOGGER = LogUtils.getLogger();
+
 
 
 
@@ -31,6 +31,7 @@ public class ObjectRegistry {
 
         BlockRegistry.BLOCKS.register(modEventBus);
         ItemRegistry.ITEMS.register(modEventBus);
+        BlockEntityRegistry.BLOCK_ENTITIES.register(modEventBus);
 
         // to register the static items/blocks
         CreativeTabRegistry.CREATIVE_MODE_TABS.register(modEventBus);
@@ -56,4 +57,6 @@ public class ObjectRegistry {
         return registryObject;
 
     }
+
+
 }

@@ -1,5 +1,7 @@
 package me.astero.mechanicaldrawersmod.registry;
 
+
+import me.astero.mechanicaldrawersmod.registry.blocks.DrawerBlock;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -30,13 +32,18 @@ public class BlockRegistry extends ObjectRegistry {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModUtils.MODID);
 
 
-    public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register
-            ("example_block", () -> new Block(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+    public static final RegistryObject<Block> DRAWER_BLOCK = BLOCKS.register
+            ("example_block", () -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
 
 
-    public static final RegistryObject<Item> EXAMPLE_BLOCK_ITEM = CreativeTabRegistry.addToCreativeTab
+
+
+
+
+    public static final RegistryObject<Item> DRAWER_BLOCK_ITEM = CreativeTabRegistry.addToCreativeTab
             (registerObject("example_block",
-            EXAMPLE_BLOCK));
+                    DRAWER_BLOCK));
+
 
 
 
