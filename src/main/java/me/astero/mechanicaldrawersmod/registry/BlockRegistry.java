@@ -33,7 +33,8 @@ public class BlockRegistry extends ObjectRegistry {
 
 
     public static final RegistryObject<Block> DRAWER_BLOCK = BLOCKS.register
-            ("example_block", () -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)));
+            ("example_block", () -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                    .strength(1f), 70));
 
 
 
