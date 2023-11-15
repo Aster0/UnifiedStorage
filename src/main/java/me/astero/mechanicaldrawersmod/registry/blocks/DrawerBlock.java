@@ -6,6 +6,7 @@ import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
+import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
@@ -37,12 +38,16 @@ public class DrawerBlock extends Block implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
 
+
+
     public DrawerBlock(Properties properties, int maxStack) {
         super(properties);
 
         this.maxStack = maxStack;
 
     }
+
+
 
     @Nullable
     @Override

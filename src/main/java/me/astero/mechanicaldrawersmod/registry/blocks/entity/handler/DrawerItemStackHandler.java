@@ -3,6 +3,7 @@ package me.astero.mechanicaldrawersmod.registry.blocks.entity.handler;
 import me.astero.mechanicaldrawersmod.registry.blocks.DrawerBlock;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class DrawerItemStackHandler extends ItemStackHandler {
@@ -21,6 +22,12 @@ public class DrawerItemStackHandler extends ItemStackHandler {
         super.onContentsChanged(slot);
 
         drawerBlockEntity.setChanged();
+
+        if(!drawerBlockEntity.getLevel().isClientSide)
+            drawerBlockEntity.getLevel().sendBlockUpdated(drawerBlockEntity.getBlockPos(),
+                    drawerBlockEntity.getBlockState(), drawerBlockEntity.getBlockState(),3);
+
+
         AsteroLogger.info("changed");
     }
 

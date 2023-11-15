@@ -1,6 +1,9 @@
 package me.astero.mechanicaldrawersmod.registry;
 
 import com.mojang.logging.LogUtils;
+import me.astero.mechanicaldrawersmod.registry.data.BlockData;
+import me.astero.mechanicaldrawersmod.registry.data.ItemData;
+import me.astero.mechanicaldrawersmod.registry.data.ObjectData;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
@@ -39,24 +42,61 @@ public class ObjectRegistry {
 
     }
 
-    protected static <T extends Item> RegistryObject<T> registerObject(String name, Supplier<T> supplier) {
+    protected static <T extends ItemLike> RegistryObject<T> registerObject(String name, ObjectData<T> objectData,
+                                                                           boolean addToCreativeTab) {
 
 
-        RegistryObject<T> registryObject = ItemRegistry.ITEMS.register(name, supplier);
 
-        return registryObject;
+
+
+        Supplier<? extends Item> itemSupplier = null;
+        RegistryObject<T> toReturn = null;
+
+        RegistryObject<Block> registeredBlock = null;
+
+        if(objectData instanceof ItemData itemData) {
+
+            itemSupplier = itemData.get();
+
+
+        }
+        else if(objectData instanceof BlockData blockData) {
+
+            Supplier blockSupplier = blockData.get();
+
+            registeredBlock = BlockRegistry.BLOCKS.register(name, blockSupplier);
+
+            final RegistryObject<Block> finalRegisteredBlock = registeredBlock;
+            itemSupplier = () -> new BlockItem(finalRegisteredBlock.get(), new Item.Properties());
+
+
+
+
+
+
+
+        }
+
+        RegistryObject<Item> registeredItem = ItemRegistry.ITEMS.register(name, itemSupplier);
+
+        if(addToCreativeTab)
+            CreativeTabRegistry.addToCreativeTab(registeredItem);
+
+        if(registeredBlock == null) {
+            return (RegistryObject<T>) registeredItem;
+        }
+
+
+
+
+
+
+
+
+        return (RegistryObject<T>) registeredBlock;
 
     }
 
-    protected static RegistryObject<Item> registerObject(String name, RegistryObject<Block> block) {
-
-
-        RegistryObject<Item> registryObject = ItemRegistry.ITEMS.register(name, () ->
-                new BlockItem(block.get(), new Item.Properties()));
-
-        return registryObject;
-
-    }
 
 
 }

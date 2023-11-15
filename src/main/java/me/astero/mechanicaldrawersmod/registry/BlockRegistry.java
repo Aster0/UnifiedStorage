@@ -2,6 +2,7 @@ package me.astero.mechanicaldrawersmod.registry;
 
 
 import me.astero.mechanicaldrawersmod.registry.blocks.DrawerBlock;
+import me.astero.mechanicaldrawersmod.registry.data.BlockData;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -14,7 +15,7 @@ import net.minecraftforge.registries.RegistryObject;
 
 import java.util.function.Supplier;
 
-public class BlockRegistry extends ObjectRegistry {
+public class BlockRegistry  {
 
     //    // Creates a new Block with the id "mechanicaldrawers:example_block", combining the namespace and path
 //    public static final RegistryObject<Block> EXAMPLE_BLOCK = BLOCKS.register
@@ -32,18 +33,24 @@ public class BlockRegistry extends ObjectRegistry {
     public static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, ModUtils.MODID);
 
 
-    public static final RegistryObject<Block> DRAWER_BLOCK = BLOCKS.register
-            ("example_block", () -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
-                    .strength(1f), 70));
+//    public static final RegistryObject<Block> DRAWER_BLOCK = BLOCKS.register
+//            ("drawer_block", () -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+//                    .strength(1f), 70));
+//
+//
+//
+//
+//
+//
+//    public static final RegistryObject<Item> DRAWER_BLOCK_ITEM = CreativeTabRegistry.addToCreativeTab
+//            (ObjectRegistry.registerObject("drawer_block",
+//                    DRAWER_BLOCK));
 
 
+    public static final RegistryObject<Block> DRAWER_BLOCK = ObjectRegistry.registerObject
+            ("drawer_block", new BlockData(() -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                    .strength(1f), 70)), true);
 
-
-
-
-    public static final RegistryObject<Item> DRAWER_BLOCK_ITEM = CreativeTabRegistry.addToCreativeTab
-            (registerObject("example_block",
-                    DRAWER_BLOCK));
 
 
 

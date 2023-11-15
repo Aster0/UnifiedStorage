@@ -1,0 +1,7 @@
+{
+  "variants" : {
+    "": {
+      "model" : "mechanicaldrawers:block/drawer_block"
+    }
+  }
+}
