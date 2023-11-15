@@ -4,6 +4,7 @@ import com.mojang.logging.LogUtils;
 import me.astero.mechanicaldrawersmod.registry.data.BlockData;
 import me.astero.mechanicaldrawersmod.registry.data.ItemData;
 import me.astero.mechanicaldrawersmod.registry.data.ObjectData;
+import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.item.*;
@@ -44,11 +45,7 @@ public class ObjectRegistry {
 
     protected static <T extends ItemLike> RegistryObject<T> registerObject(String name, ObjectData<T> objectData,
                                                                            boolean addToCreativeTab) {
-
-
-
-
-
+        
         Supplier<? extends Item> itemSupplier = null;
         RegistryObject<T> toReturn = null;
 
@@ -62,7 +59,7 @@ public class ObjectRegistry {
         }
         else if(objectData instanceof BlockData blockData) {
 
-            Supplier blockSupplier = blockData.get();
+            Supplier<Block> blockSupplier = blockData.get();
 
             registeredBlock = BlockRegistry.BLOCKS.register(name, blockSupplier);
 
@@ -70,26 +67,18 @@ public class ObjectRegistry {
             itemSupplier = () -> new BlockItem(finalRegisteredBlock.get(), new Item.Properties());
 
 
-
-
-
-
-
         }
 
-        RegistryObject<Item> registeredItem = ItemRegistry.ITEMS.register(name, itemSupplier);
+        RegistryObject<? extends Item> registeredItem = ItemRegistry.ITEMS.register(name, itemSupplier);
 
         if(addToCreativeTab)
             CreativeTabRegistry.addToCreativeTab(registeredItem);
 
+
+
         if(registeredBlock == null) {
             return (RegistryObject<T>) registeredItem;
         }
-
-
-
-
-
 
 
 
