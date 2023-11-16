@@ -11,8 +11,8 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
@@ -89,8 +89,24 @@ public class DrawerBlockEntity extends BlockEntity {
         AsteroLogger.info("shrink");
         itemStackInHand.shrink(size);
 
+
+        updateRender();
+
         return InteractionResult.CONSUME;
     }
+
+
+    public void updateRender() {
+        if(!getLevel().isClientSide)
+            getLevel().sendBlockUpdated(getBlockPos(),
+                    getBlockState(), getBlockState(), Block.UPDATE_ALL);
+    }
+
+    public String getItemsFromDrawer(int slot) {
+
+        return String.valueOf(this.inventory.getStackInSlot(slot).getCount());
+    }
+
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
 

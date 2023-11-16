@@ -1,6 +1,9 @@
 {
-  "parent" : "minecraft:block/cube_all",
+  "parent" : "minecraft:block/orientable",
   "textures" : {
-    "all" : "minecraft:block/glass"
+    "top" : "minecraft:block/glass",
+    "front" : "minecraft:block/sand",
+    "side" : "minecraft:block/glass"
+
   }
 }

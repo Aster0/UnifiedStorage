@@ -6,9 +6,11 @@ import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import net.minecraft.client.renderer.blockentity.CampfireRenderer;
+import net.minecraft.client.renderer.blockentity.SignRenderer;
 import net.minecraft.client.renderer.entity.ItemFrameRenderer;
 import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -17,9 +19,11 @@ import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -44,6 +48,7 @@ public class DrawerBlock extends Block implements EntityBlock {
         super(properties);
 
         this.maxStack = maxStack;
+        this.defaultBlockState().setValue(FACING, Direction.NORTH);
 
     }
 
@@ -66,9 +71,14 @@ public class DrawerBlock extends Block implements EntityBlock {
 
         builder.add(FACING);
 
+
     }
 
-
+    @Nullable
+    @Override
+    public BlockState getStateForPlacement(BlockPlaceContext context) {
+        return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
+    }
 
     @Override
     public void attack(BlockState p_60499_, Level p_60500_, BlockPos p_60501_, Player p_60502_) {
@@ -101,6 +111,7 @@ public class DrawerBlock extends Block implements EntityBlock {
                     DrawerItemStackHandler drawerInventory = drawerBlockEntity.getInventory();
                     ItemStack itemStackInDrawer = drawerInventory.getStackInSlot(0);
                     AsteroLogger.info(drawerInventory.getStackInSlot(0).toString());
+
 
                     if(!itemStackInHand.isEmpty()) { // there's something in the player's hands
 

@@ -45,7 +45,7 @@ public class ObjectRegistry {
 
     protected static <T extends ItemLike> RegistryObject<T> registerObject(String name, ObjectData<T> objectData,
                                                                            boolean addToCreativeTab) {
-        
+
         Supplier<? extends Item> itemSupplier = null;
         RegistryObject<T> toReturn = null;
 
