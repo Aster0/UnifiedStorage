@@ -17,20 +17,21 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-public class DrawerBlockEntity extends BlockEntity {
+public class DrawerGridControllerEntity extends BlockEntity {
 
 
-    private int maxStack = 64;
 
-    private DrawerItemStackHandler inventory = new DrawerItemStackHandler(this, 1);
 
-    private final LazyOptional<DrawerItemStackHandler> optional = LazyOptional.of(() -> this.inventory);
+    private ItemStackHandler inventory = new ItemStackHandler();
 
-    public DrawerBlockEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.DRAWER_BLOCK_ENTITY.get(), pos, state);
+    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.inventory);
+
+    public DrawerGridControllerEntity(BlockPos pos, BlockState state) {
+        super(BlockEntityRegistry.DRAWER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
     }
 
 
@@ -43,7 +44,6 @@ public class DrawerBlockEntity extends BlockEntity {
 
         this.inventory.deserializeNBT(modNbt.getCompound("drawer_items"));
 
-        maxStack = modNbt.getInt("drawer_max_stack");
     }
 
     @Override
@@ -53,59 +53,17 @@ public class DrawerBlockEntity extends BlockEntity {
 
         CompoundTag modNbt = new CompoundTag();
         modNbt.put("drawer_items", this.inventory.serializeNBT());
-        modNbt.putInt("drawer_max_stack", maxStack);
 
 
 
         nbt.put(ModUtils.MODID, modNbt);
     }
 
-    public void updateDrawerMaxStack(int size) {
-        maxStack = size;
-        this.setChanged();
-    }
-
-    public InteractionResult addItemsToDrawer(ItemStack itemStackInHand, int size) {
-
-        ItemStack itemStackInDrawer = this.getInventory().getStackInSlot(0);
-        AsteroLogger.info("blog");
-        if(itemStackInDrawer.getCount() >= maxStack) return InteractionResult.FAIL;
-
-        AsteroLogger.info("log");
-
-        itemStackInDrawer.setCount(itemStackInDrawer.getCount() + size);
-        this.setChanged();
-
-        if(itemStackInDrawer.isEmpty()) {
-
-            ItemStack toInsert = itemStackInHand.copy();
-
-            toInsert.setCount(size);
-            this.getInventory().insertItem(0, toInsert, false);
-        }
 
 
 
-        AsteroLogger.info("shrink");
-        itemStackInHand.shrink(size);
 
 
-        updateRender();
-
-        return InteractionResult.PASS;
-    }
-
-
-    public void updateRender() {
-        if(!getLevel().isClientSide)
-            getLevel().sendBlockUpdated(getBlockPos(),
-                    getBlockState(), getBlockState(), Block.UPDATE_ALL);
-    }
-
-    public String getItemsFromDrawer(int slot) {
-
-        return String.valueOf(this.inventory.getStackInSlot(slot).getCount());
-    }
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
@@ -132,15 +90,13 @@ public class DrawerBlockEntity extends BlockEntity {
         return saveWithoutMetadata();
     }
 
-    public DrawerItemStackHandler getInventory() {
+    public ItemStackHandler getInventory() {
         return inventory;
     }
 
-    public LazyOptional<DrawerItemStackHandler> getOptional() {
+    public LazyOptional<ItemStackHandler> getOptional() {
         return optional;
     }
 
-    public int getMaxStack() {
-        return maxStack;
-    }
+
 }

@@ -1,3 +1,5 @@
 {
-  "block.mechanicaldrawers.drawer_block" : "Mechanical Drawer"
+  "block.mechanicaldrawers.drawer_block" : "Mechanical Drawer",
+  "block.mechanicaldrawers.drawer_grid_controller" : "Drawer Grid Controller",
+  "item.mechanicaldrawers.grid_wrench" : "Grid Wrench"
 }

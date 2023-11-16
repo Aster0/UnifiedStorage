@@ -1,6 +1,7 @@
 package me.astero.mechanicaldrawersmod.registry;
 
 import me.astero.mechanicaldrawersmod.registry.data.ItemData;
+import me.astero.mechanicaldrawersmod.registry.items.GridWrenchItem;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
@@ -18,6 +19,10 @@ public class ItemRegistry {
     private static RegistryObject<Item> testItem =
             ObjectRegistry.registerObject("test", new ItemData<Item>(
             () -> new Item(new Item.Properties())), true);
+
+    private static RegistryObject<Item> GRID_WRENCH =
+            ObjectRegistry.registerObject("grid_wrench", new ItemData<Item>(
+                    () -> new GridWrenchItem(new Item.Properties())), true);
 
 
 

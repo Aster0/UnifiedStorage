@@ -1,7 +1,9 @@
 package me.astero.mechanicaldrawersmod.registry;
 
 
+import me.astero.mechanicaldrawersmod.registry.blocks.DrawerGridControllerBlock;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
+import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerGridControllerEntity;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -20,6 +22,11 @@ public class BlockEntityRegistry extends ObjectRegistry {
    public static final RegistryObject<BlockEntityType<DrawerBlockEntity>> DRAWER_BLOCK_ENTITY =
            BLOCK_ENTITIES.register("drawer_block_entity", () ->
                    BlockEntityType.Builder.of(DrawerBlockEntity::new, BlockRegistry.DRAWER_BLOCK.get())
+                           .build(null));
+
+   public static final RegistryObject<BlockEntityType<DrawerGridControllerEntity>> DRAWER_CONTROLLER_BLOCK_ENTITY =
+           BLOCK_ENTITIES.register("drawer_controller_block_entity", () ->
+                   BlockEntityType.Builder.of(DrawerGridControllerEntity::new, BlockRegistry.DRAWER_GRID_BLOCK.get())
                            .build(null));
 
 

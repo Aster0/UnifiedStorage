@@ -2,6 +2,7 @@ package me.astero.mechanicaldrawersmod.registry;
 
 
 import me.astero.mechanicaldrawersmod.registry.blocks.DrawerBlock;
+import me.astero.mechanicaldrawersmod.registry.blocks.DrawerGridControllerBlock;
 import me.astero.mechanicaldrawersmod.registry.data.BlockData;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.world.item.BlockItem;
@@ -50,6 +51,12 @@ public class BlockRegistry  {
     public static final RegistryObject<Block> DRAWER_BLOCK = ObjectRegistry.registerObject
             ("drawer_block", new BlockData(() -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
                     .strength(1f), 70)), true);
+
+
+    public static final RegistryObject<Block> DRAWER_GRID_BLOCK = ObjectRegistry.registerObject
+            ("drawer_grid_controller", new BlockData(() ->
+                    new DrawerGridControllerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                    .strength(1f))), true);
 
 
 
