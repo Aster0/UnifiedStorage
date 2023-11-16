@@ -1,13 +1,11 @@
-package me.astero.mechanicaldrawersmod.registry.events;
+package me.astero.mechanicaldrawersmod.registry.client;
 
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
 import me.astero.mechanicaldrawersmod.registry.renderer.DrawerItemRenderer;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.EntityRenderersEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 

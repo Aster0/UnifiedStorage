@@ -40,6 +40,8 @@ public class ObjectRegistry {
         // to register the static items/blocks
         CreativeTabRegistry.CREATIVE_MODE_TABS.register(modEventBus);
 
+        MenuRegistry.MENUS.register(modEventBus);
+
 
     }
 

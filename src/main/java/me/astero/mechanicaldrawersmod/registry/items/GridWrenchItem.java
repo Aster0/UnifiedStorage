@@ -1,6 +1,7 @@
 package me.astero.mechanicaldrawersmod.registry.items;
 
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerGridControllerEntity;
+import me.astero.mechanicaldrawersmod.registry.items.data.CustomBlockPosData;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.ChatFormatting;
@@ -19,6 +20,7 @@ import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.items.ItemStackHandler;
 
 
 public class GridWrenchItem extends Item {
@@ -36,10 +38,11 @@ public class GridWrenchItem extends Item {
             nbt = new CompoundTag();
 
 
+        final String sValue = serializeBlockPosNbt(value);
 
 
         CompoundTag innerNbt = new CompoundTag();
-        innerNbt.putString(key, value);
+        innerNbt.putString(key, sValue);
 
 
 
@@ -51,18 +54,57 @@ public class GridWrenchItem extends Item {
 
     }
 
-    public String loadNbt(ItemStack itemStack, String key) {
+    public CustomBlockPosData loadNbt(ItemStack itemStack, String key) {
 
         CompoundTag nbt = itemStack.getTag();
         System.out.println("NBT " + nbt);
 
-        if(nbt != null)
+
+
+        CustomBlockPosData customBlockPosData = null;
+
+        if(nbt != null) {
             nbt = nbt.getCompound(ModUtils.MODID);
 
-        return nbt == null ? null : nbt.getString(key);
+            String[] eValue = nbt.getString(key).split(", ");
+
+            try {
+                int x = Integer.parseInt(eValue[0].substring(2));
+                int y = Integer.parseInt(eValue[1].substring(2));
+                int z = Integer.parseInt(eValue[2].substring(2));
+
+
+                customBlockPosData = new CustomBlockPosData(x, y, z);
+            }
+            catch(NumberFormatException e) {
+                throw new NumberFormatException("Check the inputted pos if it's numbers.");
+            }
+
+
+        }
 
 
 
+
+
+
+
+        return customBlockPosData;
+
+
+
+
+    }
+
+
+    private String serializeBlockPosNbt(String value) {
+
+        String eValue = value.substring(value.indexOf("x"), value.length() - 1);
+        // Edited value to e.g., "x=2, y=-60, z=36"
+
+        System.out.println(eValue);
+
+        return eValue;
 
     }
 
@@ -91,20 +133,20 @@ public class GridWrenchItem extends Item {
 
             if(hitBlockEntity != null) {
 
-                System.out.println(hitBlockEntity);
+
+
                 if(hitBlockEntity instanceof DrawerGridControllerEntity entity) {
 
                     System.out.println("Drawer");
 
                     saveNbt(itemStack, "grid_pos", entity.getBlockPos().toString());
                 }
-                else if(level.getBlockEntity(blockHitResult.getBlockPos()).getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
+                else if(hitBlockEntity
+                        .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
 
                     System.out.println("A storage block");
 
-                    String gridPos = loadNbt(itemStack, "grid_pos");
-
-                    // TODO: Deserialize and serialize NBT data.
+                    CustomBlockPosData gridPos = loadNbt(itemStack, "grid_pos");
 
 
                     if(gridPos == null) {
@@ -112,12 +154,31 @@ public class GridWrenchItem extends Item {
 
 
                         // Send the action bar message to the player
-                        player.displayClientMessage(Component.literal("Please select a [Grid Controller] before continuing.")
+                        player.displayClientMessage(Component.translatable("language."
+                                        + ModUtils.MODID + ".no_grid_for_chest_selection")
                                 .withStyle(ChatFormatting.RED), true);
 
                         return super.use(level, player, interactionHand);
 
                     }
+
+                    BlockEntity blockEntity = level.getBlockEntity(gridPos.getBlockPos());
+
+
+                    if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
+
+                        System.out.println("Set " + drawerGridControllerEntity.getCapability(
+                                ForgeCapabilities.ITEM_HANDLER) );
+                        drawerGridControllerEntity.setChestInventory(drawerGridControllerEntity.getCapability(
+                                ForgeCapabilities.ITEM_HANDLER));
+
+
+                    }
+
+
+
+
+
                 }
 
 

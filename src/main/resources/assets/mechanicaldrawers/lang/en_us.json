@@ -1,5 +1,7 @@
 {
   "block.mechanicaldrawers.drawer_block" : "Mechanical Drawer",
   "block.mechanicaldrawers.drawer_grid_controller" : "Drawer Grid Controller",
-  "item.mechanicaldrawers.grid_wrench" : "Grid Wrench"
+  "item.mechanicaldrawers.grid_wrench" : "Grid Wrench",
+  "language.mechanicaldrawers.no_grid_for_chest_selection" : "Please select a [Grid Controller] before continuing.",
+  "container.mechanicaldrawers.grid_controller_menu_title" : "Grid Inventory"
 }

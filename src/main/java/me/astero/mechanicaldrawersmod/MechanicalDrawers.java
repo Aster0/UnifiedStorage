@@ -2,8 +2,11 @@ package me.astero.mechanicaldrawersmod;
 
 import com.mojang.logging.LogUtils;
 import me.astero.mechanicaldrawersmod.registry.ItemRegistry;
+import me.astero.mechanicaldrawersmod.registry.MenuRegistry;
 import me.astero.mechanicaldrawersmod.registry.ObjectRegistry;
+import me.astero.mechanicaldrawersmod.registry.client.screen.GridControllerScreen;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.food.FoodProperties;
@@ -113,6 +116,11 @@ public class MechanicalDrawers {
             // Some client setup code
             LOGGER.info("HELLO FROM CLIENT SETUP");
             LOGGER.info("MINECRAFT NAME >> {}", Minecraft.getInstance().getUser().getName());
+
+            event.enqueueWork(() -> {
+
+                MenuScreens.register(MenuRegistry.GRID_CONTROLLER_MENU.get(), GridControllerScreen::new);
+            });
         }
     }
 }

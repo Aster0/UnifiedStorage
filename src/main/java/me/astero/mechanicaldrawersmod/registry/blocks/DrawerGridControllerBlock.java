@@ -2,10 +2,12 @@ package me.astero.mechanicaldrawersmod.registry.blocks;
 
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
+import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerGridControllerEntity;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -14,6 +16,7 @@ import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -71,6 +74,23 @@ public class DrawerGridControllerBlock extends Block implements EntityBlock {
     public InteractionResult use(BlockState state, Level level,
                                  BlockPos pos, Player player,
                                  InteractionHand interactionHand, BlockHitResult blockHitResult) {
+
+
+
+        BlockEntity blockEntity = level.getBlockEntity(pos);
+
+        if(!level.isClientSide()) {
+            if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
+
+                if(player instanceof ServerPlayer sPlayer) {
+                    sPlayer.openMenu(drawerGridControllerEntity, pos);
+
+                }
+
+            }
+
+        }
+
 
 
         return InteractionResult.FAIL;
