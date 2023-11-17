@@ -68,17 +68,7 @@ public class GridWrenchItem extends Item {
 
             String[] eValue = nbt.getString(key).split(", ");
 
-            try {
-                int x = Integer.parseInt(eValue[0].substring(2));
-                int y = Integer.parseInt(eValue[1].substring(2));
-                int z = Integer.parseInt(eValue[2].substring(2));
-
-
-                customBlockPosData = new CustomBlockPosData(x, y, z);
-            }
-            catch(NumberFormatException e) {
-                throw new NumberFormatException("Check the inputted pos if it's numbers.");
-            }
+            customBlockPosData = ModUtils.convertStringToBlockData(eValue);
 
 
         }
@@ -97,12 +87,12 @@ public class GridWrenchItem extends Item {
     }
 
 
+
     private String serializeBlockPosNbt(String value) {
 
         String eValue = value.substring(value.indexOf("x"), value.length() - 1);
         // Edited value to e.g., "x=2, y=-60, z=36"
 
-        System.out.println(eValue);
 
         return eValue;
 
@@ -114,14 +104,14 @@ public class GridWrenchItem extends Item {
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
 
 
+
         if(!level.isClientSide) {
 
             ItemStack itemStack = player.getItemInHand(interactionHand);
             BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
 
 
-            AsteroLogger.info("BLOCK HIT!!");
-            System.out.println(loadNbt(itemStack, "grid_pos"));
+
 
 
 
@@ -137,7 +127,7 @@ public class GridWrenchItem extends Item {
 
                 if(hitBlockEntity instanceof DrawerGridControllerEntity entity) {
 
-                    System.out.println("Drawer");
+                    System.out.println("Drawer " + entity.chestLocations.get(0));
 
                     saveNbt(itemStack, "grid_pos", entity.getBlockPos().toString());
                 }
@@ -167,10 +157,10 @@ public class GridWrenchItem extends Item {
 
                     if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
 
-                        System.out.println("Set " + drawerGridControllerEntity.getCapability(
-                                ForgeCapabilities.ITEM_HANDLER) );
-                        drawerGridControllerEntity.setChestInventory(drawerGridControllerEntity.getCapability(
-                                ForgeCapabilities.ITEM_HANDLER));
+
+
+                        drawerGridControllerEntity.addChestLocations(
+                                serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()));
 
 
                     }

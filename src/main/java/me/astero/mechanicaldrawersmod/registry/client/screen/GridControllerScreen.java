@@ -1,15 +1,35 @@
 package me.astero.mechanicaldrawersmod.registry.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.astero.mechanicaldrawersmod.registry.menu.GridControllerMenu;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.jetbrains.annotations.NotNull;
 
+import java.awt.geom.AffineTransform;
+
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
+
+
+
+
+
+
+
 
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage.png");
@@ -19,18 +39,110 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         this.imageWidth = 176;
         this.imageHeight = 166;
+
     }
 
     @Override
-    protected void renderBg(@NotNull GuiGraphics pGuiGraphics, float partialTick, int mouseX, int mouseY) {
-        renderTransparentBackground(pGuiGraphics);
-        pGuiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+    protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
+        renderTransparentBackground(guiGraphics);
+        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+
+
+
+
+
+
+
     }
 
+
+
+
+
+
+
+
+
     @Override
-    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
+
+
+
+        super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
+
+
+
+//        guiGraphics.pose().pushPose();
+//
+//        guiGraphics.renderItem(new ItemStack(Items.ACACIA_PLANKS),
+//                (this.leftPos + 8),  this.topPos + 18);
+//
+//
+//
+//        guiGraphics.renderItemDecorations(this.font, new ItemStack(Items.ACACIA_PLANKS),
+//                (this.leftPos + 8),  this.topPos + 17, "0");
+
+//        // Same as the Vanilla method, just with dynamic width and height
+//        guiGraphics.fillGradient(RenderType.guiOverlay(), 1, 1, 1 + 5, 1 + 5,
+//                0x80ffffff, 0x80ffffff, 1);
+
+
+
+
+
+
+
+
+
+//        // Draw the quantity string with shadow
+//        String quantityString = String.valueOf("0");
+//        int textWidth = font.width(quantityString);
+//        int slotWidth = 18; // Adjust this based on your slot width
+//
+//        guiGraphics.drawString(this.font, quantityString,
+//                (this.leftPos + 18),  this.topPos + 26, 0xFFFFFF, false);
+
+
+
+
+
+        guiGraphics.pose().popPose();
+
+
+
+//        for (int row = 0; row < 3; row++) {
+//
+//            for (int column = 0; column < 9; column++) {
+//
+//                int x = leftPos + 18 + (column % 9) * 18;
+//                int y = topPos + 18 + (column / 9) * 18;
+//
+//
+//
+//                guiGraphics.pose().pushPose();
+//
+//
+//
+//
+//                // Draw the quantity string with shadow
+//                String quantityString = String.valueOf("0");
+//                int textWidth = font.width(quantityString);
+//                int slotWidth = 18; // Adjust this based on your slot width
+//
+//                guiGraphics.drawString(this.font, quantityString,
+//                        this.leftPos + (slotWidth * (column + 1)), y + 7 + 1, 0x000000, false);
+//
+//                guiGraphics.drawString(this.font, quantityString,
+//                        this.leftPos + (slotWidth * (column + 1)), y + 7, 0xFFFFFF, false);
+//
+//                guiGraphics.pose().popPose();
+//
+//            }
+//        }
+
     }
+
+
 
 }

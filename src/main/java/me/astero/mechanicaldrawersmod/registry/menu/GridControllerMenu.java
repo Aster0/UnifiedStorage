@@ -3,6 +3,7 @@ package me.astero.mechanicaldrawersmod.registry.menu;
 import me.astero.mechanicaldrawersmod.registry.BlockRegistry;
 import me.astero.mechanicaldrawersmod.registry.MenuRegistry;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerGridControllerEntity;
+import me.astero.mechanicaldrawersmod.registry.menu.data.ViewOnlySlot;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -10,6 +11,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.items.SlotItemHandler;
 
@@ -52,24 +54,43 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     }
 
+
     private void createBlockEntityInventory(DrawerGridControllerEntity drawerGridControllerEntity) {
 
-        System.out.println(drawerGridControllerEntity + "wot");
 
-        drawerGridControllerEntity.getOptional().ifPresent(inventory -> {
-            for (int row = 0; row < 3; row++) {
+
+//        drawerGridControllerEntity.getOptional().ifPresent(inventory -> {
+//            for (int row = 0; row < 3; row++) {
+//                for (int column = 0; column < 9; column++) {
+//                    addSlot(new SlotItemHandler(inventory,
+//                            column + (row * 9),
+//                            8 + (column * 18),
+//                            18 + (row * 18)));
+//                }
+//            }
+//        });
+
+
+        for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 9; column++) {
-                    addSlot(new SlotItemHandler(inventory,
-                            column + (row * 9),
-                            8 + (column * 18),
-                            18 + (row * 18)));
+                    addSlot(addSlot(new ViewOnlySlot(
+                            8 + (column * 18), 18 + (row * 18))));
                 }
-            }
-        });
+        }
+
+
+
+
+
+
+
+
 
 
 
     }
+
+
 
     private void createPlayerInventory(Inventory pInventory) {
         for (int row = 0; row < 3; row++) {

@@ -2,9 +2,11 @@ package me.astero.mechanicaldrawersmod.registry.blocks.entity;
 
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
 import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
+import me.astero.mechanicaldrawersmod.registry.items.data.CustomBlockPosData;
 import me.astero.mechanicaldrawersmod.registry.menu.GridControllerMenu;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -29,33 +31,46 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 public class DrawerGridControllerEntity extends BlockEntity implements MenuProvider {
 
 
 
 
+    private int maxChests = 6;
     private static final Component MENU_TITLE = Component.translatable("container."
             + ModUtils.MODID + ".grid_controller_menu_title");
-    private LazyOptional<IItemHandler> chestInventory;
-    private ItemStackHandler inventory = new ItemStackHandler(28);
+
+    public List<String> chestLocations = new ArrayList<>();;
+    private List<CustomBlockPosData> editedChestLocations = new ArrayList<>();
+    private ItemStackHandler inventory = new ItemStackHandler(27);
 
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.inventory);
 
     public DrawerGridControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.DRAWER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
+
+        System.out.println("created " + this);
     }
 
 
-    public void setChestInventory(LazyOptional<IItemHandler> chestInventory) {
-        this.chestInventory = chestInventory;
+    public void addChestLocations(String location) {
+
+        if(!chestLocations.contains(location)) {
+            System.out.println("not exist");
+            chestLocations.add(location);
+            this.setChanged();
+        }
 
 
 
     }
 
-    public LazyOptional<IItemHandler> getChestInventory() {
-        return chestInventory;
-    }
+
+
 
     @Override
     public void load(CompoundTag nbt) {
@@ -63,7 +78,35 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
-        this.inventory.deserializeNBT(modNbt.getCompound("drawer_items"));
+
+        editedChestLocations.clear();
+
+        for(int i = 0; i < maxChests; i++) {
+
+
+            String rawPos = modNbt.getString("chest" + i);
+
+            System.out.println(rawPos.length() + " RAW POS");
+
+            if(rawPos != null && rawPos.length() > 0) {
+                String[] pos = rawPos.split(", ");
+
+
+                chestLocations.add(rawPos);
+                CustomBlockPosData customBlockPosData = ModUtils.convertStringToBlockData(pos);
+                editedChestLocations.add(customBlockPosData);
+
+            }
+
+
+        }
+
+
+        System.out.println("LOADINGNBT " + nbt.getCompound(ModUtils.MODID));
+
+
+
+
 
     }
 
@@ -73,7 +116,17 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
         CompoundTag modNbt = new CompoundTag();
-        modNbt.put("drawer_items", this.inventory.serializeNBT());
+
+
+        for(int i = 0; i < chestLocations.size(); i++) {
+            modNbt.putString("chest" + i, this.chestLocations.get(i));
+
+        }
+
+
+
+
+
 
 
 

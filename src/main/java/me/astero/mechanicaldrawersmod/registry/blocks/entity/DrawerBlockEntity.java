@@ -31,6 +31,8 @@ public class DrawerBlockEntity extends BlockEntity {
 
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.DRAWER_BLOCK_ENTITY.get(), pos, state);
+
+        System.out.println(this);
     }
 
 
@@ -43,6 +45,8 @@ public class DrawerBlockEntity extends BlockEntity {
 
         this.inventory.deserializeNBT(modNbt.getCompound("drawer_items"));
 
+        System.out.println("LOAD ENTITY!!" + inventory);
+
         maxStack = modNbt.getInt("drawer_max_stack");
     }
 
@@ -51,6 +55,7 @@ public class DrawerBlockEntity extends BlockEntity {
         super.saveAdditional(nbt);
 
 
+        System.out.println("SAVE ENTITY!!!");
         CompoundTag modNbt = new CompoundTag();
         modNbt.put("drawer_items", this.inventory.serializeNBT());
         modNbt.putInt("drawer_max_stack", maxStack);
