@@ -8,6 +8,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -73,7 +74,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
         for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 9; column++) {
-                    addSlot(addSlot(new ViewOnlySlot(
+                    addSlot(addSlot(new ViewOnlySlot(new ItemStack(Items.ACACIA_LEAVES),
                             8 + (column * 18), 18 + (row * 18))));
                 }
         }
@@ -89,6 +90,8 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
 
     }
+
+
 
 
 

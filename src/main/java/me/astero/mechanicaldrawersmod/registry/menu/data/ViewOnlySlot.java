@@ -10,22 +10,34 @@ import net.minecraft.world.item.Items;
 
 public class ViewOnlySlot extends Slot {
 
-    private static final Container EMPTY_INVENTORY = new SimpleContainer(1);
-    public ViewOnlySlot(int xPos, int yPos) {
+    private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
+
+    private Item item;
+    public ViewOnlySlot(ItemStack stack, int xPos, int yPos) {
         super(EMPTY_INVENTORY, 0, xPos, yPos);
+
+        this.item = stack.getItem();
     }
 
+    public Item getItem2() {
+
+
+        return item;
+    }
 
     @Override
     public ItemStack getItem() {
-        return ItemStack.EMPTY;
+        return new ItemStack(Items.ACACIA_LEAVES, 0);
     }
 
     @Override
     public void set(ItemStack p_40240_) {
 
     }
-
+    @Override
+    public final ItemStack remove(int amount) {
+        return ItemStack.EMPTY;
+    }
     @Override
     public boolean mayPickup(Player p_40228_) {
         return false;

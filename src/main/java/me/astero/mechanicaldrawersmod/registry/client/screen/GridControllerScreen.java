@@ -2,6 +2,7 @@ package me.astero.mechanicaldrawersmod.registry.client.screen;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import me.astero.mechanicaldrawersmod.registry.menu.GridControllerMenu;
+import me.astero.mechanicaldrawersmod.registry.menu.data.ViewOnlySlot;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -14,11 +15,14 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.awt.geom.AffineTransform;
 
@@ -99,9 +103,22 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 //        String quantityString = String.valueOf("0");
 //        int textWidth = font.width(quantityString);
 //        int slotWidth = 18; // Adjust this based on your slot width
+
+        var poseStack = guiGraphics.pose();
+        poseStack.pushPose();
+
+        ItemStack displayStack = new ItemStack(Items.ACACIA_LEAVES);
+        guiGraphics.renderItem(displayStack, (this.leftPos + 8), this.topPos + 18);
+        guiGraphics.renderItemDecorations(minecraft.font, displayStack,
+                (this.leftPos + 8), this.topPos + 18, "");
+
+        poseStack.popPose();
+
+        guiGraphics.pose().pushPose();
+        guiGraphics.pose().translate(0, 0, 200);
 //
-//        guiGraphics.drawString(this.font, quantityString,
-//                (this.leftPos + 18),  this.topPos + 26, 0xFFFFFF, false);
+        guiGraphics.drawString(this.font, "0",
+                (this.leftPos + 18),  this.topPos + 26, 0xFFFFFF, false);
 
 
 
@@ -143,6 +160,50 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     }
 
+    @Override
+    public boolean mouseClicked(double p_97748_, double p_97749_, int p_97750_) {
+
+        System.out.println(super.mouseClicked(p_97748_, p_97749_, p_97750_));
 
 
+        return super.mouseClicked(p_97748_, p_97749_, p_97750_);
+
+
+    }
+
+    @Override
+    protected void slotClicked(Slot slot, int p_97779_, int p_97780_, ClickType p_97781_) {
+
+        System.out.println(slot);
+        if(slot instanceof ViewOnlySlot) {
+            menu.setCarried(new ItemStack(Items.ACACIA_LEAVES));
+
+            return;
+        }
+        
+        // TODO: Put down logic?
+
+        super.slotClicked(slot, p_97779_, p_97780_, p_97781_);
+
+
+
+
+
+    }
+
+    @Override
+    protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
+
+
+        if(this.hoveredSlot instanceof ViewOnlySlot v) {
+
+
+            Item item = v.getItem2();
+            ItemStack stack = new ItemStack(item);
+            guiGraphics.renderTooltip(this.font, stack, x, y);
+        }
+
+
+        super.renderTooltip(guiGraphics, x, y);
+    }
 }
