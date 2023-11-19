@@ -1,6 +1,7 @@
 package me.astero.mechanicaldrawersmod.items;
 
 import me.astero.mechanicaldrawersmod.blocks.entity.DrawerGridControllerEntity;
+import me.astero.mechanicaldrawersmod.data.ItemIdentifier;
 import me.astero.mechanicaldrawersmod.items.data.CustomBlockPosData;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.ChatFormatting;
@@ -122,7 +123,9 @@ public class GridWrenchItem extends Item {
 
                 if(hitBlockEntity instanceof DrawerGridControllerEntity entity) {
 
-                    System.out.println("Drawer " + entity.chestLocations.size());
+                    for(ItemIdentifier d : entity.mergedStorageContents) {
+                        System.out.println(d.getItemStack());
+                    }
 
                     saveNbt(itemStack, "grid_pos", entity.getBlockPos().toString());
                 }

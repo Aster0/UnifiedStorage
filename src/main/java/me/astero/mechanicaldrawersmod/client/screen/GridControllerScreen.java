@@ -13,6 +13,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
@@ -178,7 +179,11 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
             ItemStack item = viewOnlySlot.getActualItem();
 
-            guiGraphics.renderTooltip(this.font, item, x, y);
+            if(!item.equals(ItemStack.EMPTY, false)) {
+
+                guiGraphics.renderTooltip(this.font, item, x, y);
+            }
+
         }
 
 

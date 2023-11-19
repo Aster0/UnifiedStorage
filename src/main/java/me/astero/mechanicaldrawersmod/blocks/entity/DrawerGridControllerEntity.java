@@ -40,13 +40,13 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
 
-    private int maxChests = 6;
+    private int maxChests = 100;
     private static final Component MENU_TITLE = Component.translatable("container."
             + ModUtils.MODID + ".grid_controller_menu_title");
 
     public List<String> chestLocations = new ArrayList<>();;
 
-    private List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
+    public List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
     private List<CustomBlockPosData> editedChestLocations = new ArrayList<>();
 
 

@@ -76,11 +76,10 @@ public class GridControllerMenu extends AbstractContainerMenu {
         for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 9; column++) {
 
-                    int currentIndex = (row * 8) + column;
+                    int currentIndex = (row * 9) + column;
 
                     ItemIdentifier itemIdentifier =
                             drawerGridControllerEntity.getMergedStorageContents(currentIndex);
-
 
 
 
