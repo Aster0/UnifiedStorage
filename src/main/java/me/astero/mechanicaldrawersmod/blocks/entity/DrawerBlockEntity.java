@@ -1,7 +1,7 @@
-package me.astero.mechanicaldrawersmod.registry.blocks.entity;
+package me.astero.mechanicaldrawersmod.blocks.entity;
 
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
+import me.astero.mechanicaldrawersmod.blocks.entity.handler.DrawerItemStackHandler;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
@@ -32,7 +32,7 @@ public class DrawerBlockEntity extends BlockEntity {
     public DrawerBlockEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.DRAWER_BLOCK_ENTITY.get(), pos, state);
 
-        System.out.println(this);
+
     }
 
 
@@ -45,7 +45,7 @@ public class DrawerBlockEntity extends BlockEntity {
 
         this.inventory.deserializeNBT(modNbt.getCompound("drawer_items"));
 
-        System.out.println("LOAD ENTITY!!" + inventory);
+
 
         maxStack = modNbt.getInt("drawer_max_stack");
     }
@@ -55,7 +55,7 @@ public class DrawerBlockEntity extends BlockEntity {
         super.saveAdditional(nbt);
 
 
-        System.out.println("SAVE ENTITY!!!");
+
         CompoundTag modNbt = new CompoundTag();
         modNbt.put("drawer_items", this.inventory.serializeNBT());
         modNbt.putInt("drawer_max_stack", maxStack);
@@ -73,10 +73,10 @@ public class DrawerBlockEntity extends BlockEntity {
     public InteractionResult addItemsToDrawer(ItemStack itemStackInHand, int size) {
 
         ItemStack itemStackInDrawer = this.getInventory().getStackInSlot(0);
-        AsteroLogger.info("blog");
-        if(itemStackInDrawer.getCount() >= maxStack) return InteractionResult.FAIL;
 
-        AsteroLogger.info("log");
+        if(itemStackInDrawer.getCount() >= maxStack) return InteractionResult.CONSUME;
+
+
 
         itemStackInDrawer.setCount(itemStackInDrawer.getCount() + size);
         this.setChanged();
@@ -97,7 +97,7 @@ public class DrawerBlockEntity extends BlockEntity {
 
         updateRender();
 
-        return InteractionResult.PASS;
+        return InteractionResult.CONSUME;
     }
 
 

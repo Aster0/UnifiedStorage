@@ -1,4 +1,4 @@
-package me.astero.mechanicaldrawersmod.registry.menu.data;
+package me.astero.mechanicaldrawersmod.menu.data;
 
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;

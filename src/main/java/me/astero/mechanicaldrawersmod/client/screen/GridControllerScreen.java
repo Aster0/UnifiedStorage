@@ -1,30 +1,19 @@
-package me.astero.mechanicaldrawersmod.registry.client.screen;
+package me.astero.mechanicaldrawersmod.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import me.astero.mechanicaldrawersmod.registry.menu.GridControllerMenu;
-import me.astero.mechanicaldrawersmod.registry.menu.data.ViewOnlySlot;
+import com.mojang.blaze3d.vertex.PoseStack;
+import me.astero.mechanicaldrawersmod.menu.GridControllerMenu;
+import me.astero.mechanicaldrawersmod.menu.data.ViewOnlySlot;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraftforge.client.gui.overlay.IGuiOverlay;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.geom.AffineTransform;
 
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
 
@@ -60,13 +49,6 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     }
 
 
-
-
-
-
-
-
-
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 
@@ -75,10 +57,15 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
-        for(int k = 0; k < this.menu.slots.size(); ++k) {
-            Slot slot = this.menu.slots.get(k);
-            renderSlot(guiGraphics, slot);
+
+        for(int i = 0; i < this.menu.slots.size(); i++) {
+
+            Slot slot = this.menu.slots.get(i);
+            renderCustomSlot(guiGraphics, slot);
         }
+
+
+
 
 
 
@@ -87,7 +74,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     @Override
     public boolean mouseClicked(double p_97748_, double p_97749_, int p_97750_) {
 
-        System.out.println(super.mouseClicked(p_97748_, p_97749_, p_97750_));
+
 
 
         return super.mouseClicked(p_97748_, p_97749_, p_97750_);
@@ -98,9 +85,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     @Override
     protected void slotClicked(Slot slot, int p_97779_, int p_97780_, ClickType p_97781_) {
 
-        System.out.println(slot);
-        if(slot instanceof ViewOnlySlot) {
-            menu.setCarried(new ItemStack(Items.ACACIA_LEAVES));
+
+        if(slot instanceof ViewOnlySlot viewOnlySlot) {
+//            menu.setCarried(new ItemStack(((ViewOnlySlot) slot).getItem2().getItem(),
+//                    ((ViewOnlySlot) slot).getItem2().getCount()));
 
             return;
         }
@@ -115,19 +103,30 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     }
 
-    @Override
-    public void renderSlot(GuiGraphics guiGraphics, Slot slot) {
+
+    public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot) {
+
 
 
         if(slot instanceof ViewOnlySlot viewOnlySlot) {
 
 
-            if(viewOnlySlot.getItem2().equals(ItemStack.EMPTY, false)) return;
 
-            var poseStack = guiGraphics.pose();
+
+
+
+            if(viewOnlySlot.getActualItem().equals(ItemStack.EMPTY , false)) return;
+
+
+
+            int actualSlotX = leftPos + slot.x;
+            int actualSlotY = topPos + slot.y;
+
+            PoseStack poseStack = guiGraphics.pose();
             poseStack.pushPose();
-            ItemStack displayStack = new ItemStack(Items.ACACIA_LEAVES);
-            guiGraphics.renderItem(displayStack, leftPos + slot.x, topPos + slot.y);
+
+            ItemStack displayStack = new ItemStack(viewOnlySlot.getItemRepresentative(), 1);
+            guiGraphics.renderItem(displayStack, actualSlotX, actualSlotY);
             guiGraphics.renderItemDecorations(minecraft.font, displayStack,
                     leftPos + slot.x, topPos + slot.y, "");
             poseStack.popPose();
@@ -136,10 +135,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             poseStack.translate(0, 0, 200);
 
 
-            String text = "0";
+            String text = String.valueOf(viewOnlySlot.getActualItemCount());
             float textScale = 0.5f; // Adjust the scale factor as needed
-            float scaledX = (leftPos + slot.x) / textScale;
-            float scaledY = (topPos + slot.y) / textScale;
+            float scaledX = (actualSlotX) / textScale;
+            float scaledY = (actualSlotY) / textScale;
 
 
             // max 3 length (e.g., 100K, 100M)
@@ -152,13 +151,18 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
             guiGraphics.drawString(this.font, text,
-                    scaledX + 1 + 28 - textWidth, scaledY + 1 + 20, 0x000000, false);
+                    scaledX + 1 + 28 - textWidth, scaledY + 1 + 22, 0x000000, false);
 
             guiGraphics.drawString(this.font, text,
-                    scaledX + 30 - textWidth, scaledY + 20, 0xFFFFFF, false);
+                    scaledX + 30 - textWidth, scaledY + 22, 0xFFFFFF, false);
 
             guiGraphics.pose().popPose();
+
+
+
         }
+
+
 
 
 
@@ -169,10 +173,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
 
 
-        if(this.hoveredSlot instanceof ViewOnlySlot v) {
+        if(this.hoveredSlot instanceof ViewOnlySlot viewOnlySlot) {
 
 
-            ItemStack item = v.getItem2();
+            ItemStack item = viewOnlySlot.getActualItem();
 
             guiGraphics.renderTooltip(this.font, item, x, y);
         }

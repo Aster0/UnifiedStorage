@@ -1,29 +1,19 @@
-package me.astero.mechanicaldrawersmod.registry.blocks;
+package me.astero.mechanicaldrawersmod.blocks;
 
-import com.mojang.logging.LogUtils;
+import me.astero.mechanicaldrawersmod.blocks.entity.DrawerBlockEntity;
+import me.astero.mechanicaldrawersmod.blocks.entity.handler.DrawerItemStackHandler;
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
-import net.minecraft.client.renderer.blockentity.CampfireRenderer;
-import net.minecraft.client.renderer.blockentity.SignRenderer;
-import net.minecraft.client.renderer.entity.ItemFrameRenderer;
-import net.minecraft.client.renderer.entity.ItemRenderer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.decoration.HangingEntity;
-import net.minecraft.world.entity.decoration.ItemFrame;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.BowItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraft.world.level.block.entity.HangingSignBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -31,7 +21,6 @@ import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
-import org.slf4j.Logger;
 
 public class DrawerBlock extends Block implements EntityBlock {
 
@@ -58,7 +47,7 @@ public class DrawerBlock extends Block implements EntityBlock {
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
 
-        System.out.println("created!!! " + state);
+
         return BlockEntityRegistry.DRAWER_BLOCK_ENTITY.get().create(pos, state);
     }
 
@@ -118,35 +107,16 @@ public class DrawerBlock extends Block implements EntityBlock {
 
 
 
-
-
-
-
-
                         if(itemStackInHand.getItem().equals(itemStackInDrawer.getItem())
                                 || itemStackInDrawer.isEmpty()) {
                             // if item in drawer matches what player wants to put in or it's empty
 
-
-
-
-
-
-
-                            AsteroLogger.info("Crouching" );
                             int toInsertValue = maxStack - itemStackInDrawer.getCount();
                             int insertableAmount = toInsertValue;
 
                             if(toInsertValue > itemStackInHand.getCount()) {
                                 insertableAmount = itemStackInHand.getCount();
                             }
-
-
-
-
-
-
-
 
 
                             return drawerBlockEntity.addItemsToDrawer(itemStackInHand,
@@ -167,11 +137,10 @@ public class DrawerBlock extends Block implements EntityBlock {
             }
 
 
-
-
         }
 
-        return InteractionResult.FAIL;
+
+        return InteractionResult.SUCCESS;
     }
 
 

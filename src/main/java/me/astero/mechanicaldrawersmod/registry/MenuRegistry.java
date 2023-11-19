@@ -1,7 +1,6 @@
 package me.astero.mechanicaldrawersmod.registry;
 
-import me.astero.mechanicaldrawersmod.registry.blocks.DrawerGridControllerBlock;
-import me.astero.mechanicaldrawersmod.registry.menu.GridControllerMenu;
+import me.astero.mechanicaldrawersmod.menu.GridControllerMenu;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraftforge.common.extensions.IForgeMenuType;

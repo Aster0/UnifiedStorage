@@ -1,6 +1,6 @@
 package me.astero.mechanicaldrawersmod.utils;
 
-import me.astero.mechanicaldrawersmod.registry.items.data.CustomBlockPosData;
+import me.astero.mechanicaldrawersmod.items.data.CustomBlockPosData;
 
 public class ModUtils {
 

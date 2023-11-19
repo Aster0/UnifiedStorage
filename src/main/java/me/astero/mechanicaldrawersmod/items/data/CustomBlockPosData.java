@@ -1,4 +1,4 @@
-package me.astero.mechanicaldrawersmod.registry.items.data;
+package me.astero.mechanicaldrawersmod.items.data;
 
 import net.minecraft.core.BlockPos;
 

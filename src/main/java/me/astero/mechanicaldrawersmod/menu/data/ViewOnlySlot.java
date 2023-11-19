@@ -1,5 +1,6 @@
-package me.astero.mechanicaldrawersmod.registry.menu.data;
+package me.astero.mechanicaldrawersmod.menu.data;
 
+import me.astero.mechanicaldrawersmod.data.ItemIdentifier;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
@@ -12,22 +13,29 @@ public class ViewOnlySlot extends Slot {
 
     private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
 
-    private ItemStack item; // TODO: convert into class
-    public ViewOnlySlot(ItemStack stack, int xPos, int yPos) {
+    private ItemIdentifier itemIdentifier;
+    public ViewOnlySlot(ItemIdentifier itemIdentifier, int xPos, int yPos) {
         super(EMPTY_INVENTORY, 0, xPos, yPos);
 
-        this.item = stack;
+        this.itemIdentifier = itemIdentifier;
     }
 
-    public ItemStack getItem2() {
+    public int getActualItemCount() {
+        return itemIdentifier.getCount();
+    }
 
+    public Item getItemRepresentative() {
+        return itemIdentifier.getItemStack().getItem();
+    }
+    public ItemStack getActualItem() {
 
-        return item;
+        return new ItemStack(itemIdentifier.getItemStack().getItem(),
+                itemIdentifier.getCount());
     }
 
     @Override
     public ItemStack getItem() {
-        return new ItemStack(Items.ACACIA_LEAVES, 0);
+        return ItemStack.EMPTY;
     }
 
     @Override

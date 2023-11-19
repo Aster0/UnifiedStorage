@@ -1,9 +1,9 @@
 {
   "parent" : "minecraft:block/orientable",
   "textures" : {
-    "top" : "minecraft:block/glass",
+    "top" : "minecraft:block/stone",
     "front" : "minecraft:block/sand",
-    "side" : "minecraft:block/glass"
+    "side" : "minecraft:block/stone"
 
   }
 }

@@ -1,9 +1,8 @@
 package me.astero.mechanicaldrawersmod.registry;
 
-import me.astero.mechanicaldrawersmod.registry.data.ItemData;
-import me.astero.mechanicaldrawersmod.registry.items.GridWrenchItem;
+import me.astero.mechanicaldrawersmod.data.ItemData;
+import me.astero.mechanicaldrawersmod.items.GridWrenchItem;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
-import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;

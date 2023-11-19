@@ -1,4 +1,4 @@
-package me.astero.mechanicaldrawersmod.registry.data;
+package me.astero.mechanicaldrawersmod.data;
 
 import net.minecraft.world.item.Item;
 

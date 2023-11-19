@@ -1,10 +1,11 @@
-package me.astero.mechanicaldrawersmod.registry.blocks.entity;
+package me.astero.mechanicaldrawersmod.blocks.entity;
 
+import me.astero.mechanicaldrawersmod.data.ItemIdentifier;
+import me.astero.mechanicaldrawersmod.networking.ModNetwork;
+import me.astero.mechanicaldrawersmod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.handler.DrawerItemStackHandler;
-import me.astero.mechanicaldrawersmod.registry.items.data.CustomBlockPosData;
-import me.astero.mechanicaldrawersmod.registry.menu.GridControllerMenu;
-import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
+import me.astero.mechanicaldrawersmod.items.data.CustomBlockPosData;
+import me.astero.mechanicaldrawersmod.menu.GridControllerMenu;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
@@ -13,14 +14,14 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
-import net.minecraft.world.InteractionResult;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -32,7 +33,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class DrawerGridControllerEntity extends BlockEntity implements MenuProvider {
@@ -45,7 +45,11 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
             + ModUtils.MODID + ".grid_controller_menu_title");
 
     public List<String> chestLocations = new ArrayList<>();;
+
+    private List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
     private List<CustomBlockPosData> editedChestLocations = new ArrayList<>();
+
+
     private ItemStackHandler inventory = new ItemStackHandler(27);
 
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.inventory);
@@ -53,23 +57,86 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     public DrawerGridControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.DRAWER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
 
-        System.out.println("created " + this);
     }
 
 
-    public void addChestLocations(String location) {
+    public void setMergedStorageContents(List<ItemIdentifier> mergedStorageContents) {
+        this.mergedStorageContents = mergedStorageContents;
+    }
 
-        if(!chestLocations.contains(location)) {
-            System.out.println("not exist");
-            chestLocations.add(location);
-            this.setChanged();
+    public ItemIdentifier getMergedStorageContents(int index) {
+
+        ItemIdentifier itemIdentifier;
+        try {
+            itemIdentifier =  mergedStorageContents.get(index);
+
+
+        }
+        catch (IndexOutOfBoundsException e) {
+            itemIdentifier = new ItemIdentifier(ItemStack.EMPTY, 1);
+
         }
 
 
-
+        return itemIdentifier;
     }
 
+    public void addChestLocations(String location) {
 
+
+        if(!chestLocations.contains(location)) {
+            System.out.println("not exist");
+            addChests(location);
+            this.setChanged();
+
+
+
+        }
+
+        System.out.println("added " + chestLocations.size());
+
+    }
+    private void addChests(String location) {
+        chestLocations.add(location);
+        CustomBlockPosData customBlockPosData = ModUtils.convertStringToBlockData(location.split(", "));
+        editedChestLocations.add(customBlockPosData);
+    }
+
+    private void loadEditedChests(CompoundTag nbt) {
+
+        editedChestLocations.clear();
+
+        for(int i = 0; i < maxChests; i++) {
+
+
+
+            String rawPos = nbt.getString("chest" + i);
+
+
+
+
+            if(rawPos != null && rawPos.length() > 0) {
+                String[] pos = rawPos.split(", ");
+
+                if(chestLocations.contains(rawPos)) continue;
+
+                addChests(rawPos);
+
+
+
+                //loadStorageContents(customBlockPosData);
+
+
+            }
+
+
+
+
+        }
+
+
+        System.out.println(nbt);
+    }
 
 
     @Override
@@ -79,31 +146,71 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
 
-        editedChestLocations.clear();
-
-        for(int i = 0; i < maxChests; i++) {
 
 
-            String rawPos = modNbt.getString("chest" + i);
 
-            System.out.println(rawPos.length() + " RAW POS");
-
-            if(rawPos != null && rawPos.length() > 0) {
-                String[] pos = rawPos.split(", ");
+        loadEditedChests(modNbt);
 
 
-                chestLocations.add(rawPos);
-                CustomBlockPosData customBlockPosData = ModUtils.convertStringToBlockData(pos);
-                editedChestLocations.add(customBlockPosData);
+
+
+
+
+
+
+
+
+    }
+
+
+
+
+    private void loadStorageContents(CustomBlockPosData chestData, Player player) {
+
+
+
+
+        IItemHandler chestInventory = this.level.getBlockEntity(chestData.getBlockPos()).
+                getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(new ItemStackHandler(0));
+
+
+        System.out.println(editedChestLocations.size() + " MERGG");
+
+        for(int i = 0; i < chestInventory.getSlots(); i++) {
+
+            ItemStack chestItemStack = chestInventory.getStackInSlot(i);
+
+
+
+            if(chestItemStack.getItem() != Items.AIR) {
+                ItemStack newItemStack = new ItemStack(chestItemStack.getItem(), 1);
+
+
+                ItemIdentifier itemIdentifier = new ItemIdentifier(newItemStack, chestItemStack.getCount());
+
+                if(mergedStorageContents.contains(itemIdentifier)) { // already exists, we can merge
+
+
+                    ItemIdentifier existingItemIdentifier =
+                            mergedStorageContents.get(mergedStorageContents.indexOf(itemIdentifier));
+                    existingItemIdentifier.addCount(chestItemStack.getCount());
+
+                }
+                else {
+                    mergedStorageContents.add(itemIdentifier);
+                }
 
             }
 
-
         }
 
+        if(player instanceof ServerPlayer serverPlayer) {
 
-        System.out.println("LOADINGNBT " + nbt.getCompound(ModUtils.MODID));
+            ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
+                    this.getBlockPos()), serverPlayer);
 
+
+        }
 
 
 
@@ -115,6 +222,8 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         super.saveAdditional(nbt);
 
 
+
+
         CompoundTag modNbt = new CompoundTag();
 
 
@@ -122,12 +231,6 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
             modNbt.putString("chest" + i, this.chestLocations.get(i));
 
         }
-
-
-
-
-
-
 
 
         nbt.put(ModUtils.MODID, modNbt);
@@ -141,6 +244,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
     @Override
     public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+
 
 
         return cap == ForgeCapabilities.ITEM_HANDLER ? this.optional.cast()
@@ -169,6 +273,8 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     }
 
     public LazyOptional<ItemStackHandler> getOptional() {
+
+
         return optional;
     }
 
@@ -181,6 +287,17 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
+
+
+        mergedStorageContents.clear();
+
+        for(CustomBlockPosData customBlockPosData : editedChestLocations) {
+
+            System.out.println(customBlockPosData.getBlockPos() + " SIZZ");
+            loadStorageContents(customBlockPosData, player);
+        }
+
+
         return new GridControllerMenu(pControllerId, pInventory, this);
     }
 }

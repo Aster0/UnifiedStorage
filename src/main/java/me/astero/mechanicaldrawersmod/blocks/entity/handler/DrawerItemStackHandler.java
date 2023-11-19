@@ -1,10 +1,7 @@
-package me.astero.mechanicaldrawersmod.registry.blocks.entity.handler;
+package me.astero.mechanicaldrawersmod.blocks.entity.handler;
 
-import me.astero.mechanicaldrawersmod.registry.blocks.DrawerBlock;
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerBlockEntity;
+import me.astero.mechanicaldrawersmod.blocks.entity.DrawerBlockEntity;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.items.ItemStackHandler;
 
 public class DrawerItemStackHandler extends ItemStackHandler {

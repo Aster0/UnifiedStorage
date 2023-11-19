@@ -1,7 +1,7 @@
-package me.astero.mechanicaldrawersmod.registry.client;
+package me.astero.mechanicaldrawersmod.client;
 
 import me.astero.mechanicaldrawersmod.registry.BlockEntityRegistry;
-import me.astero.mechanicaldrawersmod.registry.renderer.DrawerItemRenderer;
+import me.astero.mechanicaldrawersmod.renderer.DrawerItemRenderer;
 import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraftforge.api.distmarker.Dist;

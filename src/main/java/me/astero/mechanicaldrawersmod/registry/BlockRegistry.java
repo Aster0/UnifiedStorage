@@ -1,20 +1,16 @@
 package me.astero.mechanicaldrawersmod.registry;
 
 
-import me.astero.mechanicaldrawersmod.registry.blocks.DrawerBlock;
-import me.astero.mechanicaldrawersmod.registry.blocks.DrawerGridControllerBlock;
-import me.astero.mechanicaldrawersmod.registry.data.BlockData;
+import me.astero.mechanicaldrawersmod.blocks.DrawerBlock;
+import me.astero.mechanicaldrawersmod.blocks.DrawerGridControllerBlock;
+import me.astero.mechanicaldrawersmod.data.BlockData;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
-
-import java.util.function.Supplier;
 
 public class BlockRegistry  {
 

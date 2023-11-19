@@ -1,26 +1,21 @@
-package me.astero.mechanicaldrawersmod.registry.items;
+package me.astero.mechanicaldrawersmod.items;
 
-import me.astero.mechanicaldrawersmod.registry.blocks.entity.DrawerGridControllerEntity;
-import me.astero.mechanicaldrawersmod.registry.items.data.CustomBlockPosData;
-import me.astero.mechanicaldrawersmod.utils.AsteroLogger;
+import me.astero.mechanicaldrawersmod.blocks.entity.DrawerGridControllerEntity;
+import me.astero.mechanicaldrawersmod.items.data.CustomBlockPosData;
 import me.astero.mechanicaldrawersmod.utils.ModUtils;
 import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.items.ItemStackHandler;
 
 
 public class GridWrenchItem extends Item {
@@ -127,7 +122,7 @@ public class GridWrenchItem extends Item {
 
                 if(hitBlockEntity instanceof DrawerGridControllerEntity entity) {
 
-                    System.out.println("Drawer " + entity.chestLocations.get(0));
+                    System.out.println("Drawer " + entity.chestLocations.size());
 
                     saveNbt(itemStack, "grid_pos", entity.getBlockPos().toString());
                 }

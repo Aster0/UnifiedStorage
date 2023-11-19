@@ -1,4 +1,4 @@
-package me.astero.mechanicaldrawersmod.registry.data;
+package me.astero.mechanicaldrawersmod.data;
 
 import java.util.function.Supplier;
 
