@@ -26,13 +26,13 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
     private static final ResourceLocation TEXTURE =
-            new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage.png");
+            new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
 
     public GridControllerScreen(GridControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
 
-        this.imageWidth = 176;
-        this.imageHeight = 166;
+        this.imageWidth = 199;
+        this.imageHeight = 235;
 
     }
 

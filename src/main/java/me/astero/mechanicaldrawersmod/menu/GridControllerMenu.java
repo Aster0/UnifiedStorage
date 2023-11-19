@@ -101,7 +101,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
             for (int column = 0; column < 9; column++) {
                 addSlot(new Slot(pInventory, 9 + column + (row * 9),
                         8 + (column * 18),
-                        84 + (row * 18)));
+                        153 + (row * 18)));
             }
         }
     }
@@ -109,7 +109,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
     private void createPlayerHotbar(Inventory pInventory) {
         for (int column = 0; column < 9; column++) {
             addSlot(new Slot(pInventory, column, 8 + (column * 18),
-                    142));
+                    211));
         }
     }
 
