@@ -119,7 +119,11 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     public void renderSlot(GuiGraphics guiGraphics, Slot slot) {
 
 
-        if(slot instanceof ViewOnlySlot) {
+        if(slot instanceof ViewOnlySlot viewOnlySlot) {
+
+
+            if(viewOnlySlot.getItem2().equals(ItemStack.EMPTY, false)) return;
+
             var poseStack = guiGraphics.pose();
             poseStack.pushPose();
             ItemStack displayStack = new ItemStack(Items.ACACIA_LEAVES);
@@ -157,6 +161,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         }
 
 
+
+
     }
 
     @Override
@@ -166,9 +172,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         if(this.hoveredSlot instanceof ViewOnlySlot v) {
 
 
-            Item item = v.getItem2();
-            ItemStack stack = new ItemStack(item);
-            guiGraphics.renderTooltip(this.font, stack, x, y);
+            ItemStack item = v.getItem2();
+
+            guiGraphics.renderTooltip(this.font, item, x, y);
         }
 
 

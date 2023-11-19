@@ -75,8 +75,8 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
         for (int row = 0; row < 3; row++) {
                 for (int column = 0; column < 9; column++) {
-                    addSlot(addSlot(new ViewOnlySlot(new ItemStack(Items.ACACIA_LEAVES),
-                            8 + (column * 18), 18 + (row * 18))));
+                    addSlot(new ViewOnlySlot(new ItemStack(Items.ACACIA_LEAVES),
+                            8 + (column * 18), 18 + (row * 18)));
                 }
         }
 

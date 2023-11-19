@@ -12,14 +12,14 @@ public class ViewOnlySlot extends Slot {
 
     private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
 
-    private Item item;
+    private ItemStack item; // TODO: convert into class
     public ViewOnlySlot(ItemStack stack, int xPos, int yPos) {
         super(EMPTY_INVENTORY, 0, xPos, yPos);
 
-        this.item = stack.getItem();
+        this.item = stack;
     }
 
-    public Item getItem2() {
+    public ItemStack getItem2() {
 
 
         return item;
