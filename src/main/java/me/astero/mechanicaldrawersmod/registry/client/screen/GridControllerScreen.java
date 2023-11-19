@@ -75,88 +75,12 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
+        for(int k = 0; k < this.menu.slots.size(); ++k) {
+            Slot slot = this.menu.slots.get(k);
+            renderSlot(guiGraphics, slot);
+        }
 
 
-//        guiGraphics.pose().pushPose();
-//
-//        guiGraphics.renderItem(new ItemStack(Items.ACACIA_PLANKS),
-//                (this.leftPos + 8),  this.topPos + 18);
-//
-//
-//
-//        guiGraphics.renderItemDecorations(this.font, new ItemStack(Items.ACACIA_PLANKS),
-//                (this.leftPos + 8),  this.topPos + 17, "0");
-
-//        // Same as the Vanilla method, just with dynamic width and height
-//        guiGraphics.fillGradient(RenderType.guiOverlay(), 1, 1, 1 + 5, 1 + 5,
-//                0x80ffffff, 0x80ffffff, 1);
-
-
-
-
-
-
-
-
-
-//        // Draw the quantity string with shadow
-//        String quantityString = String.valueOf("0");
-//        int textWidth = font.width(quantityString);
-//        int slotWidth = 18; // Adjust this based on your slot width
-
-        var poseStack = guiGraphics.pose();
-        poseStack.pushPose();
-
-        ItemStack displayStack = new ItemStack(Items.ACACIA_LEAVES);
-        guiGraphics.renderItem(displayStack, (this.leftPos + 8), this.topPos + 18);
-        guiGraphics.renderItemDecorations(minecraft.font, displayStack,
-                (this.leftPos + 8), this.topPos + 18, "");
-
-        poseStack.popPose();
-
-        guiGraphics.pose().pushPose();
-        guiGraphics.pose().translate(0, 0, 200);
-//
-        guiGraphics.drawString(this.font, "0",
-                (this.leftPos + 18),  this.topPos + 26, 0xFFFFFF, false);
-
-
-
-
-
-        guiGraphics.pose().popPose();
-
-
-
-//        for (int row = 0; row < 3; row++) {
-//
-//            for (int column = 0; column < 9; column++) {
-//
-//                int x = leftPos + 18 + (column % 9) * 18;
-//                int y = topPos + 18 + (column / 9) * 18;
-//
-//
-//
-//                guiGraphics.pose().pushPose();
-//
-//
-//
-//
-//                // Draw the quantity string with shadow
-//                String quantityString = String.valueOf("0");
-//                int textWidth = font.width(quantityString);
-//                int slotWidth = 18; // Adjust this based on your slot width
-//
-//                guiGraphics.drawString(this.font, quantityString,
-//                        this.leftPos + (slotWidth * (column + 1)), y + 7 + 1, 0x000000, false);
-//
-//                guiGraphics.drawString(this.font, quantityString,
-//                        this.leftPos + (slotWidth * (column + 1)), y + 7, 0xFFFFFF, false);
-//
-//                guiGraphics.pose().popPose();
-//
-//            }
-//        }
 
     }
 
@@ -180,13 +104,57 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
             return;
         }
-        
+
         // TODO: Put down logic?
 
         super.slotClicked(slot, p_97779_, p_97780_, p_97781_);
 
 
 
+
+
+    }
+
+    @Override
+    public void renderSlot(GuiGraphics guiGraphics, Slot slot) {
+
+
+        if(slot instanceof ViewOnlySlot) {
+            var poseStack = guiGraphics.pose();
+            poseStack.pushPose();
+            ItemStack displayStack = new ItemStack(Items.ACACIA_LEAVES);
+            guiGraphics.renderItem(displayStack, leftPos + slot.x, topPos + slot.y);
+            guiGraphics.renderItemDecorations(minecraft.font, displayStack,
+                    leftPos + slot.x, topPos + slot.y, "");
+            poseStack.popPose();
+
+            poseStack.pushPose();
+            poseStack.translate(0, 0, 200);
+
+
+            String text = "0";
+            float textScale = 0.5f; // Adjust the scale factor as needed
+            float scaledX = (leftPos + slot.x) / textScale;
+            float scaledY = (topPos + slot.y) / textScale;
+
+
+            // max 3 length (e.g., 100K, 100M)
+            float textWidth = this.font.width(text) == 0 ? 0 :
+                    textScale * this.font.width(text) * 2; // Calculate the width of the text after scaling
+
+
+            poseStack.scale(textScale, textScale, textScale);
+
+
+
+            guiGraphics.drawString(this.font, text,
+                    scaledX + 1 + 28 - textWidth, scaledY + 1 + 20, 0x000000, false);
+
+            guiGraphics.drawString(this.font, text,
+                    scaledX + 30 - textWidth, scaledY + 20, 0xFFFFFF, false);
+
+            guiGraphics.pose().popPose();
+        }
 
 
     }

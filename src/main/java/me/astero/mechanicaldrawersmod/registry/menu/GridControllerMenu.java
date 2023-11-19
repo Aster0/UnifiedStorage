@@ -56,6 +56,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
     }
 
 
+
     private void createBlockEntityInventory(DrawerGridControllerEntity drawerGridControllerEntity) {
 
 
