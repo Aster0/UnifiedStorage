@@ -16,7 +16,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 
 public class GridControllerMenu extends AbstractContainerMenu {
 
-
+    public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
     private final DrawerGridControllerEntity drawerGridControllerEntity;
     private final ContainerLevelAccess containerLevelAccess;
 
@@ -72,31 +72,64 @@ public class GridControllerMenu extends AbstractContainerMenu {
 //        });
 
 
-        for (int row = 0; row < Math.ceil(drawerGridControllerEntity.getTotalItems() / 9d); row++) {
-                for (int column = 0; column < 9; column++) {
-
-                    int currentIndex = (row * 9) + column;
-
-                    ItemIdentifier itemIdentifier =
-                            drawerGridControllerEntity.getMergedStorageContents(currentIndex);
 
 
+        generateSlots(1);
 
-
-                    if(!itemIdentifier.getItemStack().equals(ItemStack.EMPTY, false)) {
-
-                        System.out.println(itemIdentifier.getItemStack());
-                        addSlot(new ViewOnlySlot(itemIdentifier,
-                                8 + (column * 18), 18 + (row * 18)));
-                    }
-
-
-                }
-        }
-
+        System.out.println(slots.size() + " SLOT SIZE");
 
 
     }
+
+    public void generateSlots(int page) {
+
+
+        // Math.ceil(drawerGridControllerEntity.getTotalItems() / 9d)
+
+
+        for (int row = 0; row < 3; row++) {
+            for (int column = 0; column < 9; column++) {
+
+                int currentIndex = (row * 9) + column;
+
+
+                ItemIdentifier itemIdentifier =
+                        drawerGridControllerEntity.getMergedStorageContents(currentIndex);
+
+
+
+
+                if(!itemIdentifier.getItemStack().equals(ItemStack.EMPTY, false)) {
+
+
+                    if(page == 1)
+                        addSlot( new ViewOnlySlot(itemIdentifier,
+                                8 + (column * 18), 18 + (row * 18)));
+                    else {
+
+
+                        int slotToFetch = STARTING_SLOT_INDEX + (VISIBLE_CONTENT_HEIGHT * (page - 1)) + currentIndex;
+                        int slotIndex = STARTING_SLOT_INDEX + currentIndex;
+
+                        itemIdentifier =
+                                drawerGridControllerEntity.getMergedStorageContents(slotToFetch);
+
+
+                        if(slots.get(slotIndex) instanceof ViewOnlySlot) {
+
+                            slots.set(slotIndex, new ViewOnlySlot(itemIdentifier,
+                                    8 + (column * 18), 18 + (row * 18)));
+
+                            System.out.println("yes");
+                        }
+                    }
+                }
+
+
+            }
+        }
+    }
+
 
 
 

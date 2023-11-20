@@ -33,7 +33,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     private int scrollPage = 1;
 
 
-    private static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
+
 
 
     private Map<ViewOnlySlot, ViewOnlySlot> allViewOnlySlots = new HashMap<>();
@@ -78,14 +78,17 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-        scrollPage = 1;
+        scrollPage = 0;
 
 
-        int startingIndex = (scrollPage * VISIBLE_CONTENT_HEIGHT) + STARTING_SLOT_INDEX;
+        int startingIndex = (scrollPage * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)
+                + GridControllerMenu.STARTING_SLOT_INDEX;
+
+
 
         // 36 (first slot) - 62 (last slot)
         for(int i = startingIndex; i <
-                startingIndex + VISIBLE_CONTENT_HEIGHT ; i++) {
+                startingIndex + GridControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
 
             try {
 
@@ -94,7 +97,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
                 if(slot instanceof ViewOnlySlot viewOnlySlot) { // just to confirm
 
-                    Slot slotIndex = this.menu.slots.get((i - (scrollPage * VISIBLE_CONTENT_HEIGHT)));
+                    Slot slotIndex = this.menu.slots.get((i -
+                            (scrollPage * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)));
+
 
 
                     renderCustomSlot(guiGraphics, slot, slotIndex);
@@ -192,6 +197,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 //            menu.setCarried(new ItemStack(((ViewOnlySlot) slot).getItem2().getItem(),
 //                    ((ViewOnlySlot) slot).getItem2().getCount()));
 
+
+            menu.generateSlots(2);
             return;
         }
 
