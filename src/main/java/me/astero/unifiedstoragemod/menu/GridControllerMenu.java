@@ -72,7 +72,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
 //        });
 
 
-        for (int row = 0; row < 3; row++) {
+        for (int row = 0; row < Math.ceil(drawerGridControllerEntity.getTotalItems() / 9d); row++) {
                 for (int column = 0; column < 9; column++) {
 
                     int currentIndex = (row * 9) + column;
@@ -82,14 +82,22 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
 
 
-                    addSlot(new ViewOnlySlot(itemIdentifier,
-                            8 + (column * 18), 18 + (row * 18)));
+
+                    if(!itemIdentifier.getItemStack().equals(ItemStack.EMPTY, false)) {
+
+                        System.out.println(itemIdentifier.getItemStack());
+                        addSlot(new ViewOnlySlot(itemIdentifier,
+                                8 + (column * 18), 18 + (row * 18)));
+                    }
+
+
                 }
         }
 
 
 
     }
+
 
 
 

@@ -62,6 +62,10 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         this.mergedStorageContents = mergedStorageContents;
     }
 
+    public int getTotalItems() {
+       return mergedStorageContents.size();
+    }
+
     public ItemIdentifier getMergedStorageContents(int index) {
 
         ItemIdentifier itemIdentifier;

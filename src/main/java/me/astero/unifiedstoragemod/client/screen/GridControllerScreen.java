@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
@@ -12,7 +13,12 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.HashMap;
+import java.util.Map;
+
 
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
 
@@ -21,13 +27,24 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
-    private int totalContentHeight = 0;
-    private int visibleContentHeight = 100; // Adjust this based on your needs
+    private int totalContentHeight = 27;
+    private int visibleContentHeight = 7; // Adjust this based on your needs
+
+    private int scrollPage = 1;
+
+
+    private static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
+
+
+    private Map<ViewOnlySlot, ViewOnlySlot> allViewOnlySlots = new HashMap<>();
 
 
 
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
+
+    private static final ResourceLocation SCROLLBAR_TEXTURE = new ResourceLocation("minecraft",
+            "textures/gui/container/creative_inventory/tabs.png");
 
     public GridControllerScreen(GridControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
@@ -60,30 +77,99 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         renderTooltip(guiGraphics, mouseX, mouseY);
 
 
-        for(int i = 0; i < this.menu.slots.size(); i++) {
 
-            Slot slot = this.menu.slots.get(i);
-            renderCustomSlot(guiGraphics, slot);
+        scrollPage = 1;
+
+
+        int startingIndex = (scrollPage * VISIBLE_CONTENT_HEIGHT) + STARTING_SLOT_INDEX;
+
+        // 36 (first slot) - 62 (last slot)
+        for(int i = startingIndex; i <
+                startingIndex + VISIBLE_CONTENT_HEIGHT ; i++) {
+
+            try {
+
+
+                Slot slot = this.menu.slots.get(i);
+
+                if(slot instanceof ViewOnlySlot viewOnlySlot) { // just to confirm
+
+                    Slot slotIndex = this.menu.slots.get((i - (scrollPage * VISIBLE_CONTENT_HEIGHT)));
+
+
+                    renderCustomSlot(guiGraphics, slot, slotIndex);
+
+                    allViewOnlySlots.putIfAbsent((ViewOnlySlot) slotIndex, viewOnlySlot);
+                    // so when we hover when it's not page 1,
+                    // we can tie this slot position to the visual slot that we need.
+
+
+
+
+                }
+
+            }
+            catch(IndexOutOfBoundsException SLOT_DOESNT_EXIST) {
+
+
+                break;
+            }
+
+
+
+
+
+
+
+
+        }
+
+        renderScrollbar(guiGraphics);
+
+
+
+    }
+
+    private void changePage(int page) {
+
+        this.scrollPage = page;
+
+
+
+    }
+
+    private void renderScrollbar(GuiGraphics guiGraphics) {
+        if (totalContentHeight <= visibleContentHeight) {
+            return; // No need for a scrollbar if content fits in the visible area
+        }
+
+        int maxScrollbarPosition = Math.max(0, 27 - visibleContentHeight);
+
+
+
+        if (maxScrollbarPosition == 0) {
+            return;
         }
 
 
-
-
-        // Calculate scrollbar size and position based on total and visible content height
-        int maxScrollbarHeight = visibleContentHeight;
-        int totalSlots = this.menu.slots.size();
-        scrollbarHeight = Math.min(maxScrollbarHeight, visibleContentHeight * visibleContentHeight / totalContentHeight);
-        int maxScrollbarPosition = Math.max(0, totalSlots - visibleContentHeight);
         scrollbarPosition = Math.min(scrollbarPosition, maxScrollbarPosition);
 
-        // Calculate scrollbar position and size in pixels
-        int scrollbarX = leftPos + imageWidth - 12; // Adjust this based on your GUI layout
+        int scrollbarX = leftPos + imageWidth + 10; // Adjust this based on your GUI layout
         int scrollbarY = topPos + 6; // Adjust this based on your GUI layout
-        int scrollbarPixelHeight = maxScrollbarHeight - scrollbarHeight;
-        int currentPixelPosition = scrollbarPosition * scrollbarPixelHeight / maxScrollbarPosition;
+        int scrollbarHeight = 100;
+
+
+
 
         // Render the scrollbar
-        guiGraphics.fill(scrollbarX, scrollbarY + currentPixelPosition, scrollbarX + 10, scrollbarY + currentPixelPosition + scrollbarHeight, 0xFF000000);
+        guiGraphics.fill(scrollbarX, scrollbarY , scrollbarX + 10, scrollbarY
+                + scrollbarHeight, 0xFF000000);
+
+        // Calculate the position and dimensions of the scrollbar thumb
+        int thumbY = scrollbarY + scrollbarPosition * (visibleContentHeight - scrollbarHeight) / maxScrollbarPosition;
+        int thumbHeight = Math.min(scrollbarHeight, visibleContentHeight - thumbY + scrollbarY);
+
+        guiGraphics.fill(scrollbarX, thumbY , scrollbarX + 10, thumbHeight, 0xFFFFFFFF);
 
     }
 
@@ -120,7 +206,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     }
 
 
-    public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot) {
+    public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot, Slot slotIndex) {
 
 
 
@@ -135,8 +221,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-            int actualSlotX = leftPos + slot.x;
-            int actualSlotY = topPos + slot.y;
+            int actualSlotX = leftPos + slotIndex.x;
+            int actualSlotY = topPos + slotIndex.y;
 
             PoseStack poseStack = guiGraphics.pose();
             poseStack.pushPose();
@@ -144,7 +230,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             ItemStack displayStack = new ItemStack(viewOnlySlot.getItemRepresentative(), 1);
             guiGraphics.renderItem(displayStack, actualSlotX, actualSlotY);
             guiGraphics.renderItemDecorations(minecraft.font, displayStack,
-                    leftPos + slot.x, topPos + slot.y, "");
+                    actualSlotX, actualSlotY, "");
             poseStack.popPose();
 
             poseStack.pushPose();
@@ -189,15 +275,28 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     protected void renderTooltip(GuiGraphics guiGraphics, int x, int y) {
 
 
-        if(this.hoveredSlot instanceof ViewOnlySlot viewOnlySlot) {
 
 
-            ItemStack item = viewOnlySlot.getActualItem();
+        if(this.hoveredSlot instanceof ViewOnlySlot viewOnlySlot) { // on our custom inventory
 
-            if(!item.equals(ItemStack.EMPTY, false)) {
 
-                guiGraphics.renderTooltip(this.font, item, x, y);
+
+
+            ViewOnlySlot hoveredSlot = allViewOnlySlots.get(viewOnlySlot);
+
+
+            if(hoveredSlot != null) {
+
+                ItemStack item = hoveredSlot.getActualItem();
+
+                if(!item.equals(ItemStack.EMPTY, false)) {
+
+                        guiGraphics.renderTooltip(this.font, item, x, y);
+
+                }
+
             }
+
 
         }
 
