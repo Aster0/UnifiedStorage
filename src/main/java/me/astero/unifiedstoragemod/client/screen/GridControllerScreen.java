@@ -19,7 +19,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-
+    private int scrollbarPosition = 0;
+    private int scrollbarHeight = 0;
+    private int totalContentHeight = 0;
+    private int visibleContentHeight = 100; // Adjust this based on your needs
 
 
 
@@ -66,7 +69,21 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+        // Calculate scrollbar size and position based on total and visible content height
+        int maxScrollbarHeight = visibleContentHeight;
+        int totalSlots = this.menu.slots.size();
+        scrollbarHeight = Math.min(maxScrollbarHeight, visibleContentHeight * visibleContentHeight / totalContentHeight);
+        int maxScrollbarPosition = Math.max(0, totalSlots - visibleContentHeight);
+        scrollbarPosition = Math.min(scrollbarPosition, maxScrollbarPosition);
 
+        // Calculate scrollbar position and size in pixels
+        int scrollbarX = leftPos + imageWidth - 12; // Adjust this based on your GUI layout
+        int scrollbarY = topPos + 6; // Adjust this based on your GUI layout
+        int scrollbarPixelHeight = maxScrollbarHeight - scrollbarHeight;
+        int currentPixelPosition = scrollbarPosition * scrollbarPixelHeight / maxScrollbarPosition;
+
+        // Render the scrollbar
+        guiGraphics.fill(scrollbarX, scrollbarY + currentPixelPosition, scrollbarX + 10, scrollbarY + currentPixelPosition + scrollbarHeight, 0xFF000000);
 
     }
 
