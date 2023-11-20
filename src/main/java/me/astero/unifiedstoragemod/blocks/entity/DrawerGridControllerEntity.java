@@ -73,6 +73,8 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
             itemIdentifier =  mergedStorageContents.get(index);
 
 
+
+
         }
         catch (IndexOutOfBoundsException e) {
             itemIdentifier = new ItemIdentifier(ItemStack.EMPTY, 1);
@@ -176,7 +178,6 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
                 getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(new ItemStackHandler(0));
 
 
-        System.out.println(editedChestLocations.size() + " MERGG");
 
         for(int i = 0; i < chestInventory.getSlots(); i++) {
 
@@ -184,22 +185,31 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
 
+
+
+
             if(chestItemStack.getItem() != Items.AIR) {
-                ItemStack newItemStack = new ItemStack(chestItemStack.getItem(), 1);
+                ItemStack itemStack = chestItemStack.copy();
+                itemStack.setCount(1);
 
 
-                ItemIdentifier itemIdentifier = new ItemIdentifier(newItemStack, chestItemStack.getCount());
+                ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack, chestItemStack.getCount());
+
+
 
                 if(mergedStorageContents.contains(itemIdentifier)) { // already exists, we can merge
 
 
                     ItemIdentifier existingItemIdentifier =
                             mergedStorageContents.get(mergedStorageContents.indexOf(itemIdentifier));
+
+
                     existingItemIdentifier.addCount(chestItemStack.getCount());
 
                 }
                 else {
                     mergedStorageContents.add(itemIdentifier);
+
                 }
 
             }
@@ -295,8 +305,9 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
         for(CustomBlockPosData customBlockPosData : editedChestLocations) {
 
-            System.out.println(customBlockPosData.getBlockPos() + " SIZZ");
+
             loadStorageContents(customBlockPosData, player);
+
         }
 
 

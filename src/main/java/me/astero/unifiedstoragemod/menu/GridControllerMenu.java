@@ -17,6 +17,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 public class GridControllerMenu extends AbstractContainerMenu {
 
     public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
+
+
+    private int scrollPage;
+
     private final DrawerGridControllerEntity drawerGridControllerEntity;
     private final ContainerLevelAccess containerLevelAccess;
 
@@ -74,11 +78,16 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
 
 
-        generateSlots(1);
+        scrollPage = 1;
+        generateSlots(scrollPage);
 
-        System.out.println(slots.size() + " SLOT SIZE");
 
 
+    }
+
+    public void nextPage() {
+        scrollPage++;
+        generateSlots(scrollPage);
     }
 
     public void generateSlots(int page) {
@@ -86,11 +95,25 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
         // Math.ceil(drawerGridControllerEntity.getTotalItems() / 9d)
 
+//        int x = 0;
+//
+//        for( ItemIdentifier i : drawerGridControllerEntity.mergedStorageContents) {
+//            System.out.println(i.getItemStack() + " " + i.getCount() + " Index: " + x);
+//
+//            x++;
+//        }
+//
+//        System.out.println("---");
+
+
+
+
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
 
                 int currentIndex = (row * 9) + column;
+
 
 
                 ItemIdentifier itemIdentifier =
@@ -102,14 +125,19 @@ public class GridControllerMenu extends AbstractContainerMenu {
                 if(!itemIdentifier.getItemStack().equals(ItemStack.EMPTY, false)) {
 
 
+
                     if(page == 1)
                         addSlot( new ViewOnlySlot(itemIdentifier,
                                 8 + (column * 18), 18 + (row * 18)));
                     else {
 
 
-                        int slotToFetch = STARTING_SLOT_INDEX + (VISIBLE_CONTENT_HEIGHT * (page - 1)) + currentIndex;
+                        int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
+
+
                         int slotIndex = STARTING_SLOT_INDEX + currentIndex;
+
+
 
                         itemIdentifier =
                                 drawerGridControllerEntity.getMergedStorageContents(slotToFetch);
@@ -120,10 +148,12 @@ public class GridControllerMenu extends AbstractContainerMenu {
                             slots.set(slotIndex, new ViewOnlySlot(itemIdentifier,
                                     8 + (column * 18), 18 + (row * 18)));
 
-                            System.out.println("yes");
+
                         }
                     }
                 }
+
+
 
 
             }

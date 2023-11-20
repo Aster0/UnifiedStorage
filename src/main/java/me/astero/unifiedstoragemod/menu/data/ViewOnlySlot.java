@@ -28,8 +28,10 @@ public class ViewOnlySlot extends Slot {
     }
     public ItemStack getActualItem() {
 
-        return new ItemStack(itemIdentifier.getItemStack().getItem(),
-                itemIdentifier.getCount());
+        ItemStack stack = itemIdentifier.getItemStack().copy();
+        stack.setCount(itemIdentifier.getCount());
+
+        return stack;
     }
 
     @Override

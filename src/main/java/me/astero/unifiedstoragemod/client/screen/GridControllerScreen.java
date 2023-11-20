@@ -30,7 +30,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     private int totalContentHeight = 27;
     private int visibleContentHeight = 7; // Adjust this based on your needs
 
-    private int scrollPage = 1;
+
 
 
 
@@ -78,10 +78,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-        scrollPage = 0;
 
 
-        int startingIndex = (scrollPage * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)
+        int startingIndex = (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)
                 + GridControllerMenu.STARTING_SLOT_INDEX;
 
 
@@ -98,7 +97,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 if(slot instanceof ViewOnlySlot viewOnlySlot) { // just to confirm
 
                     Slot slotIndex = this.menu.slots.get((i -
-                            (scrollPage * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)));
+                            (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
+                    // but with the new system, we don't really need the scroll page anymore
+                    // because we are always dealing with a set slots generated.
+                    // not deleting first in case I need it again in the future
 
 
 
@@ -135,13 +137,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     }
 
-    private void changePage(int page) {
 
-        this.scrollPage = page;
-
-
-
-    }
 
     private void renderScrollbar(GuiGraphics guiGraphics) {
         if (totalContentHeight <= visibleContentHeight) {
@@ -198,7 +194,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 //                    ((ViewOnlySlot) slot).getItem2().getCount()));
 
 
-            menu.generateSlots(2);
+            nextPage();
             return;
         }
 
@@ -210,6 +206,12 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+    }
+
+
+    private void nextPage() {
+
+        this.menu.nextPage();
     }
 
 
@@ -234,7 +236,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             PoseStack poseStack = guiGraphics.pose();
             poseStack.pushPose();
 
-            ItemStack displayStack = new ItemStack(viewOnlySlot.getItemRepresentative(), 1);
+            ItemStack displayStack = viewOnlySlot.getActualItem();
+
+
+
             guiGraphics.renderItem(displayStack, actualSlotX, actualSlotY);
             guiGraphics.renderItemDecorations(minecraft.font, displayStack,
                     actualSlotX, actualSlotY, "");
@@ -289,20 +294,22 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-            ViewOnlySlot hoveredSlot = allViewOnlySlots.get(viewOnlySlot);
 
 
-            if(hoveredSlot != null) {
 
-                ItemStack item = hoveredSlot.getActualItem();
+
+                ItemStack item = viewOnlySlot.getActualItem();
 
                 if(!item.equals(ItemStack.EMPTY, false)) {
 
-                        guiGraphics.renderTooltip(this.font, item, x, y);
+
+                    guiGraphics.renderTooltip(this.font, item, x, y);
+
+
 
                 }
 
-            }
+
 
 
         }
