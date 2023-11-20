@@ -14,4 +14,15 @@ public class CustomBlockPosData {
     public BlockPos getBlockPos() {
         return blockPos;
     }
+
+
+    @Override
+    public String toString() {
+
+
+        return "[x=" + getBlockPos().getX() + ", y=" + getBlockPos().getY()
+                + ", z=" + getBlockPos().getZ() + "]";
+    }
+
+
 }

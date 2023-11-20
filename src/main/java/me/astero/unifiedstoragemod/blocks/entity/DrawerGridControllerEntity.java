@@ -6,6 +6,7 @@ import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntit
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
+import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
@@ -63,7 +64,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     }
 
     public int getTotalItems() {
-       return mergedStorageContents.size();
+        return mergedStorageContents.size();
     }
 
     public ItemIdentifier getMergedStorageContents(int index) {
@@ -199,13 +200,27 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
 
+    private List<CustomBlockPosData> queueToRemoveChest = new ArrayList<>();
     private void loadStorageContents(CustomBlockPosData chestData, Player player) {
 
 
 
+        BlockEntity blockEntity = this.level.getBlockEntity(chestData.getBlockPos());
 
-        IItemHandler chestInventory = this.level.getBlockEntity(chestData.getBlockPos()).
-                getCapability(ForgeCapabilities.ITEM_HANDLER).orElse(new ItemStackHandler(0));
+
+
+        if(blockEntity == null)  { // if the storage block is deleted, it will be null.
+
+
+            queueToRemoveChest.add(chestData);
+
+            return;
+        }
+
+
+
+        IItemHandler chestInventory = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
+                .orElse(new ItemStackHandler(0));
 
 
 
@@ -245,6 +260,8 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
             }
 
         }
+
+
 
         if(player instanceof ServerPlayer serverPlayer) {
 
@@ -332,6 +349,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
         mergedStorageContents.clear();
+        queueToRemoveChest.clear();
 
         for(CustomBlockPosData customBlockPosData : editedChestLocations) {
 
@@ -339,6 +357,19 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
             loadStorageContents(customBlockPosData, player);
 
         }
+
+   
+
+        for(CustomBlockPosData customBlockPosData : queueToRemoveChest) {
+            chestLocations.remove("x=" + customBlockPosData.getBlockPos().getX() + ", y=" +
+                    customBlockPosData.getBlockPos().getY() + ", z=" + customBlockPosData.getBlockPos().getZ());
+
+            editedChestLocations.remove(customBlockPosData);
+
+            AsteroLogger.info("Storage Block detected missing: " + customBlockPosData
+                    + " - Removed automatically from data");
+        }
+
 
 
         return new GridControllerMenu(pControllerId, pInventory, this);
