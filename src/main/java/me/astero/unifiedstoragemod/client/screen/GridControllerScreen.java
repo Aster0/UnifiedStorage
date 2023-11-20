@@ -6,6 +6,7 @@ import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -71,7 +72,17 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         searchField = new CustomSearchField(font, leftPos + 90, topPos + 3, 100, 12) {
             @Override
             public void onPlayerType(String text) {
-                System.out.println(text);
+
+
+                if(!text.isEmpty()) {
+
+                    menu.onStorageSearch(text);
+                    return;
+                }
+
+                menu.onStorageSearchStop();
+
+
 
             }
         }
@@ -327,21 +338,15 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+            ItemStack item = viewOnlySlot.getActualItem();
 
 
 
+            if(!item.equals(ItemStack.EMPTY, false)) {
 
+                guiGraphics.renderTooltip(this.font, item, x, y);
 
-                ItemStack item = viewOnlySlot.getActualItem();
-
-                if(!item.equals(ItemStack.EMPTY, false)) {
-
-
-                    guiGraphics.renderTooltip(this.font, item, x, y);
-
-
-
-                }
+            }
 
 
 

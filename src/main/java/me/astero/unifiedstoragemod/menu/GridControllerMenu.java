@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
@@ -14,10 +15,17 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GridControllerMenu extends AbstractContainerMenu {
 
     public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
 
+
+    private boolean finishedAdding = false;
+
+    private StorageSearchData storageSearchData = new StorageSearchData();
 
     private int scrollPage;
 
@@ -49,6 +57,40 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     }
 
+
+    public void onStorageSearchStop() {
+        storageSearchData.setSearching(false);
+        generateStartPage();
+
+    }
+
+    public void onStorageSearch(String entry) {
+
+
+        storageSearchData.getSearchedStorageList().clear();
+
+
+        storageSearchData.setSearching(true);
+        for(ItemIdentifier itemIdentifier : drawerGridControllerEntity.mergedStorageContents) {
+
+
+            String itemName = itemIdentifier.getItemStack().getDisplayName().getString().toLowerCase();
+            // [Compass]
+
+            if(itemName.substring(1, itemName.length() - 1)
+                    .contains(entry.toLowerCase())) {
+
+                storageSearchData.getSearchedStorageList().add(itemIdentifier);
+            }
+        }
+
+        generateStartPage();
+
+
+
+
+    }
+
     private void createInventory(Inventory pInventory, DrawerGridControllerEntity drawerGridControllerEntity) {
 
         createPlayerInventory(pInventory);
@@ -61,28 +103,14 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     private void createBlockEntityInventory(DrawerGridControllerEntity drawerGridControllerEntity) {
 
-
         drawerGridControllerEntity.getOptional();
+        generateStartPage();
 
-//        drawerGridControllerEntity.getOptional().ifPresent(inventory -> {
-//            for (int row = 0; row < 3; row++) {
-//                for (int column = 0; column < 9; column++) {
-//                    addSlot(new SlotItemHandler(inventory,
-//                            column + (row * 9),
-//                            8 + (column * 18),
-//                            18 + (row * 18)));
-//                }
-//            }
-//        });
+    }
 
-
-
-
+    private void generateStartPage() {
         scrollPage = 1;
         generateSlots(scrollPage);
-
-
-
     }
 
     public void nextPage() {
@@ -91,20 +119,6 @@ public class GridControllerMenu extends AbstractContainerMenu {
     }
 
     public void generateSlots(int page) {
-
-
-        // Math.ceil(drawerGridControllerEntity.getTotalItems() / 9d)
-
-//        int x = 0;
-//
-//        for( ItemIdentifier i : drawerGridControllerEntity.mergedStorageContents) {
-//            System.out.println(i.getItemStack() + " " + i.getCount() + " Index: " + x);
-//
-//            x++;
-//        }
-//
-//        System.out.println("---");
-
 
 
 
@@ -117,47 +131,57 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
 
                 ItemIdentifier itemIdentifier =
-                        drawerGridControllerEntity.getMergedStorageContents(currentIndex);
+                        drawerGridControllerEntity.getMergedStorageContents(currentIndex,
+                                storageSearchData.getSearchedStorageList(), false);
 
 
 
 
-                if(!itemIdentifier.getItemStack().equals(ItemStack.EMPTY, false)) {
+
+                if(page == 1 && !finishedAdding) {
+                    addSlot( new ViewOnlySlot(itemIdentifier,
+                            8 + (column * 18), 18 + (row * 18)));
 
 
 
-                    if(page == 1)
-                        addSlot( new ViewOnlySlot(itemIdentifier,
+                    if(currentIndex == VISIBLE_CONTENT_HEIGHT - 1)
+                        finishedAdding = true;
+                }
+
+                else {
+
+
+
+                    int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
+
+
+                    int slotIndex = STARTING_SLOT_INDEX + currentIndex;
+
+
+
+                    itemIdentifier =
+                            drawerGridControllerEntity.getMergedStorageContents(slotToFetch,
+                                    storageSearchData.getSearchedStorageList(), storageSearchData.isSearching());
+
+
+
+                    if(slots.get(slotIndex) instanceof ViewOnlySlot) {
+
+                        slots.set(slotIndex, new ViewOnlySlot(itemIdentifier,
                                 8 + (column * 18), 18 + (row * 18)));
-                    else {
 
 
-                        int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
-
-
-                        int slotIndex = STARTING_SLOT_INDEX + currentIndex;
-
-
-
-                        itemIdentifier =
-                                drawerGridControllerEntity.getMergedStorageContents(slotToFetch);
-
-
-                        if(slots.get(slotIndex) instanceof ViewOnlySlot) {
-
-                            slots.set(slotIndex, new ViewOnlySlot(itemIdentifier,
-                                    8 + (column * 18), 18 + (row * 18)));
-
-
-                        }
                     }
                 }
 
 
 
 
+
             }
         }
+
+    
     }
 
 

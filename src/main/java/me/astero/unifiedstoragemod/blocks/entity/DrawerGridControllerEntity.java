@@ -100,6 +100,36 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         System.out.println("added " + chestLocations.size());
 
     }
+
+    public ItemIdentifier getMergedStorageContents(int index, List<ItemIdentifier> searchedItemList, boolean useSearch) {
+
+
+        List<ItemIdentifier> itemIdentifiers = mergedStorageContents;
+
+
+        if(useSearch) {
+            itemIdentifiers = searchedItemList;
+
+        }
+
+        ItemIdentifier itemIdentifier;
+        try {
+            itemIdentifier =  itemIdentifiers.get(index);
+
+
+
+
+        }
+        catch (IndexOutOfBoundsException e) {
+            itemIdentifier = new ItemIdentifier(ItemStack.EMPTY, 1);
+
+
+        }
+
+
+
+        return itemIdentifier;
+    }
     private void addChests(String location) {
         chestLocations.add(location);
         CustomBlockPosData customBlockPosData = ModUtils.convertStringToBlockData(location.split(", "));
