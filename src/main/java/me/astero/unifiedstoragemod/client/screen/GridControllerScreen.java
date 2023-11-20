@@ -68,7 +68,13 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     }
 
     private void registerSearchField() {
-        searchField = new CustomSearchField(font, leftPos + 90, topPos + 3, 100, 12)
+        searchField = new CustomSearchField(font, leftPos + 90, topPos + 3, 100, 12) {
+            @Override
+            public void onPlayerType(String text) {
+                System.out.println(text);
+
+            }
+        }
                 .giveMaxLength(50);
 
 

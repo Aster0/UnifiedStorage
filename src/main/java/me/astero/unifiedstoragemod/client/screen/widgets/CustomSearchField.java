@@ -24,6 +24,7 @@ public class CustomSearchField extends CustomEditBox {
     @Override
     public void onPlayerType(String text) {
 
+
     }
 
 
@@ -34,7 +35,7 @@ public class CustomSearchField extends CustomEditBox {
         return this;
     }
 
-    
+
 
 
     @Override
