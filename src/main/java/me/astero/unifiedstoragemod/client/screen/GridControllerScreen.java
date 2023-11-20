@@ -1,11 +1,13 @@
 package me.astero.unifiedstoragemod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.astero.unifiedstoragemod.client.screen.widgets.CustomSearchField;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -24,6 +26,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+    private CustomSearchField searchField;
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
@@ -54,6 +57,27 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     }
 
+
+
+    @Override
+    protected void init() {
+        super.init();
+
+        registerSearchField();
+
+    }
+
+    private void registerSearchField() {
+        searchField = new CustomSearchField(font, leftPos + 90, topPos + 3, 100, 12)
+                .giveMaxLength(50);
+
+
+
+        addWidget(searchField);
+
+
+
+    }
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         renderTransparentBackground(guiGraphics);
@@ -68,6 +92,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     }
 
 
+
+
     @Override
     public void render(@NotNull GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTicks) {
 
@@ -76,7 +102,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         renderTooltip(guiGraphics, mouseX, mouseY);
 
-
+        searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
 
 
@@ -179,6 +205,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+        searchField.setFocused(false);
 
         return super.mouseClicked(p_97748_, p_97749_, p_97750_);
 
@@ -213,6 +240,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         this.menu.nextPage();
     }
+
 
 
     public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot, Slot slotIndex) {
