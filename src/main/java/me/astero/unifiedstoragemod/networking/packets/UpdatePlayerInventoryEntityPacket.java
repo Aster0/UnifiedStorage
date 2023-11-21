@@ -11,6 +11,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -87,12 +88,13 @@ public class UpdatePlayerInventoryEntityPacket implements EntityPacket {
 
                 System.out.println("Ya " + packet.itemStack);
 
+
                 if(!packet.cameFromCustomGUI) {
                     playerInventory.setCarried(packet.itemStack);
                 }
                 else {
 
-                    playerInventory.getSlot(packet.slotIndex).setByPlayer(playerInventory.getCarried());
+                    playerInventory.getSlot(packet.slotIndex).safeInsert(playerInventory.getCarried(), 20);
                     playerInventory.setCarried(ItemStack.EMPTY);
                 }
 

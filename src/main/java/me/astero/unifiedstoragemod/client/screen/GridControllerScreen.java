@@ -256,11 +256,17 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             if(!menu.getCarried().equals(ItemStack.EMPTY)) {
 
 
-                // TODO FIX THE BUG 
+                System.out.println(slot);
+                // TODO FIX THE BUG
                 if(slot != null) {
+
+                    System.out.println("yea");
                     menu.setCarried(ItemStack.EMPTY);
                     ModNetwork.sendToServer(new UpdatePlayerInventoryEntityPacket(menu.getCarried(),
                             slot.getSlotIndex(), true));
+
+
+                    slot.safeInsert(menu.getCarried());
                 }
 
             }
