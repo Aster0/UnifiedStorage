@@ -238,8 +238,6 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 //            menu.setCarried(new ItemStack(((ViewOnlySlot) slot).getItem2().getItem(),
 //                    ((ViewOnlySlot) slot).getItem2().getCount()));
 
-
-            nextPage();
             return;
         }
 
@@ -248,18 +246,13 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         super.slotClicked(slot, p_97779_, p_97780_, p_97781_);
 
 
-
-
-
     }
 
 
-    private void nextPage() {
-
-        this.menu.nextPage();
+    @Override
+    public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_, double p_299502_) {
+        return super.mouseScrolled(p_94686_, p_94687_, p_94688_, p_299502_);
     }
-
-
 
     public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot, Slot slotIndex) {
 

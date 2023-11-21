@@ -58,6 +58,10 @@ public class GridControllerMenu extends AbstractContainerMenu {
     }
 
 
+    public DrawerGridControllerEntity getDrawerGridControllerEntity() {
+        return drawerGridControllerEntity;
+    }
+
     public void onStorageSearchStop() {
         storageSearchData.setSearching(false);
         generateStartPage();

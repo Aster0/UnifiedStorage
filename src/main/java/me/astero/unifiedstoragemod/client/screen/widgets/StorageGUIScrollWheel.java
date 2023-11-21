@@ -10,7 +10,7 @@ public class StorageGUIScrollWheel extends CustomScrollWheel {
 
     private GridControllerMenu menu;
     public StorageGUIScrollWheel(int x, int y, int maxY, int pages, GridControllerMenu menu) {
-        super(x, y, maxY, pages);
+        super(x, y, maxY, pages, menu);
 
         this.menu = menu;
     }
