@@ -358,7 +358,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
         }
 
-   
+
 
         for(CustomBlockPosData customBlockPosData : queueToRemoveChest) {
             chestLocations.remove("x=" + customBlockPosData.getBlockPos().getX() + ", y=" +

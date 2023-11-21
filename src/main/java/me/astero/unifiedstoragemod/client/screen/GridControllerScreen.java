@@ -1,7 +1,10 @@
 package me.astero.unifiedstoragemod.client.screen;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.astero.unifiedstoragemod.client.screen.widgets.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.CustomSearchField;
+import me.astero.unifiedstoragemod.client.screen.widgets.StorageGUIScrollWheel;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
@@ -10,6 +13,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
+import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
@@ -28,6 +33,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
     private CustomSearchField searchField;
+    private CustomScrollWheel customScrollWheel;
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
@@ -47,14 +53,14 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
 
-    private static final ResourceLocation SCROLLBAR_TEXTURE = new ResourceLocation("minecraft",
-            "textures/gui/container/creative_inventory/tabs.png");
+
 
     public GridControllerScreen(GridControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
 
         this.imageWidth = 199;
         this.imageHeight = 235;
+
 
     }
 
@@ -66,7 +72,12 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         registerSearchField();
 
+        customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
+                this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+
     }
+
+
 
     private void registerSearchField() {
         searchField = new CustomSearchField(font, leftPos + 90, topPos + 3, 100, 12) {
@@ -98,10 +109,12 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         renderTransparentBackground(guiGraphics);
-        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0, this.imageWidth, this.imageHeight);
+        guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
+                this.imageWidth, this.imageHeight);
 
 
 
+        customScrollWheel.tick(guiGraphics);
 
 
 
@@ -120,6 +133,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+
+
 
 
 
@@ -174,57 +190,42 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         }
 
-        renderScrollbar(guiGraphics);
 
 
 
     }
 
 
+    @Override
+    public boolean mouseDragged(double mouseX, double mouseY, int button, double dragX, double dragY) {
 
-    private void renderScrollbar(GuiGraphics guiGraphics) {
-        if (totalContentHeight <= visibleContentHeight) {
-            return; // No need for a scrollbar if content fits in the visible area
-        }
-
-        int maxScrollbarPosition = Math.max(0, 27 - visibleContentHeight);
+        Rect2i guiBounds = new Rect2i(
+                leftPos, topPos, this.imageWidth, this.imageHeight);
 
 
-
-        if (maxScrollbarPosition == 0) {
-            return;
+        if (guiBounds.contains(((int) mouseX), (int) mouseY)) {
+            customScrollWheel.onMouseDrag(mouseX, mouseY, button, dragX, dragY);
         }
 
 
-        scrollbarPosition = Math.min(scrollbarPosition, maxScrollbarPosition);
-
-        int scrollbarX = leftPos + imageWidth + 10; // Adjust this based on your GUI layout
-        int scrollbarY = topPos + 6; // Adjust this based on your GUI layout
-        int scrollbarHeight = 100;
-
-
-
-
-        // Render the scrollbar
-        guiGraphics.fill(scrollbarX, scrollbarY , scrollbarX + 10, scrollbarY
-                + scrollbarHeight, 0xFF000000);
-
-        // Calculate the position and dimensions of the scrollbar thumb
-        int thumbY = scrollbarY + scrollbarPosition * (visibleContentHeight - scrollbarHeight) / maxScrollbarPosition;
-        int thumbHeight = Math.min(scrollbarHeight, visibleContentHeight - thumbY + scrollbarY);
-
-        guiGraphics.fill(scrollbarX, thumbY , scrollbarX + 10, thumbHeight, 0xFFFFFFFF);
-
+        return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
     }
 
     @Override
-    public boolean mouseClicked(double p_97748_, double p_97749_, int p_97750_) {
+    public boolean mouseReleased(double p_97812_, double p_97813_, int p_97814_) {
+
+        customScrollWheel.onMouseRelease();
+        return super.mouseReleased(p_97812_, p_97813_, p_97814_);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int p_97750_) {
 
 
-
+        customScrollWheel.onMouseClick(mouseX, mouseY);
         searchField.setFocused(false);
 
-        return super.mouseClicked(p_97748_, p_97749_, p_97750_);
+        return super.mouseClicked(mouseX, mouseY, p_97750_);
 
 
     }

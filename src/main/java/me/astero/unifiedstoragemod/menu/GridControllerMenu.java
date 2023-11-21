@@ -64,6 +64,10 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     }
 
+    public int getTotalPages() {
+        return drawerGridControllerEntity.mergedStorageContents.size() / VISIBLE_CONTENT_HEIGHT;
+    }
+
     public void onStorageSearch(String entry) {
 
 
@@ -113,9 +117,26 @@ public class GridControllerMenu extends AbstractContainerMenu {
         generateSlots(scrollPage);
     }
 
-    public void nextPage() {
+    public int nextPage() {
+
+        if(scrollPage > getTotalPages())
+            return getTotalPages();
+
         scrollPage++;
         generateSlots(scrollPage);
+
+        return scrollPage;
+    }
+
+    public int previousPage() {
+
+        if(scrollPage - 1 < 1)
+            return 1;
+
+        scrollPage--;
+        generateSlots(scrollPage);
+
+        return scrollPage;
     }
 
     public void generateSlots(int page) {
