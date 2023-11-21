@@ -4,5 +4,5 @@
   "item.unifiedstorage.grid_wrench" : "Grid Wrench",
   "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a [Grid Controller] before continuing.",
   "container.unifiedstorage.grid_controller_menu_title" : "Grid Inventory",
-  "container.unifiedstorage.searchField" : "Search for a block"
+  "container.unifiedstorage.searchField" : "Search Items..."
 }

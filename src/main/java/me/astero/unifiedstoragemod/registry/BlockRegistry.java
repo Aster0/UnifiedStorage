@@ -51,8 +51,10 @@ public class BlockRegistry  {
 
     public static final RegistryObject<Block> DRAWER_GRID_BLOCK = ObjectRegistry.registerObject
             ("drawer_grid_controller", new BlockData(() ->
-                    new DrawerGridControllerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
-                    .strength(1f))), true);
+                    new DrawerGridControllerBlock(BlockBehaviour.Properties.of()
+                            .mapColor(MapColor.STONE).lightLevel(value -> 10)
+                            .strength(1f).requiresCorrectToolForDrops())), true);
+
 
 
 
