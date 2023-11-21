@@ -6,6 +6,7 @@ import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -37,10 +38,13 @@ public class GridControllerMenu extends AbstractContainerMenu {
         this(containerId, pInventory, pInventory
                 .player.level().getBlockEntity(friendlyByteBuf.readBlockPos()));
 
+
+
     }
 
     public GridControllerMenu(int containerId, Inventory pInventory, BlockEntity blockEntity) {
         super(MenuRegistry.GRID_CONTROLLER_MENU.get(), containerId);
+
 
         if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
             this.drawerGridControllerEntity = drawerGridControllerEntity;

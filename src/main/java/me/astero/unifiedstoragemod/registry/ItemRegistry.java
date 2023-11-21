@@ -2,6 +2,7 @@ package me.astero.unifiedstoragemod.registry;
 
 import me.astero.unifiedstoragemod.data.ItemData;
 import me.astero.unifiedstoragemod.items.GridWrenchItem;
+
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -22,6 +23,11 @@ public class ItemRegistry {
     private static RegistryObject<Item> GRID_WRENCH =
             ObjectRegistry.registerObject("grid_wrench", new ItemData<Item>(
                     () -> new GridWrenchItem(new Item.Properties())), true);
+
+
+//    private static RegistryObject<Item> WIRELESS_STORAGE =
+//            ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(
+//                    () -> new WirelessStorage(new Item.Properties())), true);
 
 
 

@@ -8,6 +8,9 @@ import me.astero.unifiedstoragemod.client.screen.widgets.StorageGUIScrollWheel;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
+import me.astero.unifiedstoragemod.networking.ModNetwork;
+import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdatePlayerInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -234,12 +237,36 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     protected void slotClicked(Slot slot, int p_97779_, int p_97780_, ClickType p_97781_) {
 
 
+
+
         if(slot instanceof ViewOnlySlot viewOnlySlot) {
-//            menu.setCarried(new ItemStack(((ViewOnlySlot) slot).getItem2().getItem(),
-//                    ((ViewOnlySlot) slot).getItem2().getCount()));
+
+
+            menu.setCarried(viewOnlySlot.getActualItem());
+            ModNetwork.sendToServer(new UpdatePlayerInventoryEntityPacket(viewOnlySlot.getActualItem(),
+                    slot.getSlotIndex(), false));
+
+
+
 
             return;
         }
+        else {
+
+            if(!menu.getCarried().equals(ItemStack.EMPTY)) {
+
+
+                // TODO FIX THE BUG 
+                if(slot != null) {
+                    menu.setCarried(ItemStack.EMPTY);
+                    ModNetwork.sendToServer(new UpdatePlayerInventoryEntityPacket(menu.getCarried(),
+                            slot.getSlotIndex(), true));
+                }
+
+            }
+        }
+
+
 
         // TODO: Put down logic?
 

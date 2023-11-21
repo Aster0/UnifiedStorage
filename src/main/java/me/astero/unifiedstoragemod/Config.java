@@ -23,7 +23,7 @@ public class Config {
             .comment("Whether to log the dirt block on common setup")
             .define("logDirtBlock", true);
 
-    private static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER
+    public static final ForgeConfigSpec.IntValue MAGIC_NUMBER = BUILDER
             .comment("A magic number")
             .defineInRange("magicNumber", 42, 0, Integer.MAX_VALUE);
 

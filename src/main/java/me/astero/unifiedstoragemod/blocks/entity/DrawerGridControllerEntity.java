@@ -348,6 +348,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
 
 
+        System.out.println(level.isClientSide + " CLIENT");
         mergedStorageContents.clear();
         queueToRemoveChest.clear();
 

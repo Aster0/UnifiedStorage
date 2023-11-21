@@ -34,7 +34,7 @@ public class GridWrenchItem extends Item {
             nbt = new CompoundTag();
 
 
-        final String sValue = serializeBlockPosNbt(value);
+        final String sValue = ModUtils.serializeBlockPosNbt(value);
 
 
         CompoundTag innerNbt = new CompoundTag();
@@ -84,15 +84,7 @@ public class GridWrenchItem extends Item {
 
 
 
-    private String serializeBlockPosNbt(String value) {
 
-        String eValue = value.substring(value.indexOf("x"), value.length() - 1);
-        // Edited value to e.g., "x=2, y=-60, z=36"
-
-
-        return eValue;
-
-    }
 
 
 
@@ -107,6 +99,7 @@ public class GridWrenchItem extends Item {
             BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
 
 
+            System.out.println(loadNbt(itemStack, "grid_pos"));
 
 
 
@@ -143,8 +136,7 @@ public class GridWrenchItem extends Item {
 
                         // Send the action bar message to the player
                         player.displayClientMessage(Component.translatable("language."
-                                        + ModUtils.MODID + ".no_grid_for_chest_selection")
-                                .withStyle(ChatFormatting.RED), true);
+                                        + ModUtils.MODID + ".no_grid_for_chest_selection"), true);
 
                         return super.use(level, player, interactionHand);
 
@@ -158,7 +150,7 @@ public class GridWrenchItem extends Item {
 
 
                         drawerGridControllerEntity.addChestLocations(
-                                serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()));
+                                ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()));
 
 
                     }

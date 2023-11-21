@@ -2,7 +2,9 @@
   "block.unifiedstorage.drawer_block" : "Mechanical Drawer",
   "block.unifiedstorage.drawer_grid_controller" : "Drawer Grid Controller",
   "item.unifiedstorage.grid_wrench" : "Grid Wrench",
-  "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a [Grid Controller] before continuing.",
+  "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a §c[Grid Controller] §fbefore continuing.",
+  "language.unifiedstorage.wireless_storage_not_linked" : "Link a §c[Grid Controller] §fto use.",
+  "language.unifiedstorage.wireless_storage_linked" : "Successfully linked with §c[Grid Controller]§f.",
   "container.unifiedstorage.grid_controller_menu_title" : "Grid Inventory",
   "container.unifiedstorage.searchField" : "Search Items..."
 }
