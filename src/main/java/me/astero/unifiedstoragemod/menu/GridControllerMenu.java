@@ -69,7 +69,13 @@ public class GridControllerMenu extends AbstractContainerMenu {
     }
 
     public int getTotalPages() {
-        return drawerGridControllerEntity.mergedStorageContents.size() / VISIBLE_CONTENT_HEIGHT;
+
+
+
+        double value = (double) drawerGridControllerEntity.mergedStorageContents.size() / VISIBLE_CONTENT_HEIGHT;
+
+
+        return (int) Math.ceil(value);
     }
 
     public void onStorageSearch(String entry) {
@@ -123,11 +129,13 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     public int nextPage() {
 
-        if(scrollPage > getTotalPages())
+
+        if(scrollPage > getTotalPages() - 1)
             return getTotalPages();
 
         scrollPage++;
         generateSlots(scrollPage);
+
 
         return scrollPage;
     }
@@ -139,6 +147,8 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
         scrollPage--;
         generateSlots(scrollPage);
+
+        System.out.println(scrollPage);
 
         return scrollPage;
     }

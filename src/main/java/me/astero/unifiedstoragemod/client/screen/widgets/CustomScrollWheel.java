@@ -108,27 +108,32 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
     }
 
+
+    private int getTotalSteps() {
+        // Calculate the total range
+        int totalRange = maxY - minY;
+
+        // Calculate the steps per drag
+        int stepsPerDrag = totalRange / pages;
+
+        return stepsPerDrag;
+    }
     @Override
     public void onMouseDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
 
         if(isDragging) {
 
-            
+
 
             double scrollPosition = mouseY - this.minY - 10;
             offsetY = this.y + (int) scrollPosition;
             yPos = offsetY;
 
 
-            // Calculate the total range
-            int totalRange = maxY - minY;
-
-            // Calculate the steps per drag
-            int stepsPerDrag = totalRange / pages;
 
 
 
-            int thresholdToHit = (int) (this.minY + (currentPage) * stepsPerDrag);
+            int thresholdToHit = (int) (this.minY + (currentPage) * getTotalSteps());
 
 
 
@@ -136,7 +141,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
             if(scrollPosition > lastScrollPositionY) { // scrolling down
 
-                if(yPos >= thresholdToHit - stepsPerDrag / 2) {
+                if(yPos >= thresholdToHit - getTotalSteps() / 2) {
 
 
                     if(currentPage > pages)
@@ -147,7 +152,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
             }
             else {
-                if(yPos <= thresholdToHit - stepsPerDrag * 1.5 ) {
+                if(yPos <= thresholdToHit - getTotalSteps() * 1.5 ) {
 
 
                     onDragUp();
@@ -163,6 +168,48 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
         }
 
+    }
+
+    @Override
+    public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
+
+
+
+
+        if(rawDelta == -1) { // scroll down
+
+            forceHitThreshold(0);
+
+            onDragDown();
+
+
+
+            if(currentPage == pages) {
+                yPos = this.maxY;
+            }
+        }
+        else {
+            onDragUp();
+
+            forceHitThreshold(-1);
+
+            System.out.println(currentPage);
+
+            if(currentPage == 1) {
+                yPos = this.minY;
+            }
+
+
+
+        }
+
+
+    }
+
+    private void forceHitThreshold(int value) {
+        int thresholdToHit = (int) (this.minY + (currentPage + value) * getTotalSteps());
+
+        yPos = thresholdToHit;
     }
 
     @Override

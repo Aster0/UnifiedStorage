@@ -250,8 +250,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
     @Override
-    public boolean mouseScrolled(double p_94686_, double p_94687_, double p_94688_, double p_299502_) {
-        return super.mouseScrolled(p_94686_, p_94687_, p_94688_, p_299502_);
+    public boolean mouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
+
+        customScrollWheel.onMouseScrolled(mouseX, mouseY, delta, rawDelta);
+        return super.mouseScrolled(mouseX, mouseY, delta, rawDelta);
     }
 
     public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot, Slot slotIndex) {
