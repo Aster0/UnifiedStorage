@@ -9,5 +9,5 @@ public interface IMenuInteractor {
 
 
     void interactWithMenu(ClickType clickType, InventoryAction action, ItemStack itemStack, Slot slot, boolean cameFromStorage);
-    void interactWithMenu(ItemStack itemStack);
+    void interactWithMenu(ItemStack itemStack, boolean take, int value);
 }

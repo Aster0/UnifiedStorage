@@ -17,6 +17,10 @@ public class ItemIdentifier {
         this.count += count;
     }
 
+    public void setCount(int value) {
+        this.count = value;
+    }
+
     public ItemStack getItemStack() {
         return itemStack;
     }

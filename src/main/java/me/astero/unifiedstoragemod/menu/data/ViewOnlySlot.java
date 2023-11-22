@@ -32,9 +32,11 @@ public class ViewOnlySlot extends Slot {
         return itemIdentifier.getCount();
     }
 
-    public Item getItemRepresentative() {
-        return itemIdentifier.getItemStack().getItem();
+    public void setActualItemCount(int value) {
+        this.itemIdentifier.setCount(value);
     }
+
+
     public ItemStack getActualItem() {
 
         ItemStack stack = itemIdentifier.getItemStack().copy();

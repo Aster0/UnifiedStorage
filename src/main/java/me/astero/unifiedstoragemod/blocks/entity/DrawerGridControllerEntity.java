@@ -59,6 +59,19 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     }
 
 
+    public List<CustomBlockPosData> getEditedChestLocations() {
+        return editedChestLocations;
+    }
+
+    public BlockEntity getStorageBlockAt(BlockPos blockPos) {
+
+        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+
+
+        return blockEntity
+                .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent() ? blockEntity : null;
+    }
+
     public void setMergedStorageContents(List<ItemIdentifier> mergedStorageContents) {
         this.mergedStorageContents = mergedStorageContents;
     }

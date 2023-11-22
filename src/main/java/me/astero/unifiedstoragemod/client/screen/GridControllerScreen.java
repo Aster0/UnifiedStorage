@@ -24,6 +24,7 @@ import net.minecraft.world.item.Items;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
+import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -241,41 +242,66 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         if(slot instanceof ViewOnlySlot v) {
 
 
-
-            InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
-
-            ItemStack itemStack =  v.getActualItem().copy();
-
-            if(v.getActualItemCount() > itemStack.getMaxStackSize()) {
-                itemStack.setCount(itemStack.getMaxStackSize());
-            }
-            else {
-                itemStack.setCount(v.getActualItemCount());
-            }
-
-
-            if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click
-                // means we want to split
+            if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
+                InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
 
 
 
-                if(menu.getCarried().equals(ItemStack.EMPTY)) { // means we are taking out smth from the storage by splitting
+                if(clickType == ClickType.PICKUP) {
+                    ItemStack itemStack =  v.getActualItem().copy();
 
-                    int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
-                    int valueToStay = v.getActualItemCount() - valueToSplit;
+                    if(v.getActualItemCount() > itemStack.getMaxStackSize()) {
+                        itemStack.setCount(itemStack.getMaxStackSize());
+                    }
+                    else {
+                        itemStack.setCount(v.getActualItemCount());
+                    }
+
+
+                    int modifiedValue = 64;
+
+                    if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click (splitting)
+
+
+
+                        int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
+                        modifiedValue = valueToSplit;
+
+
+                        itemStack.setCount(valueToSplit);
+
+                    }
+
+                    int valueToStay = v.getActualItemCount() - modifiedValue;
+
+                    v.setActualItemCount(valueToStay);
 
                     System.out.println(valueToStay);
-                    itemStack.setCount(valueToSplit);
+
+                    if(valueToStay <= 0) {
+                        menu.updateStorageContents(itemStack, -modifiedValue);
+                    }
+
+
+
+                    ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
+                            modifiedValue)); // server
+
+                    menu.interactWithMenu(itemStack, true, modifiedValue); // client
                 }
+
+
+
+                return;
+            }
+            else { // we want to put things into the storage
+
             }
 
-
-
-            ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack)); // server
-            menu.interactWithMenu(itemStack); // client
-
-            return;
         }
+
+
+
 
         super.slotClicked(slot, slotIndex, btn, clickType);
 

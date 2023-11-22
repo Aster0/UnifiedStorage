@@ -13,14 +13,18 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
 
 
     ItemStack itemStack;
+    boolean take;
+    int value;
 
 
 
 
 
-    public TakeOutFromStorageInventoryEntityPacket(ItemStack itemStack) {
+    public TakeOutFromStorageInventoryEntityPacket(ItemStack itemStack, boolean take, int value) {
 
         this.itemStack = itemStack;
+        this.take = take;
+        this.value = value;
 
 
     }
@@ -30,6 +34,8 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
         // Decode your packet data here
 
         this.itemStack = buffer.readItem();
+        this.take = buffer.readBoolean();
+        this.value = buffer.readInt();
 
 
 
@@ -45,6 +51,8 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
 
 
         buffer.writeItemStack(this.itemStack, false);
+        buffer.writeBoolean(this.take);
+        buffer.writeInt(this.value);
 
 
 
@@ -78,19 +86,7 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
                 if(serverPlayer.containerMenu instanceof GridControllerMenu menu) {
 
 
-
-
-
-                    menu.interactWithMenu(packet.itemStack);
-
-
-
-
-
-
-
-
-
+                    menu.interactWithMenu(packet.itemStack, packet.take, packet.value);
 
 
 

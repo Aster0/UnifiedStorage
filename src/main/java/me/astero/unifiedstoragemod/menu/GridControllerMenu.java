@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
 import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
@@ -18,6 +19,11 @@ import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
+import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -151,6 +157,10 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
         return scrollPage;
+    }
+
+    public void regenerateCurrentPage() {
+        generateSlots(scrollPage);
     }
 
     public int previousPage() {
@@ -297,6 +307,8 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
     }
 
 
+
+
     @Override
     public void interactWithMenu(ClickType clickType, InventoryAction action, ItemStack itemStack,
                                  Slot slot, boolean cameFromStorage) { // handles both client and server side of when the player interacts
@@ -416,8 +428,101 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
     @Override
-    public void interactWithMenu(ItemStack itemStack) {
+    public void interactWithMenu(ItemStack itemStack, boolean take, int value) {
         System.out.println(itemStack.getCount());
-        setCarried(itemStack); // we take whatever that was clicked in the slot
+
+        if(take) {
+            setCarried(itemStack); // we take whatever that was clicked in the slot
+            takeOutFromStorage(itemStack, value);
+        }
+        else { // place in storage
+
+        }
+    }
+
+
+    public void updateStorageContents(ItemStack itemStack, int value) {
+
+        ItemIdentifier queuedToBeRemoved = null;
+
+        for(ItemIdentifier itemIdentifier : drawerGridControllerEntity.mergedStorageContents) {
+
+            System.out.println(itemIdentifier.getItemStack());
+            if(ItemStack.isSameItemSameTags(itemStack, itemIdentifier.getItemStack())) {
+                itemIdentifier.setCount(itemIdentifier.getCount() + value);
+
+                System.out.println(itemIdentifier.getCount() + " FOUIND");
+
+                if(itemIdentifier.getCount() <= 0) {
+                    queuedToBeRemoved = itemIdentifier;
+                }
+
+                break;
+            }
+        }
+
+        if(queuedToBeRemoved != null) {
+            drawerGridControllerEntity.mergedStorageContents.remove(queuedToBeRemoved);
+        }
+
+
+
+        regenerateCurrentPage();
+
+
+    }
+    private void takeOutFromStorage(ItemStack itemStack, int valueToDeduct) {
+
+        int valueLeft = valueToDeduct;
+
+
+
+        for(CustomBlockPosData blockPosData : drawerGridControllerEntity.getEditedChestLocations()) {
+
+            BlockEntity storageBlockEntity = drawerGridControllerEntity.getStorageBlockAt(blockPosData.getBlockPos());
+
+            if(storageBlockEntity != null) {
+
+
+                IItemHandler chestInventory = storageBlockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
+                        .orElse(new ItemStackHandler(0));
+
+
+                for(int i = 0; i < chestInventory.getSlots(); i++) {
+
+                    ItemStack stackInSlot = chestInventory.getStackInSlot(i);
+
+
+
+                    if(ItemStack.isSameItemSameTags(itemStack, stackInSlot)) {
+
+
+                        int calculateValueLeft = valueLeft - stackInSlot.getCount();
+
+
+                        int toMinusFromStack = stackInSlot.getCount() - valueLeft;
+
+                        valueLeft = Math.max(calculateValueLeft, 0);
+
+                        stackInSlot.setCount(Math.max(toMinusFromStack, 0));
+
+
+                        if(valueLeft == 0) break;
+
+
+                    }
+
+
+                }
+
+
+
+            }
+
+            if(valueLeft == 0) break;
+
+
+
+        }
     }
 }
