@@ -8,7 +8,6 @@ import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
 import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import me.astero.unifiedstoragemod.networking.packets.HandleStorageInventoryCloseEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -298,16 +297,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     }
 
-    @Override
-    public void onClose() {
-        super.onClose();
 
-
-
-        ModNetwork.sendToServer(new HandleStorageInventoryCloseEntityPacket(
-                menu.getDrawerGridControllerEntity().getBlockPos())); // server
-
-    }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {

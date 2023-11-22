@@ -1,6 +1,6 @@
 package me.astero.unifiedstoragemod.networking;
 
-import me.astero.unifiedstoragemod.networking.packets.HandleStorageInventoryCloseEntityPacket;
+
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
@@ -40,11 +40,7 @@ public class ModNetwork {
 
 
 
-        INSTANCE.messageBuilder(HandleStorageInventoryCloseEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(HandleStorageInventoryCloseEntityPacket::encode)
-                .decoder(HandleStorageInventoryCloseEntityPacket::new)
-                .consumerMainThread(HandleStorageInventoryCloseEntityPacket::handle)
-                .add();
+
     }
 
     public static void sendToClient(Object message, ServerPlayer player) {
