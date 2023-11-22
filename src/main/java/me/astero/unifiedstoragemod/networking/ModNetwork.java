@@ -1,7 +1,8 @@
 package me.astero.unifiedstoragemod.networking;
 
+import me.astero.unifiedstoragemod.networking.packets.HandleStorageInventoryCloseEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.UpdatePlayerInventoryEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -31,12 +32,19 @@ public class ModNetwork {
                 .add();
 
 
-        INSTANCE.messageBuilder(UpdatePlayerInventoryEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(UpdatePlayerInventoryEntityPacket::encode)
-                .decoder(UpdatePlayerInventoryEntityPacket::new)
-                .consumerMainThread(UpdatePlayerInventoryEntityPacket::handle)
+        INSTANCE.messageBuilder(UpdateStorageInventoryEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(UpdateStorageInventoryEntityPacket::encode)
+                .decoder(UpdateStorageInventoryEntityPacket::new)
+                .consumerMainThread(UpdateStorageInventoryEntityPacket::handle)
                 .add();
 
+
+
+        INSTANCE.messageBuilder(HandleStorageInventoryCloseEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(HandleStorageInventoryCloseEntityPacket::encode)
+                .decoder(HandleStorageInventoryCloseEntityPacket::new)
+                .consumerMainThread(HandleStorageInventoryCloseEntityPacket::handle)
+                .add();
     }
 
     public static void sendToClient(Object message, ServerPlayer player) {

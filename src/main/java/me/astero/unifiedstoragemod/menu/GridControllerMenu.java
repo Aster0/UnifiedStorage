@@ -2,6 +2,8 @@ package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
+import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
+import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
@@ -11,6 +13,7 @@ import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
+import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -19,7 +22,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import java.util.ArrayList;
 import java.util.List;
 
-public class GridControllerMenu extends AbstractContainerMenu {
+public class GridControllerMenu extends AbstractContainerMenu implements IMenuInteractor {
 
     public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
 
@@ -32,6 +35,10 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     private final DrawerGridControllerEntity drawerGridControllerEntity;
     private final ContainerLevelAccess containerLevelAccess;
+
+    private Inventory pInventory;
+
+    public int lastClickedSlot;
 
     public GridControllerMenu(int containerId, Inventory pInventory, FriendlyByteBuf friendlyByteBuf) {
 
@@ -58,6 +65,8 @@ public class GridControllerMenu extends AbstractContainerMenu {
         this.containerLevelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
 
         createInventory(pInventory, drawerGridControllerEntity);
+
+        this.pInventory = pInventory;
 
     }
 
@@ -111,8 +120,8 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     private void createInventory(Inventory pInventory, DrawerGridControllerEntity drawerGridControllerEntity) {
 
-        createPlayerInventory(pInventory);
         createPlayerHotbar(pInventory);
+        createPlayerInventory(pInventory);
         createBlockEntityInventory(drawerGridControllerEntity);
 
     }
@@ -157,6 +166,8 @@ public class GridControllerMenu extends AbstractContainerMenu {
         return scrollPage;
     }
 
+
+
     public void generateSlots(int page) {
 
 
@@ -179,7 +190,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
                 if(page == 1 && !finishedAdding) {
                     addSlot( new ViewOnlySlot(itemIdentifier,
-                            8 + (column * 18), 18 + (row * 18)));
+                            8 + (column * 18), 18 + (row * 18), currentIndex));
 
 
 
@@ -207,7 +218,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
                     if(slots.get(slotIndex) instanceof ViewOnlySlot) {
 
                         slots.set(slotIndex, new ViewOnlySlot(itemIdentifier,
-                                8 + (column * 18), 18 + (row * 18)));
+                                8 + (column * 18), 18 + (row * 18), slotToFetch));
 
 
                     }
@@ -221,7 +232,10 @@ public class GridControllerMenu extends AbstractContainerMenu {
         }
 
 
+
+
     }
+
 
 
 
@@ -232,6 +246,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
     private void createPlayerInventory(Inventory pInventory) {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
+
                 addSlot(new Slot(pInventory, 9 + column + (row * 9),
                         8 + (column * 18),
                         153 + (row * 18)));
@@ -241,6 +256,7 @@ public class GridControllerMenu extends AbstractContainerMenu {
 
     private void createPlayerHotbar(Inventory pInventory) {
         for (int column = 0; column < 9; column++) {
+
             addSlot(new Slot(pInventory, column, 8 + (column * 18),
                     211));
         }
@@ -278,5 +294,120 @@ public class GridControllerMenu extends AbstractContainerMenu {
     @Override
     public boolean stillValid(Player player) {
         return stillValid(this.containerLevelAccess, player, BlockRegistry.DRAWER_GRID_BLOCK.get());
+    }
+
+
+    @Override
+    public void interactWithMenu(ClickType clickType, InventoryAction action, ItemStack itemStack,
+                                 Slot slot, boolean cameFromStorage) { // handles both client and server side of when the player interacts
+
+
+
+
+        if (slot != null && slot.index >= 0 && slot.index < slots.size()) {
+
+
+            if(itemStack != null) {
+
+
+
+                if(clickType == ClickType.PICKUP) {
+
+
+
+                    ItemStack itemStackToPlace = itemStack.copy();
+                    ItemStack copiedItemstack = itemStack.copy();
+
+
+
+
+
+                    if(!getCarried().equals(ItemStack.EMPTY)) {   // means we are placing smth down
+
+
+
+
+
+                        if(slot != null) {
+
+
+                            if(!(slot instanceof ViewOnlySlot v)) { // player inventory
+
+
+
+                                if(action == InventoryAction.PLACE_ONE_OR_SPLIT) {
+                                    // to place only one
+                                    getCarried().shrink(1);
+
+                                    itemStackToPlace.grow(1);
+
+                                }
+
+
+                                itemStackToPlace = getCarried();
+
+
+
+
+                            }
+
+                        }
+
+                    }
+                    if(getCarried().equals(ItemStack.EMPTY)) {   // our hands are not carrying anything
+
+
+
+
+                        if(action == InventoryAction.PLACE_ONE_OR_SPLIT) {
+                            // means we want to split
+
+                            int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
+                            int valueToStay = itemStack.getCount() - valueToSplit;
+
+
+                            copiedItemstack.setCount(valueToSplit);
+                            itemStackToPlace.setCount(valueToStay);
+
+                        }
+                        else {
+                            itemStackToPlace = ItemStack.EMPTY;
+
+
+
+                        }
+                    }
+
+
+
+                    if(!cameFromStorage) {
+                        slot.set(itemStackToPlace);
+
+                    }
+
+
+
+
+                    setCarried(copiedItemstack); // we take whatever that was clicked in the slot
+
+
+
+
+
+
+
+
+                }
+            }
+
+        }
+
+
+
+
+
+
+
+
     }
 }

@@ -12,11 +12,20 @@ public class ViewOnlySlot extends Slot {
 
     private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
 
+    private int slotIndex;
+
     private ItemIdentifier itemIdentifier;
-    public ViewOnlySlot(ItemIdentifier itemIdentifier, int xPos, int yPos) {
+    public ViewOnlySlot(ItemIdentifier itemIdentifier, int xPos, int yPos, int slotIndex) {
         super(EMPTY_INVENTORY, 0, xPos, yPos);
 
+        this.slotIndex = slotIndex;
+
         this.itemIdentifier = itemIdentifier;
+    }
+
+    @Override
+    public int getSlotIndex() {
+        return this.slotIndex;
     }
 
     public int getActualItemCount() {
@@ -29,7 +38,7 @@ public class ViewOnlySlot extends Slot {
     public ItemStack getActualItem() {
 
         ItemStack stack = itemIdentifier.getItemStack().copy();
-        stack.setCount(itemIdentifier.getCount());
+
 
         return stack;
     }

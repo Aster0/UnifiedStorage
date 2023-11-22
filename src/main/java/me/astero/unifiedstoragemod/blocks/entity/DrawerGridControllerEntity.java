@@ -372,7 +372,12 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         }
 
 
+        GridControllerMenu gridControllerMenu = new GridControllerMenu(pControllerId, pInventory, this);
 
-        return new GridControllerMenu(pControllerId, pInventory, this);
+        this.menu = gridControllerMenu;
+
+        return gridControllerMenu;
     }
+
+    public GridControllerMenu menu;
 }

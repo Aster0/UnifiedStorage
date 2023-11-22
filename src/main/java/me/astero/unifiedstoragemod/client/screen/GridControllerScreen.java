@@ -1,22 +1,18 @@
 package me.astero.unifiedstoragemod.client.screen;
 
-import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.astero.unifiedstoragemod.client.screen.widgets.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.StorageGUIScrollWheel;
-import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
+import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.UpdatePlayerInventoryEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.HandleStorageInventoryCloseEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
-import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
@@ -25,6 +21,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.HashMap;
@@ -111,7 +108,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     }
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
-        renderTransparentBackground(guiGraphics);
+        //renderTransparentBackground(guiGraphics);
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
 
@@ -234,53 +231,83 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     }
 
     @Override
-    protected void slotClicked(Slot slot, int p_97779_, int p_97780_, ClickType p_97781_) {
+    protected void slotClicked(Slot slot, int slotIndex, int btn, ClickType clickType) {
 
 
 
+
+
+        // 0 = place down? 1 = place one. clickType cant track this
+
+
+
+
+        InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
+
+
+        if(slotIndex == -999) {
+            action = InventoryAction.DROP_ITEMS;
+
+        }
+
+        boolean cameFromStorage = false;
+
+
+        ItemStack itemStack = slot != null ? slot.getItem() : ItemStack.EMPTY;
 
         if(slot instanceof ViewOnlySlot viewOnlySlot) {
 
+            itemStack = viewOnlySlot.getActualItem().copy();
 
-            menu.setCarried(viewOnlySlot.getActualItem());
-            ModNetwork.sendToServer(new UpdatePlayerInventoryEntityPacket(viewOnlySlot.getActualItem(),
-                    slot.getSlotIndex(), false));
+            if(viewOnlySlot.getActualItemCount() > itemStack.getMaxStackSize()) {
+                itemStack.setCount(itemStack.getMaxStackSize());
+            }
+            else {
+                itemStack.setCount(viewOnlySlot.getActualItemCount());
+            }
 
+            cameFromStorage = true;
 
-
-
-            return;
         }
-        else {
-
-            if(!menu.getCarried().equals(ItemStack.EMPTY)) {
 
 
-                System.out.println(slot);
-                // TODO FIX THE BUG
-                if(slot != null) {
 
-                    System.out.println("yea");
-                    menu.setCarried(ItemStack.EMPTY);
-                    ModNetwork.sendToServer(new UpdatePlayerInventoryEntityPacket(menu.getCarried(),
-                            slot.getSlotIndex(), true));
+        if(slot != null || action == InventoryAction.DROP_ITEMS) {
 
 
-                    slot.safeInsert(menu.getCarried());
-                }
+
+            int index = -999;
+
+            if(slot != null) {
+                index = slot.getSlotIndex();
+
 
             }
+
+
+
+
+            ModNetwork.sendToServer(new UpdateStorageInventoryEntityPacket(itemStack,
+                    action, clickType, index, cameFromStorage)); // server
+
+
+            menu.interactWithMenu(clickType, action, itemStack, slot, cameFromStorage); // client
+
         }
-
-
-
-        // TODO: Put down logic?
-
-        super.slotClicked(slot, p_97779_, p_97780_, p_97781_);
 
 
     }
 
+    @Override
+    public void onClose() {
+        super.onClose();
+
+
+
+        ModNetwork.sendToServer(new HandleStorageInventoryCloseEntityPacket(
+                menu.getDrawerGridControllerEntity().getBlockPos())); // server
+
+    }
 
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
