@@ -2,6 +2,7 @@ package me.astero.unifiedstoragemod.networking;
 
 
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.resources.ResourceLocation;
@@ -36,6 +37,13 @@ public class ModNetwork {
                 .encoder(UpdateStorageInventoryEntityPacket::encode)
                 .decoder(UpdateStorageInventoryEntityPacket::new)
                 .consumerMainThread(UpdateStorageInventoryEntityPacket::handle)
+                .add();
+
+
+        INSTANCE.messageBuilder(TakeOutFromStorageInventoryEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(TakeOutFromStorageInventoryEntityPacket::encode)
+                .decoder(TakeOutFromStorageInventoryEntityPacket::new)
+                .consumerMainThread(TakeOutFromStorageInventoryEntityPacket::handle)
                 .add();
 
 

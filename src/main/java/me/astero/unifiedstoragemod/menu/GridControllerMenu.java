@@ -304,6 +304,9 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
 
+
+        // gg
+
         if (slot != null && slot.index >= 0 && slot.index < slots.size()) {
 
 
@@ -409,5 +412,12 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
 
+    }
+
+
+    @Override
+    public void interactWithMenu(ItemStack itemStack) {
+        System.out.println(itemStack.getCount());
+        setCarried(itemStack); // we take whatever that was clicked in the slot
     }
 }

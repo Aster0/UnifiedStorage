@@ -8,6 +8,7 @@ import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
 import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
+import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -234,65 +235,103 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-
-
         // 0 = place down? 1 = place one. clickType cant track this
 
 
+        if(slot instanceof ViewOnlySlot v) {
 
 
-        InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
 
+            InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
 
-        if(slotIndex == -999) {
-            action = InventoryAction.DROP_ITEMS;
+            ItemStack itemStack =  v.getActualItem().copy();
 
-        }
-
-        boolean cameFromStorage = false;
-
-
-        ItemStack itemStack = slot != null ? slot.getItem() : ItemStack.EMPTY;
-
-        if(slot instanceof ViewOnlySlot viewOnlySlot) {
-
-            itemStack = viewOnlySlot.getActualItem().copy();
-
-            if(viewOnlySlot.getActualItemCount() > itemStack.getMaxStackSize()) {
+            if(v.getActualItemCount() > itemStack.getMaxStackSize()) {
                 itemStack.setCount(itemStack.getMaxStackSize());
             }
             else {
-                itemStack.setCount(viewOnlySlot.getActualItemCount());
-            }
-
-            cameFromStorage = true;
-
-        }
-
-
-
-        if(slot != null || action == InventoryAction.DROP_ITEMS) {
-
-
-
-            int index = -999;
-
-            if(slot != null) {
-                index = slot.getSlotIndex();
-
-
+                itemStack.setCount(v.getActualItemCount());
             }
 
 
+            if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click
+                // means we want to split
 
 
-            ModNetwork.sendToServer(new UpdateStorageInventoryEntityPacket(itemStack,
-                    action, clickType, index, cameFromStorage)); // server
+
+                if(menu.getCarried().equals(ItemStack.EMPTY)) { // means we are taking out smth from the storage by splitting
+
+                    int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
+                    int valueToStay = v.getActualItemCount() - valueToSplit;
+
+                    System.out.println(valueToStay);
+                    itemStack.setCount(valueToSplit);
+                }
+            }
 
 
-            menu.interactWithMenu(clickType, action, itemStack, slot, cameFromStorage); // client
 
+            ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack)); // server
+            menu.interactWithMenu(itemStack); // client
+
+            return;
         }
+
+        super.slotClicked(slot, slotIndex, btn, clickType);
+
+
+//        InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
+//
+//
+//        if(slotIndex == -999) {
+//            action = InventoryAction.DROP_ITEMS;
+//
+//        }
+//
+//        boolean cameFromStorage = false;
+//
+//
+//        ItemStack itemStack = slot != null ? slot.getItem() : ItemStack.EMPTY;
+//
+//        if(slot instanceof ViewOnlySlot viewOnlySlot) {
+//
+//            itemStack = viewOnlySlot.getActualItem().copy();
+//
+//            if(viewOnlySlot.getActualItemCount() > itemStack.getMaxStackSize()) {
+//                itemStack.setCount(itemStack.getMaxStackSize());
+//            }
+//            else {
+//                itemStack.setCount(viewOnlySlot.getActualItemCount());
+//            }
+//
+//            cameFromStorage = true;
+//
+//        }
+//
+//
+//
+//        if(slot != null || action == InventoryAction.DROP_ITEMS) {
+//
+//
+//
+//            int index = -999;
+//
+//            if(slot != null) {
+//                index = slot.getSlotIndex();
+//
+//
+//            }
+//
+//
+//
+//
+//            ModNetwork.sendToServer(new UpdateStorageInventoryEntityPacket(itemStack,
+//                    action, clickType, index, cameFromStorage)); // server
+//
+//
+//            menu.interactWithMenu(clickType, action, itemStack, slot, cameFromStorage); // client
+//
+//        }
 
 
     }
