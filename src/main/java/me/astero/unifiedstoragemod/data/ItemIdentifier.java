@@ -33,7 +33,8 @@ public class ItemIdentifier {
     public boolean equals(Object o){
 
         if(o instanceof ItemIdentifier itemIdentifier) {
-            return itemIdentifier.itemStack.equals(this.itemStack, false);
+            return ItemStack.isSameItemSameTags(itemIdentifier.getItemStack(), itemStack);
+
         }
 
         return false;

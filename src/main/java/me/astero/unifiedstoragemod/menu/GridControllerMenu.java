@@ -445,21 +445,32 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
         ItemIdentifier queuedToBeRemoved = null;
 
-        for(ItemIdentifier itemIdentifier : drawerGridControllerEntity.mergedStorageContents) {
+        ItemIdentifier existingItemIdentifier =
+                drawerGridControllerEntity.mergedStorageContents.get(
+                        drawerGridControllerEntity.mergedStorageContents.indexOf(
+                                new ItemIdentifier(itemStack, 1)));
 
-            System.out.println(itemIdentifier.getItemStack());
-            if(ItemStack.isSameItemSameTags(itemStack, itemIdentifier.getItemStack())) {
-                itemIdentifier.setCount(itemIdentifier.getCount() + value);
+        existingItemIdentifier.setCount(existingItemIdentifier.getCount() + value);
 
-                System.out.println(itemIdentifier.getCount() + " FOUIND");
-
-                if(itemIdentifier.getCount() <= 0) {
-                    queuedToBeRemoved = itemIdentifier;
-                }
-
-                break;
-            }
+        if(existingItemIdentifier.getCount() <= 0) {
+            queuedToBeRemoved = existingItemIdentifier;
         }
+
+//        for(ItemIdentifier itemIdentifier : drawerGridControllerEntity.mergedStorageContents) {
+//
+//            System.out.println(itemIdentifier.getItemStack());
+//            if(ItemStack.isSameItemSameTags(itemStack, itemIdentifier.getItemStack())) {
+//                itemIdentifier.setCount(itemIdentifier.getCount() + value);
+//
+//                System.out.println(itemIdentifier.getCount() + " FOUIND");
+//
+//                if(itemIdentifier.getCount() <= 0) {
+//                    queuedToBeRemoved = itemIdentifier;
+//                }
+//
+//                break;
+//            }
+//        }
 
         if(queuedToBeRemoved != null) {
             drawerGridControllerEntity.mergedStorageContents.remove(queuedToBeRemoved);
