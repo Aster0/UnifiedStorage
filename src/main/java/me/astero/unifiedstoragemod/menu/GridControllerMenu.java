@@ -424,8 +424,11 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
                     if(!take) {
 
                         System.out.println(i);
-                        remainingStack = chestInventory.insertItem(i, new ItemStack(
-                                itemStack.getItem(), remainingStack.getCount()), false);
+
+                        ItemStack clonedItemStack = itemStack.copy();
+                        clonedItemStack.setCount(remainingStack.getCount());
+
+                        remainingStack = chestInventory.insertItem(i, clonedItemStack, false);
 
 
 
