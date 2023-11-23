@@ -309,9 +309,13 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
             itemStack.setCount(value);
 
+            int index = drawerGridControllerEntity.mergedStorageContents
+                    .indexOf(new ItemIdentifier(itemStack, 1));
+
+            if(index == -1) return;
+
             ItemIdentifier itemIdentifier = drawerGridControllerEntity.mergedStorageContents.get(
-                    drawerGridControllerEntity.mergedStorageContents
-                            .indexOf(new ItemIdentifier(itemStack, 1)));
+                    index);
 
 
 
@@ -447,7 +451,10 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
                             valueLeft = Math.max(calculateValueLeft, 0);
 
-                            stackInSlot.setCount(Math.max(toMinusFromStack, 0));
+                            chestInventory.extractItem(i,
+                                    stackInSlot.getCount() - Math.max(toMinusFromStack, 0),
+                                    false);
+
 
                             if(valueLeft == 0) break;
                         }
@@ -461,24 +468,21 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
 
+
             }
 
 
             if(valueLeft == 0) break;
 
 
-            if(remainingStack != null) {
-                if((remainingStack.equals(ItemStack.EMPTY, false)))
-                    break;
-            }
+            if((remainingStack.equals(ItemStack.EMPTY, false)))
+                break;
 
 
         }
 
 
-
-        if(remainingStack != null) {
-
+        if(!take) {
 
             setCarried(remainingStack);
 
@@ -487,7 +491,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
                     remainingStack.getCount(), itemStack), (ServerPlayer) pInventory.player);
 
             updateInsertVisual(drawerGridControllerEntity, itemStack, remainingStack.getCount());
-
         }
 
 
