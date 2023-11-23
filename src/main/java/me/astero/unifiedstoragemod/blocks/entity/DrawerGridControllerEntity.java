@@ -121,6 +121,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         List<ItemIdentifier> itemIdentifiers = mergedStorageContents;
 
 
+
         if(useSearch) {
             itemIdentifiers = searchedItemList;
 
@@ -221,7 +222,6 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         BlockEntity blockEntity = this.level.getBlockEntity(chestData.getBlockPos());
 
 
-
         if(blockEntity == null)  { // if the storage block is deleted, it will be null.
 
 
@@ -237,13 +237,10 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
 
+
         for(int i = 0; i < chestInventory.getSlots(); i++) {
 
             ItemStack chestItemStack = chestInventory.getStackInSlot(i);
-
-
-
-
 
 
             if(chestItemStack.getItem() != Items.AIR) {
@@ -276,13 +273,6 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
 
-        if(player instanceof ServerPlayer serverPlayer) {
-
-            ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
-                    this.getBlockPos()), serverPlayer);
-
-
-        }
 
 
 
@@ -361,14 +351,24 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
 
 
-        System.out.println(level.isClientSide + " CLIENT");
+
         mergedStorageContents.clear();
         queueToRemoveChest.clear();
+
 
         for(CustomBlockPosData customBlockPosData : editedChestLocations) {
 
 
             loadStorageContents(customBlockPosData, player);
+
+        }
+
+        if(player instanceof ServerPlayer serverPlayer) {
+
+            ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
+                    this.getBlockPos()), serverPlayer);
+
+
 
         }
 

@@ -195,7 +195,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
                                 storageSearchData.getSearchedStorageList(), false);
 
 
-
                 if(page == 1 && !finishedAdding) {
                     addSlot( new ViewOnlySlot(itemIdentifier,
                             8 + (column * 18), 18 + (row * 18), currentIndex));
