@@ -246,13 +246,12 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
                 InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
 
-                System.out.println(v.getActualItem() + " ACTUALLL");
 
                 if(v.getActualItem().equals(ItemStack.EMPTY))
                     return;
 
                 ItemStack itemStack =  v.getActualItem().copy();
-                int modifiedValue = itemStack.getMaxStackSize();
+                int modifiedValue = Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
                 boolean quickMove = false;
 
                 if(clickType == ClickType.PICKUP) {
@@ -267,8 +266,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-                    modifiedValue =
-                            Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
+
 
                     if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click (splitting)
 
@@ -277,9 +275,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                         int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
                         modifiedValue = valueToSplit;
 
-                        System.out.println(modifiedValue + " MODIFY " + quickMove);
 
-                        itemStack.setCount(valueToSplit);
+
 
                     }
 
@@ -290,8 +287,6 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 }
                 else if(clickType == ClickType.QUICK_MOVE) {
 
-                    modifiedValue = itemStack.getMaxStackSize();
-                    itemStack.setCount(modifiedValue);
 
                     quickMove = true;
                 }

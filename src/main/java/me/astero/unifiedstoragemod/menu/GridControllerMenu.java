@@ -18,6 +18,7 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -428,6 +429,8 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
         if(take) {
 
 
+            itemStack.setCount(value);
+
             ItemIdentifier itemIdentifier = drawerGridControllerEntity.mergedStorageContents.get(
                     drawerGridControllerEntity.mergedStorageContents
                             .indexOf(new ItemIdentifier(itemStack, 1)));
@@ -442,12 +445,47 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
                 setCarried(itemStack); // we take whatever that was clicked in the slot
             else {
 
-                System.out.println(pInventory.getFreeSlot());
-                if(pInventory.getFreeSlot() == -1) // no free slots, dont extract.
+
+                int remainingSlot = pInventory.getSlotWithRemainingSpace(itemStack);
+                ItemStack stack = itemStack;
+
+                if(pInventory.getFreeSlot() == -1 && remainingSlot == -1) // no free slots, dont extract.
                     return;
 
-                pInventory.setItem(pInventory.getFreeSlot(), itemStack);
+                int slot = pInventory.getFreeSlot() != -1 ? pInventory.getFreeSlot() :
+                        remainingSlot;
+
+                if(remainingSlot != -1) {
+
+                    ItemStack remainingSlotItem = pInventory.getItem(remainingSlot);
+                    int toFill = remainingSlotItem.getMaxStackSize() -
+                            pInventory.getItem(remainingSlot).getCount();
+
+
+
+
+                    if(toFill > itemStack.getCount()) { // means we don't have enough to fill
+                        toFill = itemStack.getCount();
+                    }
+
+                    itemStack.setCount(toFill);
+
+                    System.out.println(toFill + remainingSlotItem.getCount() + " TO FILL");
+
+                    remainingSlotItem.setCount(toFill + remainingSlotItem.getCount());
+
+                    stack = remainingSlotItem;
+
+                }
+
+                pInventory.setItem(slot, stack);
+
+
+
+
             }
+
+            value = itemStack.getCount();
 
             takeOutFromStorage(itemStack, value);
 
