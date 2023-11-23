@@ -447,13 +447,14 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
                 int remainingSlot = pInventory.getSlotWithRemainingSpace(itemStack);
+                int freeSlot = pInventory.getFreeSlot();
                 ItemStack stack = itemStack;
 
                 if(pInventory.getFreeSlot() == -1 && remainingSlot == -1) // no free slots, dont extract.
                     return;
 
-                int slot = pInventory.getFreeSlot() != -1 ? pInventory.getFreeSlot() :
-                        remainingSlot;
+                int slot = remainingSlot != -1 ? remainingSlot :
+                        freeSlot;
 
                 if(remainingSlot != -1) {
 
@@ -470,10 +471,11 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
                     itemStack.setCount(toFill);
 
-                    System.out.println(toFill + remainingSlotItem.getCount() + " TO FILL");
+
 
                     remainingSlotItem.setCount(toFill + remainingSlotItem.getCount());
 
+                    System.out.println(remainingSlotItem.getCount() + " TO FILL");
                     stack = remainingSlotItem;
 
                 }
