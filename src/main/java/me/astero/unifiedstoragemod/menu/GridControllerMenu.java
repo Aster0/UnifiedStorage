@@ -2,15 +2,19 @@ package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
+import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
-import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
+import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
+import me.astero.unifiedstoragemod.networking.ModNetwork;
+import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
-import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
@@ -18,16 +22,10 @@ import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.capabilities.ICapabilityProvider;
-import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class GridControllerMenu extends AbstractContainerMenu implements IMenuInteractor {
 
@@ -200,7 +198,7 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
                 if(page == 1 && !finishedAdding) {
-                    addSlot( new ViewOnlySlot(itemIdentifier,
+                    addSlot( new CustomGUISlot(itemIdentifier,
                             8 + (column * 18), 18 + (row * 18), currentIndex));
 
 
@@ -226,9 +224,9 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
 
-                    if(slots.get(slotIndex) instanceof ViewOnlySlot) {
+                    if(slots.get(slotIndex) instanceof CustomGUISlot) {
 
-                        slots.set(slotIndex, new ViewOnlySlot(itemIdentifier,
+                        slots.set(slotIndex, new CustomGUISlot(itemIdentifier,
                                 8 + (column * 18), 18 + (row * 18), slotToFetch));
 
 
@@ -302,126 +300,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
     }
 
 
-
-
-    @Override
-    public void interactWithMenu(ClickType clickType, InventoryAction action, ItemStack itemStack,
-                                 Slot slot, boolean cameFromStorage) { // handles both client and server side of when the player interacts
-
-
-
-
-
-        // gg
-
-        if (slot != null && slot.index >= 0 && slot.index < slots.size()) {
-
-
-            if(itemStack != null) {
-
-
-
-                if(clickType == ClickType.PICKUP) {
-
-
-
-                    ItemStack itemStackToPlace = itemStack.copy();
-                    ItemStack copiedItemstack = itemStack.copy();
-
-
-
-
-
-                    if(!getCarried().equals(ItemStack.EMPTY)) {   // means we are placing smth down
-
-
-
-
-
-                        if(slot != null) {
-
-
-                            if(!(slot instanceof ViewOnlySlot v)) { // player inventory
-
-
-
-                                if(action == InventoryAction.PLACE_ONE_OR_SPLIT) {
-                                    // to place only one
-                                    getCarried().shrink(1);
-
-                                    itemStackToPlace.grow(1);
-
-                                }
-
-
-                                itemStackToPlace = getCarried();
-
-
-
-
-                            }
-
-                        }
-
-                    }
-                    if(getCarried().equals(ItemStack.EMPTY)) {   // our hands are not carrying anything
-
-
-
-
-                        if(action == InventoryAction.PLACE_ONE_OR_SPLIT) {
-                            // means we want to split
-
-                            int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
-                            int valueToStay = itemStack.getCount() - valueToSplit;
-
-
-                            copiedItemstack.setCount(valueToSplit);
-                            itemStackToPlace.setCount(valueToStay);
-
-                        }
-                        else {
-                            itemStackToPlace = ItemStack.EMPTY;
-
-
-
-                        }
-                    }
-
-
-
-                    if(!cameFromStorage) {
-                        slot.set(itemStackToPlace);
-
-                    }
-
-
-
-
-                    setCarried(copiedItemstack); // we take whatever that was clicked in the slot
-
-
-
-
-
-
-
-
-                }
-            }
-
-        }
-
-
-
-
-
-
-
-
-    }
-
-
     @Override
     public void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove) {
 
@@ -435,7 +313,7 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
                     drawerGridControllerEntity.mergedStorageContents
                             .indexOf(new ItemIdentifier(itemStack, 1)));
 
-            System.out.println(itemIdentifier.getCount() + " COUNT " + value);
+
 
             if(itemIdentifier.getCount() < value) {
                 return; // somehow we don't have enough value to take it out of the storage
@@ -475,7 +353,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
                     remainingSlotItem.setCount(toFill + remainingSlotItem.getCount());
 
-                    System.out.println(remainingSlotItem.getCount() + " TO FILL");
                     stack = remainingSlotItem;
 
                 }
@@ -487,9 +364,11 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
             }
 
+            System.out.println(getCarried() + " GET CARRIED! " + pInventory.player.level().isClientSide());
+
             value = itemStack.getCount();
 
-            takeOutFromStorage(itemStack, value);
+            updateAllStorages(itemStack, value, true, false);
 
             int valueToStay = itemIdentifier.getCount() - value;
 
@@ -503,7 +382,138 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
         }
         else { // place in storage
 
+            updateAllStorages(getCarried(), value, false, false);
+
         }
+    }
+
+
+
+    private void updateAllStorages(ItemStack itemStack, int value, boolean take, boolean insertAnywhere) {
+
+
+        ItemStack remainingStack = itemStack.copy();
+
+        if(pInventory.player.level().isClientSide())
+            return;
+
+        int valueLeft = value;
+
+
+        for(CustomBlockPosData blockPosData : drawerGridControllerEntity.getEditedChestLocations()) {
+
+            BlockEntity storageBlockEntity = drawerGridControllerEntity.getStorageBlockAt(blockPosData.getBlockPos());
+
+            if(storageBlockEntity != null) {
+
+
+                IItemHandler chestInventory = storageBlockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
+                        .orElse(new ItemStackHandler(0));
+
+
+
+
+                for(int i = 0; i < chestInventory.getSlots(); i++) {
+
+                    ItemStack stackInSlot = chestInventory.getStackInSlot(i);
+
+                    if(!take) {
+
+                        System.out.println(i);
+                        remainingStack = chestInventory.insertItem(i, new ItemStack(
+                                itemStack.getItem(), remainingStack.getCount()), false);
+
+
+
+
+                        if(remainingStack.equals(ItemStack.EMPTY, false)) break;
+
+
+                    }
+
+
+
+                    if(ItemStack.isSameItemSameTags(itemStack, stackInSlot)) {
+
+
+
+                        if(take) {
+
+
+                            int calculateValueLeft = valueLeft - stackInSlot.getCount();
+
+
+                            int toMinusFromStack = stackInSlot.getCount() - valueLeft;
+
+                            valueLeft = Math.max(calculateValueLeft, 0);
+
+                            stackInSlot.setCount(Math.max(toMinusFromStack, 0));
+
+                            if(valueLeft == 0) break;
+                        }
+
+
+
+                    }
+
+
+                }
+
+
+
+            }
+
+
+            if(valueLeft == 0) break;
+
+
+            if(remainingStack != null) {
+                if((remainingStack.equals(ItemStack.EMPTY, false)))
+                    break;
+            }
+
+
+        }
+
+
+
+        if(remainingStack != null) {
+
+
+            setCarried(remainingStack);
+
+            ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
+                    drawerGridControllerEntity.getBlockPos(),
+                    remainingStack.getCount(), itemStack), (ServerPlayer) pInventory.player);
+
+            updateInsertVisual(drawerGridControllerEntity, itemStack, remainingStack.getCount());
+
+        }
+
+
+    }
+
+    public void updateInsertVisual(DrawerGridControllerEntity d, ItemStack itemStack, int value) {
+
+        int index = d.mergedStorageContents
+                .indexOf(new ItemIdentifier(itemStack, 1));
+
+        if(index != -1) {
+
+            ItemIdentifier itemIdentifier = d.mergedStorageContents.get(
+                    index);
+
+            itemIdentifier.setCount(itemIdentifier.getCount()
+                    + itemStack.getCount() - value);
+
+            return;
+        }
+
+
+        d.mergedStorageContents.add(new ItemIdentifier(itemStack,
+                itemStack.getCount() - value));
+
+        regenerateCurrentPage();
     }
 
 
@@ -548,58 +558,8 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
     }
-    private void takeOutFromStorage(ItemStack itemStack, int valueToDeduct) {
-
-        int valueLeft = valueToDeduct;
 
 
 
-        for(CustomBlockPosData blockPosData : drawerGridControllerEntity.getEditedChestLocations()) {
 
-            BlockEntity storageBlockEntity = drawerGridControllerEntity.getStorageBlockAt(blockPosData.getBlockPos());
-
-            if(storageBlockEntity != null) {
-
-
-                IItemHandler chestInventory = storageBlockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
-                        .orElse(new ItemStackHandler(0));
-
-
-                for(int i = 0; i < chestInventory.getSlots(); i++) {
-
-                    ItemStack stackInSlot = chestInventory.getStackInSlot(i);
-
-
-
-                    if(ItemStack.isSameItemSameTags(itemStack, stackInSlot)) {
-
-
-                        int calculateValueLeft = valueLeft - stackInSlot.getCount();
-
-
-                        int toMinusFromStack = stackInSlot.getCount() - valueLeft;
-
-                        valueLeft = Math.max(calculateValueLeft, 0);
-
-                        stackInSlot.setCount(Math.max(toMinusFromStack, 0));
-
-
-                        if(valueLeft == 0) break;
-
-
-                    }
-
-
-                }
-
-
-
-            }
-
-            if(valueLeft == 0) break;
-
-
-
-        }
-    }
 }

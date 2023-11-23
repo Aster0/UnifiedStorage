@@ -5,17 +5,16 @@ import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 
-public class ViewOnlySlot extends Slot {
+public class CustomGUISlot extends Slot {
 
     private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
 
     private int slotIndex;
 
     private ItemIdentifier itemIdentifier;
-    public ViewOnlySlot(ItemIdentifier itemIdentifier, int xPos, int yPos, int slotIndex) {
+    public CustomGUISlot(ItemIdentifier itemIdentifier, int xPos, int yPos, int slotIndex) {
         super(EMPTY_INVENTORY, 0, xPos, yPos);
 
         this.slotIndex = slotIndex;

@@ -369,7 +369,6 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
                     this.getBlockPos()), serverPlayer);
 
 
-
         }
 
 

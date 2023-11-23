@@ -5,11 +5,10 @@ import me.astero.unifiedstoragemod.client.screen.widgets.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.StorageGUIScrollWheel;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
-import me.astero.unifiedstoragemod.menu.data.ViewOnlySlot;
-import me.astero.unifiedstoragemod.menu.enums.InventoryAction;
+import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
+import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
@@ -20,13 +19,7 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
-
-import java.sql.SQLOutput;
-import java.util.HashMap;
-import java.util.Map;
 
 
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
@@ -47,7 +40,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-    private Map<ViewOnlySlot, ViewOnlySlot> allViewOnlySlots = new HashMap<>();
+
 
 
 
@@ -154,7 +147,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
                 Slot slot = this.menu.slots.get(i);
 
-                if(slot instanceof ViewOnlySlot viewOnlySlot) { // just to confirm
+                if(slot instanceof CustomGUISlot customGUISlot) { // just to confirm
 
                     Slot slotIndex = this.menu.slots.get((i -
                             (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
@@ -166,9 +159,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
                     renderCustomSlot(guiGraphics, slot, slotIndex);
 
-                    allViewOnlySlots.putIfAbsent((ViewOnlySlot) slotIndex, viewOnlySlot);
-                    // so when we hover when it's not page 1,
-                    // we can tie this slot position to the visual slot that we need.
+
 
 
 
@@ -240,15 +231,16 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-        if(slot instanceof ViewOnlySlot v) {
-
+        if(slot instanceof CustomGUISlot v) {
 
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
-                InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
+                MouseAction action = btn == 0 ? MouseAction.LEFT_CLICK : MouseAction.RIGHT_CLICK;
 
 
                 if(v.getActualItem().equals(ItemStack.EMPTY))
                     return;
+
+
 
                 ItemStack itemStack =  v.getActualItem().copy();
                 int modifiedValue = Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
@@ -265,24 +257,13 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                     }
 
 
-
-
-
-                    if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click (splitting)
-
-
+                    if(action == MouseAction.RIGHT_CLICK) { // right click (splitting)
 
                         int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
                         modifiedValue = valueToSplit;
 
 
-
-
                     }
-
-
-
-
 
                 }
                 else if(clickType == ClickType.QUICK_MOVE) {
@@ -297,18 +278,26 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
                         modifiedValue, quickMove));
 
-                menu.interactWithMenu(itemStack, true, modifiedValue, quickMove); //
+                menu.interactWithMenu(itemStack, true, modifiedValue, quickMove);
 
 
-
-                return;
             }
             else { // we want to put things into the storage
 
+                ItemStack itemToPutIn = menu.getCarried();
+                int modifiedValue = itemToPutIn.getCount();
+
+                ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
+                        modifiedValue, false));
+
+                menu.interactWithMenu(itemToPutIn, false,
+                        modifiedValue, false);
+
                 System.out.println("clicked");
 
-                return;
             }
+
+            return;
 
         }
 
@@ -387,14 +376,14 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-        if(slot instanceof ViewOnlySlot viewOnlySlot) {
+        if(slot instanceof CustomGUISlot customGUISlot) {
 
 
 
 
 
 
-            if(viewOnlySlot.getActualItem().equals(ItemStack.EMPTY , false)) return;
+            if(customGUISlot.getActualItem().equals(ItemStack.EMPTY , false)) return;
 
 
 
@@ -404,7 +393,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             PoseStack poseStack = guiGraphics.pose();
             poseStack.pushPose();
 
-            ItemStack displayStack = viewOnlySlot.getActualItem();
+            ItemStack displayStack = customGUISlot.getActualItem();
 
 
 
@@ -417,7 +406,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             poseStack.translate(0, 0, 200);
 
 
-            String text = String.valueOf(viewOnlySlot.getActualItemCount());
+            String text = String.valueOf(customGUISlot.getActualItemCount());
             float textScale = 0.5f; // Adjust the scale factor as needed
             float scaledX = (actualSlotX) / textScale;
             float scaledY = (actualSlotY) / textScale;
@@ -457,11 +446,11 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-        if(this.hoveredSlot instanceof ViewOnlySlot viewOnlySlot) { // on our custom inventory
+        if(this.hoveredSlot instanceof CustomGUISlot customGUISlot) { // on our custom inventory
 
 
 
-            ItemStack item = viewOnlySlot.getActualItem();
+            ItemStack item = customGUISlot.getActualItem();
 
 
 
