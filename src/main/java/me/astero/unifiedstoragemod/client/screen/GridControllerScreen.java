@@ -258,7 +258,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                     }
 
 
-                    int modifiedValue = 64;
+
+                    int modifiedValue = itemStack.getMaxStackSize();
 
                     if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click (splitting)
 
@@ -267,6 +268,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                         int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
                         modifiedValue = valueToSplit;
 
+                        System.out.println("SPLIT");
 
                         itemStack.setCount(valueToSplit);
 
@@ -275,6 +277,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                     int valueToStay = v.getActualItemCount() - modifiedValue;
 
                     v.setActualItemCount(valueToStay);
+
+
 
                     System.out.println(valueToStay);
 

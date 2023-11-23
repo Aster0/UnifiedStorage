@@ -196,8 +196,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
 
-
-
                 if(page == 1 && !finishedAdding) {
                     addSlot( new ViewOnlySlot(itemIdentifier,
                             8 + (column * 18), 18 + (row * 18), currentIndex));
@@ -233,14 +231,8 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
                     }
                 }
-
-
-
-
-
             }
         }
-
 
 
 
