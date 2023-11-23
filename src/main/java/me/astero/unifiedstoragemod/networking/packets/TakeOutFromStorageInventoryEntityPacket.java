@@ -12,7 +12,7 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
 
     ItemStack itemStack;
     boolean take;
-    int value;
+    int value, slotIndex;
 
     boolean quickMove;
 
@@ -20,12 +20,24 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
 
 
 
+    public TakeOutFromStorageInventoryEntityPacket(ItemStack itemStack, boolean take, int value, boolean quickMove, int slotIndex) {
+
+        this.itemStack = itemStack;
+        this.take = take;
+        this.value = value;
+        this.quickMove = quickMove;
+        this.slotIndex = slotIndex;
+
+
+    }
+
     public TakeOutFromStorageInventoryEntityPacket(ItemStack itemStack, boolean take, int value, boolean quickMove) {
 
         this.itemStack = itemStack;
         this.take = take;
         this.value = value;
         this.quickMove = quickMove;
+
 
 
     }
@@ -38,6 +50,7 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
         this.take = buffer.readBoolean();
         this.value = buffer.readInt();
         this.quickMove = buffer.readBoolean();
+        this.slotIndex = buffer.readInt();
 
 
 
@@ -56,7 +69,7 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
         buffer.writeBoolean(this.take);
         buffer.writeInt(this.value);
         buffer.writeBoolean(this.quickMove);
-
+        buffer.writeInt(this.slotIndex);
 
 
     }
@@ -89,7 +102,8 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
                 if(serverPlayer.containerMenu instanceof GridControllerMenu menu) {
 
 
-                    menu.interactWithMenu(packet.itemStack, packet.take, packet.value, packet.quickMove);
+                    menu.interactWithMenu(packet.itemStack, packet.take,
+                            packet.value, packet.quickMove, packet.slotIndex);
 
 
 

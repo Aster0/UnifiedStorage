@@ -18,17 +18,20 @@ import net.minecraftforge.event.network.CustomPayloadEvent;
 public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
 
     BlockPos blockPos;
-    int amount;
+    int amount, slotIndex;
     ItemStack itemStack;
+    boolean quickMove;
 
 
 
 
-    public UpdateStorageInventoryClientEntityPacket(BlockPos blockPos, int amount, ItemStack itemStack) {
+    public UpdateStorageInventoryClientEntityPacket(BlockPos blockPos, int amount, ItemStack itemStack, int slotIndex, boolean quickMove) {
 
         this.blockPos = blockPos;
         this.amount = amount;
         this.itemStack = itemStack;
+        this.slotIndex = slotIndex;
+        this.quickMove = quickMove;
 
     }
 
@@ -39,6 +42,8 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
         this.blockPos = buffer.readBlockPos();
         this.amount = buffer.readInt();
         this.itemStack = buffer.readItem();
+        this.slotIndex = buffer.readInt();
+        this.quickMove = buffer.readBoolean();
 
 
 
@@ -54,6 +59,8 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
         buffer.writeBlockPos(this.blockPos);
         buffer.writeInt(this.amount);
         buffer.writeItemStack(this.itemStack, false);
+        buffer.writeInt(this.slotIndex);
+        buffer.writeBoolean(this.quickMove);
 
     }
 
@@ -83,7 +90,7 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
 
                     if(abstractMenu instanceof GridControllerMenu menu) {
 
-                        menu.updateInsertVisual(d, packet.itemStack, packet.amount);
+                        menu.updateInsertVisual(d, packet.itemStack, packet.amount, packet.quickMove, packet.slotIndex);
                     }
 
                 }

@@ -6,5 +6,5 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 
 public interface IMenuInteractor {
-    void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove);
+    void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove, int slotIndex);
 }

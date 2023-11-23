@@ -231,6 +231,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+
+
+
         if(slot instanceof CustomGUISlot v) {
 
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
@@ -246,6 +249,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 int modifiedValue = Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
                 boolean quickMove = false;
 
+                System.out.println(clickType);
                 if(clickType == ClickType.PICKUP) {
 
 
@@ -278,11 +282,12 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
                         modifiedValue, quickMove));
 
-                menu.interactWithMenu(itemStack, true, modifiedValue, quickMove);
+                menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
 
 
             }
             else { // we want to put things into the storage
+
 
                 ItemStack itemToPutIn = menu.getCarried();
                 int modifiedValue = itemToPutIn.getCount();
@@ -291,7 +296,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                         modifiedValue, false));
 
                 menu.interactWithMenu(itemToPutIn, false,
-                        modifiedValue, false);
+                        modifiedValue, false, 0);
 
                 System.out.println("clicked");
 
@@ -301,64 +306,27 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         }
 
+        if(clickType == ClickType.QUICK_MOVE) {
+
+            ItemStack itemToPutIn = slot.getItem();
+            int modifiedValue = itemToPutIn.getCount();
+            System.out.println(modifiedValue);
+
+            ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
+                    modifiedValue, true, slot.getSlotIndex()));
+
+            menu.interactWithMenu(itemToPutIn, false,
+                    modifiedValue, true, slot.getSlotIndex());
+
+            System.out.println("clicked");
+
+        }
+
 
 
 
         super.slotClicked(slot, slotIndex, btn, clickType);
 
-
-//        InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
-//
-//
-//        if(slotIndex == -999) {
-//            action = InventoryAction.DROP_ITEMS;
-//
-//        }
-//
-//        boolean cameFromStorage = false;
-//
-//
-//        ItemStack itemStack = slot != null ? slot.getItem() : ItemStack.EMPTY;
-//
-//        if(slot instanceof ViewOnlySlot viewOnlySlot) {
-//
-//            itemStack = viewOnlySlot.getActualItem().copy();
-//
-//            if(viewOnlySlot.getActualItemCount() > itemStack.getMaxStackSize()) {
-//                itemStack.setCount(itemStack.getMaxStackSize());
-//            }
-//            else {
-//                itemStack.setCount(viewOnlySlot.getActualItemCount());
-//            }
-//
-//            cameFromStorage = true;
-//
-//        }
-//
-//
-//
-//        if(slot != null || action == InventoryAction.DROP_ITEMS) {
-//
-//
-//
-//            int index = -999;
-//
-//            if(slot != null) {
-//                index = slot.getSlotIndex();
-//
-//
-//            }
-//
-//
-//
-//
-//            ModNetwork.sendToServer(new UpdateStorageInventoryEntityPacket(itemStack,
-//                    action, clickType, index, cameFromStorage)); // server
-//
-//
-//            menu.interactWithMenu(clickType, action, itemStack, slot, cameFromStorage); // client
-//
-//        }
 
 
     }

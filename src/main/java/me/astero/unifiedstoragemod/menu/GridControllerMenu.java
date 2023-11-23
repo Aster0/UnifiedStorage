@@ -301,7 +301,7 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
     @Override
-    public void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove) {
+    public void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove, int slotIndex) {
 
 
         if(take) {
@@ -368,11 +368,11 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
             }
 
-            System.out.println(getCarried() + " GET CARRIED! " + pInventory.player.level().isClientSide());
+
 
             value = itemStack.getCount();
 
-            updateAllStorages(itemStack, value, true, false);
+            updateAllStorages(itemStack, value, true, false, slotIndex);
 
             int valueToStay = itemIdentifier.getCount() - value;
 
@@ -386,14 +386,14 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
         }
         else { // place in storage
 
-            updateAllStorages(getCarried(), value, false, false);
+            updateAllStorages(itemStack, value, false, quickMove, slotIndex);
 
         }
     }
 
 
 
-    private void updateAllStorages(ItemStack itemStack, int value, boolean take, boolean insertAnywhere) {
+    private void updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
 
 
         ItemStack remainingStack = itemStack.copy();
@@ -423,7 +423,7 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
                     if(!take) {
 
-                        System.out.println(i);
+
 
                         ItemStack clonedItemStack = itemStack.copy();
                         clonedItemStack.setCount(remainingStack.getCount());
@@ -470,8 +470,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
                 }
 
 
-
-
             }
 
 
@@ -485,41 +483,70 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
         }
 
 
-        if(!take) {
+        if(!take) { // if put into the storage
 
-            setCarried(remainingStack);
+            if(!quickMove)
+                setCarried(remainingStack);
 
             ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
                     drawerGridControllerEntity.getBlockPos(),
-                    remainingStack.getCount(), itemStack), (ServerPlayer) pInventory.player);
+                    remainingStack.getCount(), itemStack, slotIndex, quickMove), (ServerPlayer) pInventory.player);
 
-            updateInsertVisual(drawerGridControllerEntity, itemStack, remainingStack.getCount());
+            updateInsertVisual(drawerGridControllerEntity, itemStack,
+                    remainingStack.getCount(), quickMove, slotIndex);
         }
 
 
     }
 
-    public void updateInsertVisual(DrawerGridControllerEntity d, ItemStack itemStack, int value) {
+    public void updateInsertVisual(DrawerGridControllerEntity d, ItemStack itemStack, int value, boolean quickMove, int slotIndex) {
 
         int index = d.mergedStorageContents
                 .indexOf(new ItemIdentifier(itemStack, 1));
+
+
 
         if(index != -1) {
 
             ItemIdentifier itemIdentifier = d.mergedStorageContents.get(
                     index);
 
-            itemIdentifier.setCount(itemIdentifier.getCount()
-                    + itemStack.getCount() - value);
+            int itemCountLeft = itemIdentifier.getCount()
+                    + itemStack.getCount() - value;
+
+            itemIdentifier.setCount(itemCountLeft);
+
+            checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
 
             return;
         }
 
 
-        d.mergedStorageContents.add(new ItemIdentifier(itemStack,
-                itemStack.getCount() - value));
+        int itemCountLeft = itemStack.getCount() - value;
 
-        regenerateCurrentPage();
+        if(itemCountLeft != 0) {
+            d.mergedStorageContents.add(new ItemIdentifier(itemStack,
+                    itemCountLeft));
+
+            checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
+
+            regenerateCurrentPage();
+
+
+
+        }
+
+    }
+
+    private void checkToRemoveInSlotForQuickMove(boolean quickMove, int itemCountLeft, int slotIndex, int value, ItemStack itemStack) {
+        if(quickMove) {
+            if(itemCountLeft != 0) {
+
+                int finalValue = itemStack.getCount() - value;
+                pInventory.removeItem(slotIndex, finalValue);
+            }
+
+        }
     }
 
 
@@ -538,21 +565,6 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
             queuedToBeRemoved = existingItemIdentifier;
         }
 
-//        for(ItemIdentifier itemIdentifier : drawerGridControllerEntity.mergedStorageContents) {
-//
-//            System.out.println(itemIdentifier.getItemStack());
-//            if(ItemStack.isSameItemSameTags(itemStack, itemIdentifier.getItemStack())) {
-//                itemIdentifier.setCount(itemIdentifier.getCount() + value);
-//
-//                System.out.println(itemIdentifier.getCount() + " FOUIND");
-//
-//                if(itemIdentifier.getCount() <= 0) {
-//                    queuedToBeRemoved = itemIdentifier;
-//                }
-//
-//                break;
-//            }
-//        }
 
         if(queuedToBeRemoved != null) {
             drawerGridControllerEntity.mergedStorageContents.remove(queuedToBeRemoved);
