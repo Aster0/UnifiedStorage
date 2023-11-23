@@ -76,6 +76,9 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
     }
 
+    public Inventory getPlayerInventory() {
+        return pInventory;
+    }
 
     public DrawerGridControllerEntity getDrawerGridControllerEntity() {
         return drawerGridControllerEntity;
@@ -171,7 +174,7 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
         scrollPage--;
         generateSlots(scrollPage);
 
-        System.out.println(scrollPage);
+
 
         return scrollPage;
     }
@@ -419,12 +422,44 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
 
 
     @Override
-    public void interactWithMenu(ItemStack itemStack, boolean take, int value) {
-        System.out.println(itemStack.getCount());
+    public void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove) {
+
 
         if(take) {
-            setCarried(itemStack); // we take whatever that was clicked in the slot
+
+
+            ItemIdentifier itemIdentifier = drawerGridControllerEntity.mergedStorageContents.get(
+                    drawerGridControllerEntity.mergedStorageContents
+                            .indexOf(new ItemIdentifier(itemStack, 1)));
+
+            System.out.println(itemIdentifier.getCount() + " COUNT " + value);
+
+            if(itemIdentifier.getCount() < value) {
+                return; // somehow we don't have enough value to take it out of the storage
+            }
+
+            if(!quickMove)
+                setCarried(itemStack); // we take whatever that was clicked in the slot
+            else {
+
+                System.out.println(pInventory.getFreeSlot());
+                if(pInventory.getFreeSlot() == -1) // no free slots, dont extract.
+                    return;
+
+                pInventory.setItem(pInventory.getFreeSlot(), itemStack);
+            }
+
             takeOutFromStorage(itemStack, value);
+
+            int valueToStay = itemIdentifier.getCount() - value;
+
+            itemIdentifier.setCount(valueToStay);
+
+            if(valueToStay <= 0) {
+
+                updateStorageContents(itemStack, -value);
+            }
+
         }
         else { // place in storage
 

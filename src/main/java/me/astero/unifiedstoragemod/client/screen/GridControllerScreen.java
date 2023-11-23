@@ -239,16 +239,24 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         // 0 = place down? 1 = place one. clickType cant track this
 
 
+
         if(slot instanceof ViewOnlySlot v) {
 
 
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
                 InventoryAction action = btn == 0 ? InventoryAction.PICKUP_OR_PLACE_ALL : InventoryAction.PLACE_ONE_OR_SPLIT;
 
+                System.out.println(v.getActualItem() + " ACTUALLL");
 
+                if(v.getActualItem().equals(ItemStack.EMPTY))
+                    return;
+
+                ItemStack itemStack =  v.getActualItem().copy();
+                int modifiedValue = itemStack.getMaxStackSize();
+                boolean quickMove = false;
 
                 if(clickType == ClickType.PICKUP) {
-                    ItemStack itemStack =  v.getActualItem().copy();
+
 
                     if(v.getActualItemCount() > itemStack.getMaxStackSize()) {
                         itemStack.setCount(itemStack.getMaxStackSize());
@@ -259,7 +267,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-                    int modifiedValue = itemStack.getMaxStackSize();
+                    modifiedValue =
+                            Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
 
                     if(action == InventoryAction.PLACE_ONE_OR_SPLIT) { // right click (splitting)
 
@@ -268,31 +277,32 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                         int valueToSplit = (int) Math.ceil((double) itemStack.getCount() / 2);
                         modifiedValue = valueToSplit;
 
-                        System.out.println("SPLIT");
+                        System.out.println(modifiedValue + " MODIFY " + quickMove);
 
                         itemStack.setCount(valueToSplit);
 
                     }
 
-                    int valueToStay = v.getActualItemCount() - modifiedValue;
-
-                    v.setActualItemCount(valueToStay);
 
 
 
-                    System.out.println(valueToStay);
 
-                    if(valueToStay <= 0) {
-                        menu.updateStorageContents(itemStack, -modifiedValue);
-                    }
-
-
-
-                    ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
-                            modifiedValue)); // server
-
-                    menu.interactWithMenu(itemStack, true, modifiedValue); // client
                 }
+                else if(clickType == ClickType.QUICK_MOVE) {
+
+                    modifiedValue = itemStack.getMaxStackSize();
+                    itemStack.setCount(modifiedValue);
+
+                    quickMove = true;
+                }
+
+
+
+
+                ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
+                        modifiedValue, quickMove));
+
+                menu.interactWithMenu(itemStack, true, modifiedValue, quickMove); //
 
 
 
@@ -300,6 +310,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             }
             else { // we want to put things into the storage
 
+                System.out.println("clicked");
+
+                return;
             }
 
         }
