@@ -8,5 +8,6 @@
   "container.unifiedstorage.grid_controller_menu_title" : "Grid Inventory",
   "container.unifiedstorage.searchField" : "Search Items...",
   "container.unifiedstorage.networkSlotTitle" : "Insert Network Card",
-  "container.unifiedstorage.networkSlotDescription" : "§7Network card links different\n§7storage blocks together."
+  "container.unifiedstorage.networkSlotDescription" : "§7Network card links different\n§7storage blocks together.",
+  "container.unifiedstorage UpgradeSlotTitle" : "Insert Upgrade Card"
 }

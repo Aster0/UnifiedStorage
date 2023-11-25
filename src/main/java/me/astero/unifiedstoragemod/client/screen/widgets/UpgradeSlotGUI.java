@@ -8,7 +8,6 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -24,7 +23,7 @@ enum SlotType {
     FILTER
 }
 
-public class UpgradeSlotGUI<T extends Menu> implements ICustomWidgetComponent, IUpgradeSlot {
+public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements ICustomWidgetComponent {
 
     private static final ResourceLocation UPGRADE_START =
             new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
@@ -47,19 +46,21 @@ public class UpgradeSlotGUI<T extends Menu> implements ICustomWidgetComponent, I
 
         int nextY = this.rawY + 7;
 
-        Slot slot = new UpgradeSlot(new ItemStackHandler(1),
-                0, this.rawX + 8, nextY);
 
-        if(slotType == SlotType.NETWORK) {
-            slot = new NetworkSlot(new ItemStackHandler(1),
-                    0, this.rawX + 8, nextY);
-        }
 
 
 
 
 
         for(int i = 0; i < numberOfSlots; i++) {
+
+            Slot slot = new UpgradeSlot(new ItemStackHandler(1),
+                    0, this.rawX + 8, nextY);
+
+            if(slotType == SlotType.NETWORK) {
+                slot = new NetworkSlot(new ItemStackHandler(1),
+                        0, this.rawX + 8, nextY);
+            }
 
             menu.addCustomSlot(slot);
 
@@ -111,10 +112,9 @@ public class UpgradeSlotGUI<T extends Menu> implements ICustomWidgetComponent, I
     @Override
     public void renderCustomTooltip(GuiGraphics guiGraphics, Font font) {
         List<Component> componentList = new ArrayList<>();
-        componentList.add(Component.literal("HI!!"));
-        componentList.add(Component.literal("§7HI!!"));
+        componentList.add(Component.translatable("container.unifiedstorage UpgradeSlotTitle"));
 
-        guiGraphics.renderTooltip(font, componentList, Optional.empty(), x, y);
+        super.renderCustomTooltip(componentList, guiGraphics, font, x, y);
 
     }
 }

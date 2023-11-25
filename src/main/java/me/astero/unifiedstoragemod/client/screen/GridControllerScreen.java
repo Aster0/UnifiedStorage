@@ -5,6 +5,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
+import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
@@ -20,10 +21,6 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-
 
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
 
@@ -31,7 +28,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     private CustomSearchField searchField;
     private CustomScrollWheel customScrollWheel;
-    private UpgradeSlotGUI upgradeSlotGUI;
+    private NetworkSlotGUI<GridControllerMenu> networkSlotGUI;
+    private UpgradeSlotGUI<GridControllerMenu> upgradeSlotGUI;
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
@@ -71,9 +69,13 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                 this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
-        upgradeSlotGUI = new NetworkSlotGUI(1, this.leftPos + 210, this.topPos,
+        networkSlotGUI = new NetworkSlotGUI(1, this.leftPos + 210, this.topPos,
                 210, 0);
 
+        upgradeSlotGUI = new UpgradeSlotGUI(3, this.leftPos + 210, this.topPos + 50,
+                210, 50);
+
+        networkSlotGUI.create(menu);
         upgradeSlotGUI.create(menu);
 
 
@@ -114,8 +116,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
 
+        networkSlotGUI.tick(guiGraphics);
         upgradeSlotGUI.tick(guiGraphics);
-
 
 
         customScrollWheel.tick(guiGraphics);
@@ -449,10 +451,19 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
         }
-        else if(this.hoveredSlot instanceof NetworkSlot networkSlot){
+        else if(this.hoveredSlot instanceof NetworkSlot networkSlot) {
 
 
             if(networkSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
+
+                networkSlotGUI.renderCustomTooltip(guiGraphics, this.font);
+            }
+
+        }
+        else if(this.hoveredSlot instanceof UpgradeSlot upgradeSlot) {
+
+
+            if(upgradeSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
 
                 upgradeSlotGUI.renderCustomTooltip(guiGraphics, this.font);
             }

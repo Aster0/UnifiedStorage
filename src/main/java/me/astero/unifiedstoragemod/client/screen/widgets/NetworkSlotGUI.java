@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class NetworkSlotGUI extends UpgradeSlotGUI {
+public class NetworkSlotGUI<T extends Menu> extends UpgradeSlotGUI<T> {
 
     private static final ResourceLocation UPGRADE_START =
             new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
@@ -32,6 +32,8 @@ public class NetworkSlotGUI extends UpgradeSlotGUI {
 
     }
 
+
+
     @Override
     public void renderCustomTooltip(GuiGraphics guiGraphics, Font font) {
         List<Component> componentList = new ArrayList<>();
@@ -40,7 +42,7 @@ public class NetworkSlotGUI extends UpgradeSlotGUI {
                 "container.unifiedstorage.networkSlotDescription")));
 
 
-        guiGraphics.renderTooltip(font, componentList, Optional.empty(), x, y + 30);
+        super.renderCustomTooltip(componentList, guiGraphics, font, x, y);
 
     }
 }
