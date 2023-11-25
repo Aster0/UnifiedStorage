@@ -16,5 +16,5 @@ public abstract class BaseUpgradeSlot {
     }
 
 
-    public abstract void renderCustomTooltip(GuiGraphics guiGraphics, Font font);
+    public abstract void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y);
 }

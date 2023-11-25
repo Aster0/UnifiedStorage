@@ -35,7 +35,7 @@ public class NetworkSlotGUI<T extends Menu> extends UpgradeSlotGUI<T> {
 
 
     @Override
-    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font) {
+    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y) {
         List<Component> componentList = new ArrayList<>();
         componentList.add(Component.translatable("container.unifiedstorage.networkSlotTitle"));
         componentList.addAll(ModUtils.breakComponentLine(Component.translatable(

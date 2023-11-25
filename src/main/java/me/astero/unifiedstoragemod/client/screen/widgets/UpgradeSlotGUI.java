@@ -9,6 +9,8 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -87,6 +89,8 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
             guiGraphics.blit(UPGRADE_START, x, nextY,   42, 0,
                     31, 25);
         }
+
+        //guiGraphics.renderItem(new ItemStack(Items.IRON_INGOT), this.x + 8, this.y + 7);
     }
 
     @Override
@@ -110,7 +114,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
     }
 
     @Override
-    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font) {
+    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y) {
         List<Component> componentList = new ArrayList<>();
         componentList.add(Component.translatable("container.unifiedstorage UpgradeSlotTitle"));
 

@@ -456,7 +456,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
             if(networkSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
 
-                networkSlotGUI.renderCustomTooltip(guiGraphics, this.font);
+                networkSlotGUI.renderCustomTooltip(guiGraphics, this.font, x, y);
             }
 
         }
@@ -465,7 +465,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
             if(upgradeSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
 
-                upgradeSlotGUI.renderCustomTooltip(guiGraphics, this.font);
+                upgradeSlotGUI.renderCustomTooltip(guiGraphics, this.font, x, y);
             }
 
         }
