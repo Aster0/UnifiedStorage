@@ -6,5 +6,7 @@
   "language.unifiedstorage.wireless_storage_not_linked" : "Link a §c[Grid Controller] §fto use.",
   "language.unifiedstorage.wireless_storage_linked" : "Successfully linked with §c[Grid Controller]§f.",
   "container.unifiedstorage.grid_controller_menu_title" : "Grid Inventory",
-  "container.unifiedstorage.searchField" : "Search Items..."
+  "container.unifiedstorage.searchField" : "Search Items...",
+  "container.unifiedstorage.networkSlotTitle" : "Insert Network Card",
+  "container.unifiedstorage.networkSlotDescription" : "§7Network card links different\n§7storage blocks together."
 }

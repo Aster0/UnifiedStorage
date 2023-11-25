@@ -1,6 +1,12 @@
 package me.astero.unifiedstoragemod.utils;
 
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class ModUtils {
 
@@ -28,6 +34,24 @@ public class ModUtils {
 
 
         return eValue;
+
+    }
+
+    public static List<Component> breakComponentLine(MutableComponent component) {
+
+
+        List<Component> components = new ArrayList<>();
+        String[] componentString = component.getString().split("\n");
+
+        for(String str : componentString) {
+
+
+            components.add(Component.literal(str));
+        }
+
+
+        return components;
+
 
     }
 }

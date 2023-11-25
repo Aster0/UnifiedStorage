@@ -1,11 +1,10 @@
 package me.astero.unifiedstoragemod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.astero.unifiedstoragemod.client.screen.widgets.CustomScrollWheel;
-import me.astero.unifiedstoragemod.client.screen.widgets.CustomSearchField;
-import me.astero.unifiedstoragemod.client.screen.widgets.StorageGUIScrollWheel;
+import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
+import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
@@ -21,6 +20,10 @@ import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 
 public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
 
@@ -28,6 +31,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     private CustomSearchField searchField;
     private CustomScrollWheel customScrollWheel;
+    private UpgradeSlotGUI upgradeSlotGUI;
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
@@ -46,7 +50,6 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
-
 
 
     public GridControllerScreen(GridControllerMenu menu, Inventory pInventory, Component title) {
@@ -68,6 +71,11 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                 this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+        upgradeSlotGUI = new NetworkSlotGUI(1, this.leftPos + 210, this.topPos,
+                210, 0);
+
+        upgradeSlotGUI.create(menu);
+
 
     }
 
@@ -106,14 +114,19 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
 
+        upgradeSlotGUI.tick(guiGraphics);
+
 
 
         customScrollWheel.tick(guiGraphics);
 
 
+        renderCustomSlot(guiGraphics);
 
 
     }
+
+
 
 
 
@@ -132,55 +145,6 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-
-        int startingIndex = (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)
-                + GridControllerMenu.STARTING_SLOT_INDEX;
-
-
-
-        // 36 (first slot) - 62 (last slot)
-        for(int i = startingIndex; i <
-                startingIndex + GridControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
-
-            try {
-
-
-                Slot slot = this.menu.slots.get(i);
-
-                if(slot instanceof CustomGUISlot customGUISlot) { // just to confirm
-
-                    Slot slotIndex = this.menu.slots.get((i -
-                            (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
-                    // but with the new system, we don't really need the scroll page anymore
-                    // because we are always dealing with a set slots generated.
-                    // not deleting first in case I need it again in the future
-
-
-
-                    renderCustomSlot(guiGraphics, slot, slotIndex);
-
-
-
-
-
-
-                }
-
-            }
-            catch(IndexOutOfBoundsException SLOT_DOESNT_EXIST) {
-
-
-                break;
-            }
-
-
-
-
-
-
-
-
-        }
 
 
 
@@ -340,6 +304,59 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         return super.mouseScrolled(mouseX, mouseY, delta, rawDelta);
     }
 
+    private void renderCustomSlot(GuiGraphics guiGraphics) {
+
+
+        int startingIndex = (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)
+                + GridControllerMenu.STARTING_SLOT_INDEX;
+
+
+
+        // 36 (first slot) - 62 (last slot)
+        for(int i = startingIndex; i <
+                startingIndex + GridControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
+
+            try {
+
+
+                Slot slot = this.menu.slots.get(i);
+
+                if(slot instanceof CustomGUISlot customGUISlot) { // just to confirm
+
+                    Slot slotIndex = this.menu.slots.get((i -
+                            (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
+                    // but with the new system, we don't really need the scroll page anymore
+                    // because we are always dealing with a set slots generated.
+                    // not deleting first in case I need it again in the future
+
+
+
+                    renderCustomSlot(guiGraphics, slot, slotIndex);
+
+
+
+
+
+
+                }
+
+            }
+            catch(IndexOutOfBoundsException SLOT_DOESNT_EXIST) {
+
+
+                break;
+            }
+
+
+
+
+
+
+
+
+        }
+    }
+
     public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot, Slot slotIndex) {
 
 
@@ -367,7 +384,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
             guiGraphics.renderItem(displayStack, actualSlotX, actualSlotY);
             guiGraphics.renderItemDecorations(minecraft.font, displayStack,
-                    actualSlotX, actualSlotY, "");
+                    actualSlotX, actualSlotY, ""); // item durability, etc
             poseStack.popPose();
 
             poseStack.pushPose();
@@ -432,6 +449,16 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
         }
+        else if(this.hoveredSlot instanceof NetworkSlot networkSlot){
+
+
+            if(networkSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
+
+                upgradeSlotGUI.renderCustomTooltip(guiGraphics, this.font);
+            }
+
+        }
+
 
 
         super.renderTooltip(guiGraphics, x, y);

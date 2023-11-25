@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.menu;
 
+import me.astero.unifiedstoragemod.client.screen.widgets.UpgradeSlotGUI;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
@@ -27,7 +28,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-public class GridControllerMenu extends AbstractContainerMenu implements IMenuInteractor {
+public class GridControllerMenu extends Menu implements IMenuInteractor {
 
     public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
 
@@ -131,6 +132,7 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
         createPlayerHotbar(pInventory);
         createPlayerInventory(pInventory);
         createBlockEntityInventory(drawerGridControllerEntity);
+
 
     }
 
@@ -578,6 +580,9 @@ public class GridControllerMenu extends AbstractContainerMenu implements IMenuIn
     }
 
 
+    @Override
+    public void addCustomSlot(Slot slot) {
 
-
+        addSlot(slot);
+    }
 }
