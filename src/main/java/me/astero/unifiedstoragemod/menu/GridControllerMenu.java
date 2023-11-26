@@ -357,8 +357,9 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
             itemStack.setCount(value);
 
             int slot = -1;
-            ItemStack stack = itemStack;
+            ItemStack stack = itemStack.copy();
 
+            ItemStack remainingSlotItem = null;
 
             if(quickMove) {
 
@@ -372,15 +373,13 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
                         freeSlot;
 
 
-                System.out.println(slot + " SLOT");
+
                 if(remainingSlot != -1) {
 
-                    ItemStack remainingSlotItem = pInventory.getItem(remainingSlot);
+                    remainingSlotItem = pInventory.getItem(remainingSlot);
                     int toFill = remainingSlotItem.getMaxStackSize() -
                             pInventory.getItem(remainingSlot).getCount();
 
-
-                    System.out.println(toFill + " FILL");
 
 
                     if(toFill > itemStack.getCount()) { // means we don't have enough to fill
@@ -389,34 +388,43 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
                     itemStack.setCount(toFill);
 
+                    System.out.println(toFill + " TO FILL");
 
 
-                    remainingSlotItem.setCount(toFill + remainingSlotItem.getCount());
+                    //remainingSlotItem.setCount(toFill + remainingSlotItem.getCount());
 
                     stack = remainingSlotItem;
 
                 }
 
-            
+
             }
 
             value = itemStack.getCount();
 
+            System.out.println(value + " VALUE");
 
-            System.out.println(pInventory.player.level().isClientSide() + " CIENT");
             int actualValue = updateAllStorages(itemStack, value, true, quickMove, slotIndex);
+            value = actualValue;
+
 
             
             if(quickMove) {
 
-                System.out.println(actualValue);
-                if(slot != -1 && actualValue > 0)
+
+                System.out.println(slot);
+
+                if(slot != -1 && actualValue > 0) {
+
+                    stack.setCount(actualValue +
+                            (remainingSlotItem == null ? 0 : remainingSlotItem.getCount()));
+                    System.out.println("PUTTING! " + stack);
                     pInventory.setItem(slot, stack);
+                }
+
             }
             
-            value = actualValue;
 
-            itemStack.setCount(value);
 
 
 
