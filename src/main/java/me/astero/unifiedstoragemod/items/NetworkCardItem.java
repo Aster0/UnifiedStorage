@@ -1,16 +1,10 @@
 package me.astero.unifiedstoragemod.items;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.*;
-import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
-import me.astero.unifiedstoragemod.data.ItemIdentifier;
+
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
+import me.astero.unifiedstoragemod.items.data.UpgradeTier;
 import me.astero.unifiedstoragemod.utils.ModUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -30,27 +24,40 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.capabilities.ICapabilityProvider;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 
 public class NetworkCardItem extends BaseItem {
 
+
+
+
+
     public NetworkCardItem(Properties properties) {
         super(properties);
+
 
     }
 
 
 
-    private final List<SavedStorageData> savedStorageData = new ArrayList<>();
 
-    public void saveNbt(ItemStack itemStack, String key) {
+
+    private Map<String, List<SavedStorageData>> storageLocations = new HashMap<>();
+
+    private boolean nbtLoaded = false;
+
+    public List<SavedStorageData> getStorageLocations(ItemStack itemStack) {
+
+        return storageLocations.get(itemStack.toString());
+    }
+
+    public void saveNbt(ItemStack itemStack) {
 
 
         CompoundTag nbt = itemStack.getTag();
@@ -61,12 +68,15 @@ public class NetworkCardItem extends BaseItem {
 
         CompoundTag innerNbt = new CompoundTag();
 
+        List<SavedStorageData> savedStorageData = storageLocations.get(itemStack.toString());
+
+        System.out.println(savedStorageData.size() + " SIZEEE");
 
         for(int i = 0; i < savedStorageData.size(); i++) {
-            innerNbt.putString("chest" + i, this.savedStorageData.get(i)
+            innerNbt.putString("storage" + i, savedStorageData.get(i)
                     .getCustomBlockPosData().toString());
 
-            System.out.println("chest" + i + " "  +this.savedStorageData.get(i)
+            System.out.println("storage" + i + " "  + savedStorageData.get(i)
                     .getCustomBlockPosData().toString());
         }
 
@@ -77,27 +87,48 @@ public class NetworkCardItem extends BaseItem {
 
     }
 
-    public CustomBlockPosData loadNbt(ItemStack itemStack, String key) {
+    public void loadNbt(ItemStack itemStack) {
+
 
         CompoundTag nbt = itemStack.getTag();
-        System.out.println("NBT " + nbt);
 
+        storageLocations.clear();
 
-
-        CustomBlockPosData customBlockPosData = null;
-
-        if(nbt != null) {
-            nbt = nbt.getCompound(ModUtils.MODID);
-
-            String[] eValue = nbt.getString(key).split(", ");
-
-            customBlockPosData = ModUtils.convertStringToBlockData(eValue);
-
-
+        if(nbt == null) {
+            return;
         }
 
 
-        return customBlockPosData;
+        nbt = nbt.getCompound(ModUtils.MODID);
+
+
+
+        for(int i = 0; i < UpgradeTier.MAX.getAmount(); i++) {
+
+
+
+            String rawPos = nbt.getString("storage" + i);
+
+
+            if(rawPos.length() > 0) {
+
+                rawPos = ModUtils.serializeBlockPosNbt(rawPos);
+
+                CustomBlockPosData customBlockPosData =
+                        ModUtils.convertStringToBlockData(rawPos.split(", "));
+
+                SavedStorageData savedStorageData = new SavedStorageData(customBlockPosData);
+
+
+                saveToStorage(itemStack, savedStorageData);
+
+                continue;
+            }
+
+            return;
+
+        }
+
 
 
     }
@@ -113,27 +144,56 @@ public class NetworkCardItem extends BaseItem {
 
         boolean added = false;
 
-        if(!this.savedStorageData.contains(savedStorageData)) {
-            this.savedStorageData.add(savedStorageData);
+
+
+        if(saveToStorage(itemStack, savedStorageData)) {
 
 
 
-
-            saveNbt(itemStack, "storages");
+            saveNbt(itemStack);
 
 
             added = true;
         }
         else {
+
+
             System.out.println("removed");
-            this.savedStorageData.removeIf((value) ->
-                    value.getCustomBlockPosData()
-                            .equals(savedStorageData.getCustomBlockPosData()));
+            removeFromStorage(itemStack, savedStorageData);
 
         }
 
         return added;
 
+    }
+
+
+    private boolean saveToStorage(ItemStack itemStack, SavedStorageData savedStorageData) {
+        List<SavedStorageData> savedStorageDataList = storageLocations.computeIfAbsent(itemStack.toString(),
+                (s) -> new ArrayList<>());
+
+
+        if(!savedStorageDataList.contains(savedStorageData)) {
+            savedStorageDataList.add(savedStorageData);
+
+            return true;
+        }
+
+
+        return false;
+
+    }
+
+    private void removeFromStorage(ItemStack itemStack, SavedStorageData savedStorageData) {
+
+
+        List<SavedStorageData> savedStorageDataList = storageLocations.get(itemStack.toString());
+
+        System.out.println(savedStorageDataList);
+
+        savedStorageDataList.removeIf((value) ->
+                value.getCustomBlockPosData()
+                        .equals(savedStorageData.getCustomBlockPosData()));
     }
 
 
@@ -145,9 +205,14 @@ public class NetworkCardItem extends BaseItem {
 
         if(!level.isClientSide) {
 
+
             ItemStack itemStack = player.getItemInHand(interactionHand);
             BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
 
+
+
+
+            loadNbt(itemStack);
 
             BlockEntity hitBlockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
 
@@ -160,6 +225,8 @@ public class NetworkCardItem extends BaseItem {
 
 
 
+                    if(storageLocations.isEmpty())
+                        loadNbt(itemStack);
 
 
 
@@ -189,13 +256,25 @@ public class NetworkCardItem extends BaseItem {
     }
 
 
+    @Override
+    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
+        super.appendHoverText(stack, level, components, flag);
 
+        loadNbt(stack);
+    }
 
-    public List<Component> addShiftText() {
+    public List<Component> addShiftText(ItemStack itemStack) {
+
+        List<SavedStorageData> savedStorageData = storageLocations.get(itemStack.toString());
+
+        int amountOfStorages = 0;
+        if(savedStorageData != null) {
+            amountOfStorages = savedStorageData.size();
+        }
 
         return ModUtils.
                 breakComponentLine(Component.translatable("lore.unifiedstorage.network_card"),
-                        savedStorageData.size(), 0);
+                        amountOfStorages, 0);
 
     }
 }

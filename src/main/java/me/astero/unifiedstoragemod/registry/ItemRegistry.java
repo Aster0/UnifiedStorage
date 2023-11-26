@@ -27,7 +27,7 @@ public class ItemRegistry {
 
     public static RegistryObject<Item> NETWORK_CARD =
             ObjectRegistry.registerObject("network_card", new ItemData<Item>(
-                    () -> new NetworkCardItem(new Item.Properties())), true);
+                    () -> new NetworkCardItem(new Item.Properties().stacksTo(1))), true);
 
 
 //    private static RegistryObject<Item> WIRELESS_STORAGE =

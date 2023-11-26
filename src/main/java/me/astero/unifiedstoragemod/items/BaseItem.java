@@ -18,7 +18,7 @@ public abstract class BaseItem extends Item {
         super(properties);
     }
 
-    public abstract List<Component> addShiftText();
+    public abstract List<Component> addShiftText(ItemStack itemStack);
 
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
@@ -28,7 +28,7 @@ public abstract class BaseItem extends Item {
 
 
 
-            components.addAll(addShiftText());
+            components.addAll(addShiftText(stack));
 
 
 

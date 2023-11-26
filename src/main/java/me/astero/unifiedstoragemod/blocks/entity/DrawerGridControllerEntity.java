@@ -1,11 +1,13 @@
 package me.astero.unifiedstoragemod.blocks.entity;
 
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.items.NetworkCardItem;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.menu.GridControllerMenu;
+import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
@@ -361,6 +363,16 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         mergedStorageContents.clear();
         queueToRemoveChest.clear();
 
+
+        IItemHandler iItemHandler = getNetworkInventory();
+
+        ItemStack itemStack = iItemHandler.getStackInSlot(0);
+
+
+        if(itemStack.getItem() instanceof NetworkCardItem networkCardItem) {
+
+            System.out.println(networkCardItem.getStorageLocations(itemStack));
+        }
 
         for(CustomBlockPosData customBlockPosData : editedChestLocations) {
 
