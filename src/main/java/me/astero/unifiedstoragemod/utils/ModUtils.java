@@ -54,4 +54,28 @@ public class ModUtils {
 
 
     }
+
+    public static List<Component> breakComponentLine(MutableComponent component, int ...amount) {
+
+
+        List<Component> components = new ArrayList<>();
+        String[] componentString = component.getString().split("\n");
+
+        int index = 0;
+
+        for(String str : componentString) {
+
+
+            components.add(Component.literal(str.replace("%amount%", String.valueOf(amount[index]))));
+
+            if(str.contains("%amount%")) {
+                index++;
+            }
+        }
+
+
+        return components;
+
+
+    }
 }

@@ -28,7 +28,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
     private CustomSearchField searchField;
     private CustomScrollWheel customScrollWheel;
-    private NetworkSlotGUI<GridControllerMenu> networkSlotGUI;
+    private NetworkSlotGUI networkSlotGUI;
     private UpgradeSlotGUI<GridControllerMenu> upgradeSlotGUI;
 
     private int scrollbarPosition = 0;
@@ -69,14 +69,10 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                 this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
-        networkSlotGUI = new NetworkSlotGUI(1, this.leftPos + 210, this.topPos,
-                210, 0);
+        networkSlotGUI = menu.getNetworkSlotGUI();
 
-        upgradeSlotGUI = new UpgradeSlotGUI(3, this.leftPos + 210, this.topPos + 50,
-                210, 50);
+        upgradeSlotGUI = menu.getUpgradeSlotGUI();
 
-        networkSlotGUI.create(menu);
-        upgradeSlotGUI.create(menu);
 
 
     }
@@ -116,11 +112,11 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
 
-        networkSlotGUI.tick(guiGraphics);
-        upgradeSlotGUI.tick(guiGraphics);
+        networkSlotGUI.tick(guiGraphics, leftPos, topPos);
+        upgradeSlotGUI.tick(guiGraphics, leftPos, topPos);
 
 
-        customScrollWheel.tick(guiGraphics);
+        customScrollWheel.tick(guiGraphics, 0,0);
 
 
         renderCustomSlot(guiGraphics);
@@ -197,9 +193,6 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-
-
-
         if(slot instanceof CustomGUISlot v) {
 
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
@@ -215,7 +208,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 int modifiedValue = Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
                 boolean quickMove = false;
 
-                System.out.println(clickType);
+
                 if(clickType == ClickType.PICKUP) {
 
 

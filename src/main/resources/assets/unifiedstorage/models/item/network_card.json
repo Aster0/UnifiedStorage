@@ -1,3 +1,7 @@
 {
-  "parent" : "minecraft:item/iron_ingot"
+  "parent" : "minecraft:item/generated",
+
+  "textures" : {
+    "layer0" : "unifiedstorage:item/upgrade"
+  }
 }

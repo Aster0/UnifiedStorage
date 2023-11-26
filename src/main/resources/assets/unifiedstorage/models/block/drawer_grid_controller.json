@@ -1,9 +1,11 @@
 {
   "parent" : "minecraft:block/orientable",
   "textures" : {
-    "top" : "unifiedstorage:block/storage_bottom",
+    "particle" : "unifiedstorage:block/storage_top",
+    "top" : "unifiedstorage:block/storage_top",
     "front" : "unifiedstorage:block/storage_front",
-    "side" : "unifiedstorage:block/storage_side"
+    "side" : "unifiedstorage:block/storage_side",
+    "bottom" : "unifiedstorage:block/storage_bottom"
 
   }
 }

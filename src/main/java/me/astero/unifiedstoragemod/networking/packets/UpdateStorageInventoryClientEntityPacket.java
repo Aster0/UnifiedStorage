@@ -20,18 +20,20 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
     BlockPos blockPos;
     int amount, slotIndex;
     ItemStack itemStack;
-    boolean quickMove;
+    boolean quickMove, take;
 
 
 
 
-    public UpdateStorageInventoryClientEntityPacket(BlockPos blockPos, int amount, ItemStack itemStack, int slotIndex, boolean quickMove) {
+    public UpdateStorageInventoryClientEntityPacket(BlockPos blockPos, int amount,
+                                                    ItemStack itemStack, int slotIndex, boolean quickMove, boolean take) {
 
         this.blockPos = blockPos;
         this.amount = amount;
         this.itemStack = itemStack;
         this.slotIndex = slotIndex;
         this.quickMove = quickMove;
+        this.take = take;
 
     }
 
@@ -44,6 +46,7 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
         this.itemStack = buffer.readItem();
         this.slotIndex = buffer.readInt();
         this.quickMove = buffer.readBoolean();
+        this.take = buffer.readBoolean();
 
 
 
@@ -61,6 +64,7 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
         buffer.writeItemStack(this.itemStack, false);
         buffer.writeInt(this.slotIndex);
         buffer.writeBoolean(this.quickMove);
+        buffer.writeBoolean(this.take);
 
     }
 
@@ -90,7 +94,7 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
 
                     if(abstractMenu instanceof GridControllerMenu menu) {
 
-                        menu.updateInsertVisual(d, packet.itemStack, packet.amount, packet.quickMove, packet.slotIndex);
+                        menu.updateInsertVisual(d, packet.itemStack, packet.amount, packet.quickMove, packet.slotIndex, packet.take);
                     }
 
                 }

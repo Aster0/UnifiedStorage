@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
+import com.mojang.blaze3d.systems.RenderSystem;
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
@@ -29,6 +30,9 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
 
     private static final ResourceLocation UPGRADE_START =
             new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
+
+    private static final ResourceLocation NETWORK_CARD_SHADOW =
+            new ResourceLocation(ModUtils.MODID, "textures/gui/network_shadow.png");
     int numberOfSlots = 1, x, y, rawX, rawY;
 
     protected SlotType slotType;
@@ -75,22 +79,50 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
     }
 
     @Override
-    public void tick(GuiGraphics guiGraphics) {
+    public void tick(GuiGraphics guiGraphics, int leftPos, int topPos) {
 
-        guiGraphics.blit(UPGRADE_START, x, y,   0, 0,
+
+
+        guiGraphics.blit(UPGRADE_START, leftPos + x, topPos + y,   0, 0,
                 32, 30);
 
 
-        int nextY = y;
+
+        int nextYForIcon = topPos + y + 8;
+
+        RenderSystem.enableBlend(); // Enable alpha blending
+        RenderSystem.defaultBlendFunc(); // Set the default blend function
+
+        guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,   80, 2,
+                16, 16);
+
+        int nextY = topPos + y;
+
         for(int i = 1; i < numberOfSlots; i++) {
             if(i == 1) nextY += 25;
             else nextY +=20;
 
-            guiGraphics.blit(UPGRADE_START, x, nextY,   42, 0,
+            guiGraphics.blit(UPGRADE_START, leftPos + x, nextY,   42, 0,
                     31, 25);
+
+
+            nextYForIcon +=20;
+
+
+            guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,   80, 2,
+                    16, 16);
+
+
+
+
+
         }
 
-        //guiGraphics.renderItem(new ItemStack(Items.IRON_INGOT), this.x + 8, this.y + 7);
+        RenderSystem.disableBlend(); // Disable alpha blending after rendering
+
+
+
+
     }
 
     @Override

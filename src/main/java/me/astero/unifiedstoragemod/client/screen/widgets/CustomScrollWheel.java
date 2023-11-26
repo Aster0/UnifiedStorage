@@ -49,7 +49,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
     }
 
     @Override
-    public void tick(GuiGraphics guiGraphics) {
+    public void tick(GuiGraphics guiGraphics, int leftPos, int topPos) {
 
 
         //offsetY = (int) lerp(offsetY, targetedY, 0.5f);
