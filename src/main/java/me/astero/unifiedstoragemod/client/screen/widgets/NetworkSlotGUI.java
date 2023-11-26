@@ -19,8 +19,8 @@ public class NetworkSlotGUI<T extends Menu> extends UpgradeSlotGUI<T> {
             new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
     int numberOfSlots = 1, x, y, rawX, rawY;
 
-    public NetworkSlotGUI(int numberOfSlots, int x, int y, int rawX, int rawY) {
-        super(numberOfSlots, x, y, rawX, rawY);
+    public NetworkSlotGUI(int numberOfSlots, int x, int y, int rawX, int rawY, ItemStackHandler itemStackHandler) {
+        super(numberOfSlots, x, y, rawX, rawY, itemStackHandler);
 
         this.numberOfSlots = numberOfSlots;
         this.x = x;

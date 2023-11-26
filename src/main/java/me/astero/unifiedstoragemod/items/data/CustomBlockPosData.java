@@ -32,5 +32,13 @@ public class CustomBlockPosData {
         return level.getBlockEntity(blockPos);
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        if(obj instanceof CustomBlockPosData customBlockPosData) {
 
+            return customBlockPosData.blockPos.equals(this.blockPos);
+        }
+
+        return false;
+    }
 }

@@ -49,9 +49,15 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     private List<CustomBlockPosData> editedChestLocations = new ArrayList<>();
 
 
-    private ItemStackHandler inventory = new ItemStackHandler(27);
+    private ItemStackHandler networkInventory = new ItemStackHandler(1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+            setChanged();
+        }
+    };
 
-    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.inventory);
+    private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.networkInventory);
 
     public DrawerGridControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.DRAWER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
@@ -195,6 +201,8 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
 
+        this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
+
 
 
 
@@ -287,7 +295,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
         CompoundTag modNbt = new CompoundTag();
-
+        modNbt.put("network_card", this.getNetworkInventory().serializeNBT());
 
         for(int i = 0; i < chestLocations.size(); i++) {
             modNbt.putString("chest" + i, this.chestLocations.get(i));
@@ -330,13 +338,11 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         return saveWithoutMetadata();
     }
 
-    public ItemStackHandler getInventory() {
-        return inventory;
+    public ItemStackHandler getNetworkInventory() {
+        return networkInventory;
     }
 
     public LazyOptional<ItemStackHandler> getOptional() {
-
-
         return optional;
     }
 

@@ -35,15 +35,18 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
             new ResourceLocation(ModUtils.MODID, "textures/gui/network_shadow.png");
     int numberOfSlots = 1, x, y, rawX, rawY;
 
+    private ItemStackHandler itemStackHandler;
+
     protected SlotType slotType;
 
-    public UpgradeSlotGUI(int numberOfSlots, int x, int y, int rawX, int rawY) {
+    public UpgradeSlotGUI(int numberOfSlots, int x, int y, int rawX, int rawY, ItemStackHandler itemStackHandler) {
 
         this.numberOfSlots = numberOfSlots;
         this.x = x;
         this.y = y;
         this.rawX = rawX;
         this.rawY = rawY;
+        this.itemStackHandler = itemStackHandler;
 
     }
 
@@ -52,20 +55,18 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
 
         int nextY = this.rawY + 7;
 
-
-
-
-
+        if(itemStackHandler == null)
+            itemStackHandler = new ItemStackHandler(1);
 
 
         for(int i = 0; i < numberOfSlots; i++) {
 
-            Slot slot = new UpgradeSlot(new ItemStackHandler(1),
+            Slot slot = new UpgradeSlot(itemStackHandler,
                     0, this.rawX + 8, nextY);
 
             if(slotType == SlotType.NETWORK) {
-                slot = new NetworkSlot(new ItemStackHandler(1),
-                        0, this.rawX + 8, nextY);
+                slot = new NetworkSlot(itemStackHandler,
+                        i, this.rawX + 8, nextY);
             }
 
             menu.addCustomSlot(slot);

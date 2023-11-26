@@ -6,21 +6,16 @@ import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
-import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
 import net.minecraft.world.inventory.ContainerLevelAccess;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
@@ -284,12 +279,12 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
     private void createUpgradeSlots() {
 
         networkSlotGUI = new NetworkSlotGUI<>(1,  210, 0,
-                210, 0);
+                210, 0, drawerGridControllerEntity.getNetworkInventory());
 
         networkSlotGUI.create(this);
 
         upgradeSlotGUI = new UpgradeSlotGUI<>(3,  210, 50,
-                210, 50);
+                210, 50, null);
 
         upgradeSlotGUI.create(this);
     }

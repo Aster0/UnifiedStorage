@@ -50,7 +50,8 @@ public class NetworkCardItem extends BaseItem {
 
     private final List<SavedStorageData> savedStorageData = new ArrayList<>();
 
-    public void saveNbt(ItemStack itemStack, String key, String value) {
+    public void saveNbt(ItemStack itemStack, String key) {
+
 
         CompoundTag nbt = itemStack.getTag();
 
@@ -58,19 +59,21 @@ public class NetworkCardItem extends BaseItem {
             nbt = new CompoundTag();
 
 
-        final String sValue = ModUtils.serializeBlockPosNbt(value);
-
-
         CompoundTag innerNbt = new CompoundTag();
-        innerNbt.putString(key, sValue);
 
 
+        for(int i = 0; i < savedStorageData.size(); i++) {
+            innerNbt.putString("chest" + i, this.savedStorageData.get(i)
+                    .getCustomBlockPosData().toString());
 
+            System.out.println("chest" + i + " "  +this.savedStorageData.get(i)
+                    .getCustomBlockPosData().toString());
+        }
 
         nbt.put(ModUtils.MODID, innerNbt);
 
-        itemStack.setTag(nbt);
 
+        itemStack.setTag(nbt);
 
     }
 
@@ -100,115 +103,38 @@ public class NetworkCardItem extends BaseItem {
     }
 
 
-    private void addStorageData(LazyOptional<IItemHandler> inventory, String blockCoordinate) {
-
-        checkIfStorageExists(ModUtils.convertStringToBlockData(blockCoordinate.split(", ")));
-
-//        System.out.println("test" + savedStorageData.size());
-//        SavedStorageData savedStorageData = new SavedStorageData(inventory,
-//                ModUtils.convertStringToBlockData(blockCoordinate.split(", ")));
-//
-//
-//        if(!this.savedStorageData.contains(savedStorageData)) {
-//            this.savedStorageData.add(savedStorageData);
-//        }
-//        else {
-//            System.out.println("Already saved before");
-//        }
-
-    }
-
-    private int test = 0;
-    private void checkIfStorageExists(CustomBlockPosData customBlockPosData) {
-        // mainly for double chests
-
-        BlockPos blockPos = customBlockPosData.getBlockPos();
+    private boolean addStorageData(String blockCoordinate, ItemStack itemStack) {
 
 
 
-        BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(blockPos);
+        SavedStorageData savedStorageData = new SavedStorageData(
+                ModUtils.convertStringToBlockData(blockCoordinate.split(", ")));
 
 
-        Block block = Minecraft.getInstance().level.getBlockState(blockPos).getBlock();
+        boolean added = false;
+
+        if(!this.savedStorageData.contains(savedStorageData)) {
+            this.savedStorageData.add(savedStorageData);
 
 
 
-        if(blockEntity instanceof ChestBlockEntity chestBlockEntity) {
+
+            saveNbt(itemStack, "storages");
 
 
+            added = true;
+        }
+        else {
+            System.out.println("removed");
+            this.savedStorageData.removeIf((value) ->
+                    value.getCustomBlockPosData()
+                            .equals(savedStorageData.getCustomBlockPosData()));
 
-            System.out.println("CLICKED ON " + chestBlockEntity.getUpdateTag());
         }
 
-
-
-
-
-
-
-
+        return added;
 
     }
-
-
-    public BlockEntity lookInAllDirections(ChestBlockEntity currentChestBlock, ChestBlockEntity parentChestBlock, boolean nested) {
-
-
-
-
-
-        ChestType clickedChestType = currentChestBlock.getBlockState().getValue(ChestBlock.TYPE);
-        System.out.println(clickedChestType);
-
-//
-//
-//        System.out.println("current " + clickedChestType);
-//        ChestType lookingForType = clickedChestType == ChestType.RIGHT ? ChestType.LEFT : ChestType.RIGHT;
-//
-//
-//        System.out.println(lookingForType);
-//
-//
-//        BlockPos[] directions = {currentChestBlock.getBlockPos().west(),
-//                currentChestBlock.getBlockPos().east(),
-//                currentChestBlock.getBlockPos().south(),
-//                currentChestBlock.getBlockPos().north()};
-//
-//
-//        for(BlockPos pos : directions) {
-//
-//            BlockEntity entity = Minecraft.getInstance().level.getBlockEntity(pos);
-//
-//            if(entity instanceof ChestBlockEntity chestBlockEntity) {
-//
-//
-//
-//                if(chestBlockEntity == parentChestBlock) {
-//
-//                    return chestBlockEntity;
-//
-//                }
-//
-//                lookInAllDirections(chestBlockEntity, parentChestBlock, false);
-//
-//            }
-//        }
-
-
-
-        return null;
-
-
-    }
-
-    private ChestType getLookingForChestType(ChestBlockEntity chestBlockEntity) {
-        ChestType clickedChestType = chestBlockEntity.getBlockState().getValue(ChestBlock.TYPE);
-
-        ChestType lookingForType = clickedChestType == ChestType.RIGHT ? ChestType.LEFT : ChestType.RIGHT;
-
-        return lookingForType;
-    }
-
 
 
     @Override
@@ -233,75 +159,25 @@ public class NetworkCardItem extends BaseItem {
                         .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
 
 
-                    LazyOptional<IItemHandler> inventory = hitBlockEntity
-                            .getCapability(ForgeCapabilities.ITEM_HANDLER);
-
-                    addStorageData(inventory,
-                            ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()));
 
 
 
-                    player.displayClientMessage(Component.translatable("language."
-                            + ModUtils.MODID + ".linked_storage"), true);
+
+
+                    String language = "language."
+                                    + ModUtils.MODID + ".unlinked_storage";
+
+
+                    if(addStorageData(ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()),
+                            itemStack)) {
+                        language = "language."
+                                + ModUtils.MODID + ".linked_storage";
+                    }
+
+                    player.displayClientMessage(Component.translatable(language), true);
                 }
 
-
-
-//
-//                if(hitBlockEntity instanceof DrawerGridControllerEntity entity) {
-//
-//                    for(ItemIdentifier d : entity.mergedStorageContents) {
-//                        System.out.println(d.getItemStack());
-//                    }
-//
-//                    saveNbt(itemStack, "grid_pos", entity.getBlockPos().toString());
-//                }
-//                else if(hitBlockEntity
-//                        .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
-//
-//                    System.out.println("A storage block");
-//
-//                    CustomBlockPosData gridPos = loadNbt(itemStack, "grid_pos");
-//
-//
-//                    if(gridPos == null) {
-//
-//
-//
-//                        // Send the action bar message to the player
-//                        player.displayClientMessage(Component.translatable("language."
-//                                        + ModUtils.MODID + ".no_grid_for_chest_selection"), true);
-//
-//                        return super.use(level, player, interactionHand);
-//
-//                    }
-//
-//                    BlockEntity blockEntity = level.getBlockEntity(gridPos.getBlockPos());
-//
-//
-//                    if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
-//
-//
-//
-//                        drawerGridControllerEntity.addChestLocations(
-//                                ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()));
-//
-//
-//                    }
-//
-//
-//
-//
-//
-//                }
-
-
             }
-
-
-
-
-
 
         }
 
@@ -319,7 +195,7 @@ public class NetworkCardItem extends BaseItem {
 
         return ModUtils.
                 breakComponentLine(Component.translatable("lore.unifiedstorage.network_card"),
-                        0, 0);
+                        savedStorageData.size(), 0);
 
     }
 }
