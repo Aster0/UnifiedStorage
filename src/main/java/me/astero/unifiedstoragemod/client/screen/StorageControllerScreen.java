@@ -29,8 +29,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
     private CustomSearchField searchField;
     private CustomScrollWheel customScrollWheel;
-    private NetworkSlotGUI networkSlotGUI;
-    private UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI;
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
@@ -70,14 +68,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         registerSearchField();
 
 
-
-        networkSlotGUI = menu.getNetworkSlotGUI();
-
-        upgradeSlotGUI = menu.getUpgradeSlotGUI();
-
-
-
-
     }
 
 
@@ -115,8 +105,8 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
 
-        networkSlotGUI.tick(guiGraphics, leftPos, topPos);
-        upgradeSlotGUI.tick(guiGraphics, leftPos, topPos);
+
+        ICustomWidgetComponent.tickAll(menu.getWidgets(), guiGraphics, leftPos, topPos);
 
         if(savedPages != menu.getTotalPages()) {
 
@@ -496,26 +486,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
         }
-        else if(this.hoveredSlot instanceof NetworkSlot networkSlot) {
 
 
-            if(networkSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
-
-                networkSlotGUI.renderCustomTooltip(guiGraphics, this.font, x, y);
-            }
-
-        }
-        else if(this.hoveredSlot instanceof UpgradeSlot upgradeSlot) {
-
-
-            if(upgradeSlot.getItem().isEmpty()) {  // if there's nothing, we give them a hint on what to put.
-
-                upgradeSlotGUI.renderCustomTooltip(guiGraphics, this.font, x, y);
-            }
-
-        }
-
-
+        ICustomWidgetComponent.renderToolTipAll(menu.getWidgets(), guiGraphics, this.font, x, y, this.hoveredSlot);
 
         super.renderTooltip(guiGraphics, x, y);
     }

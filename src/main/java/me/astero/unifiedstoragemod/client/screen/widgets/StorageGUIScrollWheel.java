@@ -1,6 +1,9 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.world.inventory.Slot;
 
 public class StorageGUIScrollWheel extends CustomScrollWheel {
 
@@ -24,6 +27,7 @@ public class StorageGUIScrollWheel extends CustomScrollWheel {
     public void onDragUp() {
         super.currentPage = menu.previousPage();
     }
+
 
 
 }

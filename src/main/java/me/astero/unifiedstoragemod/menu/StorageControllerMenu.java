@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
+import me.astero.unifiedstoragemod.client.screen.widgets.ICustomWidgetComponent;
 import me.astero.unifiedstoragemod.client.screen.widgets.NetworkSlotGUI;
 import me.astero.unifiedstoragemod.client.screen.widgets.UpgradeSlotGUI;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
@@ -24,6 +25,8 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
+import java.util.List;
+
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
@@ -40,8 +43,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     private Inventory pInventory;
 
-    private NetworkSlotGUI<StorageControllerMenu> networkSlotGUI;
-    private UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI;
+
 
     public int lastClickedSlot;
 
@@ -78,13 +80,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
 
-    public NetworkSlotGUI<StorageControllerMenu> getNetworkSlotGUI() {
-        return networkSlotGUI;
-    }
-
-    public UpgradeSlotGUI<StorageControllerMenu> getUpgradeSlotGUI() {
-        return upgradeSlotGUI;
-    }
 
     public Inventory getPlayerInventory() {
         return pInventory;
@@ -284,15 +279,20 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     private void createUpgradeSlots() {
 
-        networkSlotGUI = new NetworkSlotGUI<>(1,  210, 0,
+        NetworkSlotGUI<StorageControllerMenu> networkSlotGUI = new NetworkSlotGUI<>(1,  210, 0,
                 210, 0, storageControllerEntity.getNetworkInventory());
 
         networkSlotGUI.create(this);
 
-        upgradeSlotGUI = new UpgradeSlotGUI<>(3,  210, 50,
+        UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI = new UpgradeSlotGUI<>(3,  210, 50,
                 210, 50, null);
 
         upgradeSlotGUI.create(this);
+
+
+        widgets.add(networkSlotGUI);
+        widgets.add(upgradeSlotGUI);
+
     }
 
     @Override

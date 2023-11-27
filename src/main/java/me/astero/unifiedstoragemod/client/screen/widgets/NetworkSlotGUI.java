@@ -1,12 +1,14 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import me.astero.unifiedstoragemod.menu.Menu;
+import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -35,14 +37,22 @@ public class NetworkSlotGUI<T extends Menu> extends UpgradeSlotGUI<T> {
 
 
     @Override
-    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y) {
-        List<Component> componentList = new ArrayList<>();
-        componentList.add(Component.translatable("container.unifiedstorage.networkSlotTitle"));
-        componentList.addAll(ModUtils.breakComponentLine(Component.translatable(
-                "container.unifiedstorage.networkSlotDescription")));
+    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y, Slot slot) {
+
+        if(slot instanceof NetworkSlot) {
+
+            if(!slot.getItem().isEmpty())
+                return;
+
+            List<Component> componentList = new ArrayList<>();
+            componentList.add(Component.translatable("container.unifiedstorage.networkSlotTitle"));
+            componentList.addAll(ModUtils.breakComponentLine(Component.translatable(
+                    "container.unifiedstorage.networkSlotDescription")));
 
 
-        super.renderCustomTooltip(componentList, guiGraphics, font, x, y);
+            super.renderCustomTooltip(componentList, guiGraphics, font, x, y, slot);
+        }
+
 
     }
 }

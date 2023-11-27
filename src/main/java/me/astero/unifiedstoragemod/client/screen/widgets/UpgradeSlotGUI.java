@@ -147,11 +147,18 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
     }
 
     @Override
-    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y) {
-        List<Component> componentList = new ArrayList<>();
-        componentList.add(Component.translatable("container.unifiedstorage UpgradeSlotTitle"));
+    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y, Slot slot) {
 
-        super.renderCustomTooltip(componentList, guiGraphics, font, x, y);
+        if(slot instanceof UpgradeSlot) {
+
+            if(!slot.getItem().isEmpty())
+                return;
+
+            List<Component> componentList = new ArrayList<>();
+            componentList.add(Component.translatable("container.unifiedstorage UpgradeSlotTitle"));
+
+            super.renderCustomTooltip(componentList, guiGraphics, font, x, y, slot);
+        }
 
     }
 }

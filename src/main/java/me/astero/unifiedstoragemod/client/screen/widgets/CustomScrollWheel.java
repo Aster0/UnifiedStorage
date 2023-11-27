@@ -1,9 +1,11 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.Slot;
 
 public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
@@ -176,8 +178,8 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
     @Override
     public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
 
-
-        if(pages == 0)
+        
+        if(pages <= 1)
             return;
 
 
@@ -230,5 +232,10 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
     public abstract void onDragDown();
     public abstract void onDragUp();
+
+    @Override
+    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y, Slot slot) {
+
+    }
 
 }
