@@ -254,8 +254,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                 .orElse(new ItemStackHandler(0));
 
 
-
-
         for(int i = 0; i < chestInventory.getSlots(); i++) {
 
             ItemStack chestItemStack = chestInventory.getStackInSlot(i);

@@ -1,9 +1,7 @@
 package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
-import me.astero.unifiedstoragemod.client.screen.widgets.ICustomWidgetComponent;
-import me.astero.unifiedstoragemod.client.screen.widgets.NetworkSlotGUI;
-import me.astero.unifiedstoragemod.client.screen.widgets.UpgradeSlotGUI;
+import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
@@ -284,14 +282,21 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         networkSlotGUI.create(this);
 
-        UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI = new UpgradeSlotGUI<>(3,  210, 50,
-                210, 50, null);
+        UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI = new UpgradeSlotGUI<>(3,  210, 40,
+                210, 40, null, SlotType.UPGRADE);
 
         upgradeSlotGUI.create(this);
 
 
+        VisualItemSlotGUI<StorageControllerMenu> visualItemSlotGUI = new VisualItemSlotGUI<>(1,  210, 120,
+                210, 120, null);
+
+        visualItemSlotGUI.create(this);
+
+
         widgets.add(networkSlotGUI);
         widgets.add(upgradeSlotGUI);
+        widgets.add(visualItemSlotGUI);
 
     }
 

@@ -14,7 +14,10 @@
   "container.unifiedstorage.searchField" : "Search Items...",
   "container.unifiedstorage.networkSlotTitle" : "Insert Network Card",
   "container.unifiedstorage.networkSlotDescription" : "§7Network card links different\n§7storage blocks together.",
-  "container.unifiedstorage UpgradeSlotTitle" : "Insert Upgrade Card"
+  "container.unifiedstorage.upgradeSlotTitle" : "Insert Upgrade Card",
+  "container.unifiedstorage.upgradeSlotDescription" : "§7Upgrading provides a way to \n§7enhance the controller's capabilities.",
+  "container.unifiedstorage.visualItemSlotTitle" : "Insert an Item",
+  "container.unifiedstorage.visualItemSlotDescription" : "§7Providing an item gives a visual for\n§7this controller block like an item frame."
 
 
 }

@@ -4,6 +4,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
+import me.astero.unifiedstoragemod.menu.data.VisualBlockSlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
@@ -19,27 +20,19 @@ import java.util.List;
 import java.util.Optional;
 
 
-
-enum SlotType {
-    UPGRADE,
-    NETWORK,
-    FILTER
-}
-
 public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements ICustomWidgetComponent {
 
     private static final ResourceLocation UPGRADE_START =
             new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
 
-    private static final ResourceLocation NETWORK_CARD_SHADOW =
-            new ResourceLocation(ModUtils.MODID, "textures/gui/network_shadow.png");
     int numberOfSlots = 1, x, y, rawX, rawY;
 
     private ItemStackHandler itemStackHandler;
 
     protected SlotType slotType;
 
-    public UpgradeSlotGUI(int numberOfSlots, int x, int y, int rawX, int rawY, ItemStackHandler itemStackHandler) {
+    public UpgradeSlotGUI(int numberOfSlots, int x, int y, int rawX, int rawY, ItemStackHandler itemStackHandler,
+                          SlotType slotType) {
 
         this.numberOfSlots = numberOfSlots;
         this.x = x;
@@ -47,6 +40,9 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
         this.rawX = rawX;
         this.rawY = rawY;
         this.itemStackHandler = itemStackHandler;
+
+        this.slotType = slotType;
+
 
     }
 
@@ -68,6 +64,10 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
                 slot = new NetworkSlot(itemStackHandler,
                         i, this.rawX + 8, nextY);
             }
+            else if(slotType == SlotType.VISUAL_BLOCK) {
+                slot = new VisualBlockSlot(itemStackHandler,
+                        i, this.rawX + 8, nextY);
+            }
 
             menu.addCustomSlot(slot);
 
@@ -84,6 +84,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
 
 
 
+
         guiGraphics.blit(UPGRADE_START, leftPos + x, topPos + y,   0, 0,
                 32, 30);
 
@@ -94,7 +95,8 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
         RenderSystem.enableBlend(); // Enable alpha blending
         RenderSystem.defaultBlendFunc(); // Set the default blend function
 
-        guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,   80, 2,
+        guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,
+                slotType.getIconHeight(), slotType.getIconWidth(),
                 16, 16);
 
         int nextY = topPos + y;
@@ -110,8 +112,9 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
             nextYForIcon +=20;
 
 
-            guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,   80, 2,
-                    16, 16);
+            guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,
+                    slotType.getIconHeight(), slotType.getIconWidth(),
+                    16, 16); // shadow
 
 
 
@@ -155,7 +158,9 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
                 return;
 
             List<Component> componentList = new ArrayList<>();
-            componentList.add(Component.translatable("container.unifiedstorage UpgradeSlotTitle"));
+            componentList.add(Component.translatable("container.unifiedstorage.upgradeSlotTitle"));
+            componentList.addAll(ModUtils.breakComponentLine(Component.translatable(
+                    "container.unifiedstorage.upgradeSlotDescription")));
 
             super.renderCustomTooltip(componentList, guiGraphics, font, x, y, slot);
         }
