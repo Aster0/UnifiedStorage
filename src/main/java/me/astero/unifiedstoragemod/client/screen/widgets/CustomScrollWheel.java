@@ -177,6 +177,8 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
     public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
 
 
+        if(pages == 0)
+            return;
 
 
         if(rawDelta == -1) { // scroll down
