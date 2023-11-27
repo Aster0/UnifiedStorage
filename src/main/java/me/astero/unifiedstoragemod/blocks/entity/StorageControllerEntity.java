@@ -451,7 +451,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         for(SavedStorageData customBlockPosData : queueToRemoveChest) {
 
-      
+
             networkCardItem.getStorageLocations(itemStack).remove(customBlockPosData);
             networkCardItem.saveNbt(itemStack);
 

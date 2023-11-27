@@ -4,7 +4,7 @@
   "lore.unifiedstorage.default" : "§7Press §fSHIFT §7to learn more.",
   "item.unifiedstorage.grid_wrench" : "Grid Wrench",
   "item.unifiedstorage.network_card" : "Network Card",
-  "lore.unifiedstorage.network_card" : "\n§7\"This item links storages and\n§7or terminal blocks together\"\n\n§4*Don't link a double chest twice!\n\n§a[%amount%]§c storages have been linked.\n§a[%amount%]§c terminal has been linked",
+  "lore.unifiedstorage.network_card" : "\n§7\"This item links storages and\n§7or terminal blocks together\"\n\n§4*Don't link a double chest twice!\n\n§7Usage: SHIFT+RIGHT-CLICK\n\n§a[%amount%]§c storages have been linked.\n§a[%amount%]§c terminal has been linked",
   "lore.unifiedstorage.storage_controller" : "\n§7\"Use a network card to link\n§7various storages together to\n§7see it as one unified storage\"",
   "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a §c[Grid Controller] §fbefore continuing.",
   "language.unifiedstorage.linked_storage" : "§aSuccessfully linked this storage.",
