@@ -4,12 +4,13 @@ import me.astero.unifiedstoragemod.blocks.entity.handler.NetworkCardItemStackHan
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.NetworkCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
+import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
-import me.astero.unifiedstoragemod.menu.GridControllerMenu;
-import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
@@ -38,7 +39,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuProvider {
+public class StorageControllerEntity extends BaseBlockEntity implements MenuProvider {
 
 
 
@@ -53,6 +54,8 @@ public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuP
     private List<SavedStorageData> editedChestLocations = new ArrayList<>();
 
 
+
+
     private ItemStackHandler networkInventory =
             new NetworkCardItemStackHandler<>(this) {
 
@@ -65,10 +68,11 @@ public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuP
 
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.networkInventory);
 
-    public DrawerGridControllerEntity(BlockPos pos, BlockState state) {
+    public StorageControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.DRAWER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
 
     }
+
 
 
     public List<SavedStorageData> getEditedChestLocations() {
@@ -362,7 +366,7 @@ public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuP
     public void updateNetworkCardItems(ItemStack itemStack, Player player) {
 
 
-
+        System.out.println(player.level().isClientSide + " YEAAAA");
 
         if(itemStack.getItem() instanceof NetworkCardItem networkCardItem) {
 
@@ -384,7 +388,7 @@ public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuP
 
         }
 
-        if(player.containerMenu instanceof GridControllerMenu menu) {
+        if(player.containerMenu instanceof StorageControllerMenu menu) {
             menu.createBlockEntityInventory();
         }
     }
@@ -394,7 +398,7 @@ public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuP
         mergedStorageContents.clear();
         queueToRemoveChest.clear();
 
-        if(player.containerMenu instanceof GridControllerMenu menu) {
+        if(player.containerMenu instanceof StorageControllerMenu menu) {
             menu.createBlockEntityInventory();
         }
     }
@@ -448,16 +452,28 @@ public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuP
 
         ItemStack itemStack = iItemHandler.getStackInSlot(0);
 
-        updateNetworkCardItems(itemStack, player);
+
+        disabled = itemStack.equals(ItemStack.EMPTY, false);
+        System.out.println(disabled + " disabled " + player.level().isClientSide);
+
+        if(!disabled)
+            updateNetworkCardItems(itemStack, player);
+
+
+        if(player instanceof ServerPlayer serverPlayer) {
+            System.out.println("SERVER PLAYERTR");
+            ModNetwork.sendToClient(new UpdateStorageDisabledEntityPacket(disabled, this.getBlockPos()), serverPlayer);
+        }
 
 
 
-        GridControllerMenu gridControllerMenu = new GridControllerMenu(pControllerId, pInventory, this);
 
-        this.menu = gridControllerMenu;
+        StorageControllerMenu storageControllerMenu = new StorageControllerMenu(pControllerId, pInventory, this);
 
-        return gridControllerMenu;
+        this.menu = storageControllerMenu;
+
+        return storageControllerMenu;
     }
 
-    public GridControllerMenu menu;
+    public StorageControllerMenu menu;
 }

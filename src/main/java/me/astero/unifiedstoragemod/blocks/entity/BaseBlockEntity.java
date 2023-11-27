@@ -14,6 +14,15 @@ public abstract class BaseBlockEntity extends BlockEntity {
         super(p_155228_, p_155229_, p_155230_);
     }
 
+    protected boolean disabled = false;
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
+    public void setDisabled(boolean disabled) {
+        this.disabled = disabled;
+    }
 
     public abstract void updateNetworkCardItems(ItemStack itemStack, Player player);
     public abstract void actionWhenNetworkTakenOut(Player player);

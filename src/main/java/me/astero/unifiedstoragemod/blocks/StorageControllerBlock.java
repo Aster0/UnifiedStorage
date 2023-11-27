@@ -1,7 +1,7 @@
 package me.astero.unifiedstoragemod.blocks;
 
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
-import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
+import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,7 +22,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import org.jetbrains.annotations.Nullable;
 
-public class DrawerGridControllerBlock extends Block implements EntityBlock {
+public class StorageControllerBlock extends Block implements EntityBlock {
 
 
 
@@ -31,7 +31,7 @@ public class DrawerGridControllerBlock extends Block implements EntityBlock {
 
 
 
-    public DrawerGridControllerBlock(Properties properties) {
+    public StorageControllerBlock(Properties properties) {
         super(properties);
 
         this.defaultBlockState().setValue(FACING, Direction.NORTH);
@@ -81,10 +81,10 @@ public class DrawerGridControllerBlock extends Block implements EntityBlock {
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
         if(!level.isClientSide()) {
-            if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
+            if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
 
                 if(player instanceof ServerPlayer sPlayer) {
-                    sPlayer.openMenu(drawerGridControllerEntity, pos);
+                    sPlayer.openMenu(storageControllerEntity, pos);
                     return InteractionResult.SUCCESS;
                 }
 

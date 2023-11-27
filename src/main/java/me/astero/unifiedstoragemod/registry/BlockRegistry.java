@@ -2,7 +2,7 @@ package me.astero.unifiedstoragemod.registry;
 
 
 import me.astero.unifiedstoragemod.blocks.DrawerBlock;
-import me.astero.unifiedstoragemod.blocks.DrawerGridControllerBlock;
+import me.astero.unifiedstoragemod.blocks.StorageControllerBlock;
 import me.astero.unifiedstoragemod.data.BlockData;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.level.block.Block;
@@ -49,9 +49,9 @@ public class BlockRegistry  {
                     .strength(1f), 70)), true);
 
 
-    public static final RegistryObject<Block> DRAWER_GRID_BLOCK = ObjectRegistry.registerObject
-            ("drawer_grid_controller", new BlockData(() ->
-                    new DrawerGridControllerBlock(BlockBehaviour.Properties.of()
+    public static final RegistryObject<Block> STORAGE_CONTROLLER_BLOCK = ObjectRegistry.registerObject
+            ("storage_controller", new BlockData(() ->
+                    new StorageControllerBlock(BlockBehaviour.Properties.of()
                             .mapColor(MapColor.STONE).lightLevel(value -> 10)
                             .strength(1f).requiresCorrectToolForDrops())), true);
 

@@ -1,10 +1,9 @@
 package me.astero.unifiedstoragemod.items;
 
-import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
+import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.utils.ModUtils;
-import net.minecraft.ChatFormatting;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -114,7 +113,7 @@ public class GridWrenchItem extends Item {
 
 
 
-                if(hitBlockEntity instanceof DrawerGridControllerEntity entity) {
+                if(hitBlockEntity instanceof StorageControllerEntity entity) {
 
                     for(ItemIdentifier d : entity.mergedStorageContents) {
                         System.out.println(d.getItemStack());
@@ -145,11 +144,11 @@ public class GridWrenchItem extends Item {
                     BlockEntity blockEntity = level.getBlockEntity(gridPos.getBlockPos());
 
 
-                    if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
+                    if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
 
 
 
-                        drawerGridControllerEntity.addChestLocations(
+                        storageControllerEntity.addChestLocations(
                                 ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()));
 
 

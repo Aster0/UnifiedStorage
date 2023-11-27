@@ -1,16 +1,11 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
-import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.menu.GridControllerMenu;
-import me.astero.unifiedstoragemod.menu.enums.MouseAction;
+import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
+import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.inventory.AbstractContainerMenu;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
@@ -88,11 +83,11 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
 
                 BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(packet.blockPos);
 
-                if(blockEntity instanceof DrawerGridControllerEntity d) {
+                if(blockEntity instanceof StorageControllerEntity d) {
 
                     AbstractContainerMenu abstractMenu = Minecraft.getInstance().player.containerMenu;
 
-                    if(abstractMenu instanceof GridControllerMenu menu) {
+                    if(abstractMenu instanceof StorageControllerMenu menu) {
 
 
                         System.out.println(d.mergedStorageContents.size() + " INSIDE");

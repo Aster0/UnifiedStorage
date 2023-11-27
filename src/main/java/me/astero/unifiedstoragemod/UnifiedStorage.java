@@ -1,10 +1,10 @@
 package me.astero.unifiedstoragemod;
 
 import com.mojang.logging.LogUtils;
+import me.astero.unifiedstoragemod.client.screen.StorageControllerScreen;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import me.astero.unifiedstoragemod.registry.ObjectRegistry;
-import me.astero.unifiedstoragemod.client.screen.GridControllerScreen;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screens.MenuScreens;
@@ -109,7 +109,7 @@ public class UnifiedStorage {
 
             event.enqueueWork(() -> {
 
-                MenuScreens.register(MenuRegistry.GRID_CONTROLLER_MENU.get(), GridControllerScreen::new);
+                MenuScreens.register(MenuRegistry.GRID_CONTROLLER_MENU.get(), StorageControllerScreen::new);
                 ModNetwork.register();
             });
         }

@@ -2,7 +2,7 @@ package me.astero.unifiedstoragemod.registry;
 
 
 import me.astero.unifiedstoragemod.blocks.entity.DrawerBlockEntity;
-import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
+import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
@@ -19,9 +19,9 @@ public class BlockEntityRegistry extends ObjectRegistry {
                    BlockEntityType.Builder.of(DrawerBlockEntity::new, BlockRegistry.DRAWER_BLOCK.get())
                            .build(null));
 
-   public static final RegistryObject<BlockEntityType<DrawerGridControllerEntity>> DRAWER_CONTROLLER_BLOCK_ENTITY =
+   public static final RegistryObject<BlockEntityType<StorageControllerEntity>> DRAWER_CONTROLLER_BLOCK_ENTITY =
            BLOCK_ENTITIES.register("drawer_controller_block_entity", () ->
-                   BlockEntityType.Builder.of(DrawerGridControllerEntity::new, BlockRegistry.DRAWER_GRID_BLOCK.get())
+                   BlockEntityType.Builder.of(StorageControllerEntity::new, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get())
                            .build(null));
 
 

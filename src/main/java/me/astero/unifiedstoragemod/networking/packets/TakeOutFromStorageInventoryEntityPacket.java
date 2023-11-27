@@ -1,9 +1,8 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.menu.GridControllerMenu;
+import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.inventory.InventoryMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
@@ -95,7 +94,7 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
 
 
 
-                if(serverPlayer.containerMenu instanceof GridControllerMenu menu) {
+                if(serverPlayer.containerMenu instanceof StorageControllerMenu menu) {
 
 
                     menu.interactWithMenu(packet.itemStack, packet.take,

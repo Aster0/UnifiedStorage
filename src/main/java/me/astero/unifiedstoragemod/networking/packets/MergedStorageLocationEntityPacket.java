@@ -1,8 +1,8 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.blocks.entity.DrawerGridControllerEntity;
+import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.menu.GridControllerMenu;
+import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -84,15 +84,15 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
 
                 BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(packet.blockPos);
 
-                if(blockEntity instanceof DrawerGridControllerEntity drawerGridControllerEntity) {
-                    drawerGridControllerEntity.setMergedStorageContents(packet.data);
+                if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
+                    storageControllerEntity.setMergedStorageContents(packet.data);
 
 
-                    System.out.println(drawerGridControllerEntity.mergedStorageContents.size() + " SIZE FROM CLIENT");
+                    System.out.println(storageControllerEntity.mergedStorageContents.size() + " SIZE FROM CLIENT");
 
                     Player player = Minecraft.getInstance().player;
 
-                    if(player.containerMenu instanceof GridControllerMenu menu) {
+                    if(player.containerMenu instanceof StorageControllerMenu menu) {
 
 
                         menu.createBlockEntityInventory();

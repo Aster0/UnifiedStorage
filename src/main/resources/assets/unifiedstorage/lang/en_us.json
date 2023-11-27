@@ -1,6 +1,6 @@
 {
   "block.unifiedstorage.drawer_block" : "Mechanical Drawer",
-  "block.unifiedstorage.drawer_grid_controller" : "Drawer Grid Controller",
+  "block.unifiedstorage.storage_controller" : "Storage Controller",
   "lore.unifiedstorage.default" : "§7Press §fSHIFT §7to learn more.",
   "item.unifiedstorage.grid_wrench" : "Grid Wrench",
   "item.unifiedstorage.network_card" : "Network Card",

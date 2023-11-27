@@ -2,13 +2,12 @@ package me.astero.unifiedstoragemod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
-import me.astero.unifiedstoragemod.menu.GridControllerMenu;
+import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import me.astero.unifiedstoragemod.networking.packets.OnNetworkCardInsertClientEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -18,19 +17,20 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
 
-public class GridControllerScreen extends AbstractContainerScreen<GridControllerMenu> {
+public class StorageControllerScreen extends AbstractContainerScreen<StorageControllerMenu> {
 
 
 
     private CustomSearchField searchField;
     private CustomScrollWheel customScrollWheel;
     private NetworkSlotGUI networkSlotGUI;
-    private UpgradeSlotGUI<GridControllerMenu> upgradeSlotGUI;
+    private UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI;
 
     private int scrollbarPosition = 0;
     private int scrollbarHeight = 0;
@@ -52,7 +52,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
 
 
-    public GridControllerScreen(GridControllerMenu menu, Inventory pInventory, Component title) {
+    public StorageControllerScreen(StorageControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
 
         this.imageWidth = 199;
@@ -76,8 +76,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         upgradeSlotGUI = menu.getUpgradeSlotGUI();
 
 
-        System.out.println(menu.getTotalPages() + " a "
-         + menu.getDrawerGridControllerEntity().getLevel().isClientSide);
+
 
     }
 
@@ -130,7 +129,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         }
 
 
-        customScrollWheel.tick(guiGraphics, 0,0);
+        if(customScrollWheel != null)
+            customScrollWheel.tick(guiGraphics, 0,0);
 
 
         renderCustomSlot(guiGraphics);
@@ -204,6 +204,16 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     @Override
     protected void slotClicked(Slot slot, int slotIndex, int btn, ClickType clickType) {
 
+        System.out.println(menu.getDrawerGridControllerEntity().isDisabled());
+        if(menu.getDrawerGridControllerEntity().isDisabled()) {
+
+            if(slot instanceof CustomGUISlot ) {
+                return;
+            }
+
+            super.slotClicked(slot, slotIndex, btn, clickType);
+            return;
+        }
 
 
         // 0 = place down? 1 = place one. clickType cant track this
@@ -288,7 +298,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-            super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
+            if(clickType != ClickType.QUICK_MOVE)
+                super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
 
             return;
         }
@@ -334,14 +345,14 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
     private void renderCustomSlot(GuiGraphics guiGraphics) {
 
 
-        int startingIndex = (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT)
-                + GridControllerMenu.STARTING_SLOT_INDEX;
+        int startingIndex = (0 * StorageControllerMenu.VISIBLE_CONTENT_HEIGHT)
+                + StorageControllerMenu.STARTING_SLOT_INDEX;
 
 
 
         // 36 (first slot) - 62 (last slot)
         for(int i = startingIndex; i <
-                startingIndex + GridControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
+                startingIndex + StorageControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
 
             try {
 
@@ -351,7 +362,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 if(slot instanceof CustomGUISlot customGUISlot) { // just to confirm
 
                     Slot slotIndex = this.menu.slots.get((i -
-                            (0 * GridControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
+                            (0 * StorageControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
                     // but with the new system, we don't really need the scroll page anymore
                     // because we are always dealing with a set slots generated.
                     // not deleting first in case I need it again in the future
@@ -390,8 +401,17 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         if(slot instanceof CustomGUISlot customGUISlot) {
 
+            int actualSlotX = leftPos + slotIndex.x;
+            int actualSlotY = topPos + slotIndex.y;
 
 
+
+            if(menu.getDrawerGridControllerEntity().isDisabled()) {
+                guiGraphics.fill(actualSlotX, actualSlotY, 16 + actualSlotX, 16 + actualSlotY,
+                        0xFF686868);
+
+                return;
+            }
 
 
 
@@ -399,8 +419,8 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
-            int actualSlotX = leftPos + slotIndex.x;
-            int actualSlotY = topPos + slotIndex.y;
+
+
 
             PoseStack poseStack = guiGraphics.pose();
             poseStack.pushPose();

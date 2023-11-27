@@ -1,11 +1,9 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
-import me.astero.unifiedstoragemod.menu.GridControllerMenu;
+import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.inventory.CreativeModeInventoryScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
 
 public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
@@ -26,7 +24,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
     private boolean isDragging, disabled, draggable;
 
 
-    public CustomScrollWheel(int x, int y, int maxY, int pages, GridControllerMenu menu) {
+    public CustomScrollWheel(int x, int y, int maxY, int pages, StorageControllerMenu menu) {
 
         this.x = x;
         this.minY = y;
@@ -113,9 +111,14 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
         // Calculate the total range
         int totalRange = maxY - minY;
 
+
+
+        if(pages == 0) {
+            return 0;
+        }
+
         // Calculate the steps per drag
         int stepsPerDrag = totalRange / pages;
-
         return stepsPerDrag;
     }
     @Override

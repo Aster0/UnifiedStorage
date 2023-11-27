@@ -30,11 +30,15 @@ public class NetworkCardItemStackHandler<T extends BaseBlockEntity> extends Item
         if(slotInStack.equals(ItemStack.EMPTY,false)) {
             blockEntity.actionWhenNetworkTakenOut(blockEntity.getLevel().getPlayerByUUID(
                     Minecraft.getInstance().player.getUUID()));
-
-            System.out.println("taken out");
+            blockEntity.setDisabled(true);
             return;
         }
 
+
+
+
+
+        blockEntity.setDisabled(false);
 
         blockEntity.updateNetworkCardItems(this.getStackInSlot(slot), blockEntity.getLevel().getPlayerByUUID(
                 Minecraft.getInstance().player.getUUID()
