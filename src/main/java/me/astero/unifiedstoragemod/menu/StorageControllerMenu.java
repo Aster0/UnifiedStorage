@@ -289,7 +289,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         VisualItemSlotGUI<StorageControllerMenu> visualItemSlotGUI = new VisualItemSlotGUI<>(1,  210, 120,
-                210, 120, null);
+                210, 120, storageControllerEntity.getVisualItemInventory());
 
         visualItemSlotGUI.create(this);
 

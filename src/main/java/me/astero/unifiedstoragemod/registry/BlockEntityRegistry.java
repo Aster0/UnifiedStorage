@@ -19,8 +19,8 @@ public class BlockEntityRegistry extends ObjectRegistry {
                    BlockEntityType.Builder.of(DrawerBlockEntity::new, BlockRegistry.DRAWER_BLOCK.get())
                            .build(null));
 
-   public static final RegistryObject<BlockEntityType<StorageControllerEntity>> DRAWER_CONTROLLER_BLOCK_ENTITY =
-           BLOCK_ENTITIES.register("drawer_controller_block_entity", () ->
+   public static final RegistryObject<BlockEntityType<StorageControllerEntity>> STORAGE_CONTROLLER_BLOCK_ENTITY =
+           BLOCK_ENTITIES.register("storage_controller_block_entity", () ->
                    BlockEntityType.Builder.of(StorageControllerEntity::new, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get())
                            .build(null));
 

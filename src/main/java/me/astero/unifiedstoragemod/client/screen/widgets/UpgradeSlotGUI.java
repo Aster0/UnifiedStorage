@@ -4,20 +4,17 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
-import me.astero.unifiedstoragemod.menu.data.VisualBlockSlot;
+import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements ICustomWidgetComponent {
@@ -65,7 +62,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
                         i, this.rawX + 8, nextY);
             }
             else if(slotType == SlotType.VISUAL_BLOCK) {
-                slot = new VisualBlockSlot(itemStackHandler,
+                slot = new VisualItemSlot(itemStackHandler,
                         i, this.rawX + 8, nextY);
             }
 

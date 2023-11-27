@@ -53,7 +53,7 @@ public class BlockRegistry  {
             ("storage_controller", new BlockData(() ->
                     new StorageControllerBlock(BlockBehaviour.Properties.of()
                             .mapColor(MapColor.STONE).lightLevel(value -> 10)
-                            .strength(1f).requiresCorrectToolForDrops())), true);
+                            .strength(0.2f).requiresCorrectToolForDrops())), true);
 
 
 

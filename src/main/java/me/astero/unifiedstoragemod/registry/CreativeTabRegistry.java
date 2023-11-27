@@ -2,7 +2,9 @@ package me.astero.unifiedstoragemod.registry;
 
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.registries.Registries;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.*;
+import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.RegistryObject;
 
@@ -18,11 +20,11 @@ public class CreativeTabRegistry {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(
             Registries.CREATIVE_MODE_TAB, ModUtils.MODID);
 
-    // Creates a creative tab with the id "examplemod:example_tab" for the example item, that is placed after the combat tab
-    private static final RegistryObject<CreativeModeTab> MECHANICAL_DRAWER_TAB = CREATIVE_MODE_TABS.register(
-            "mechanical_drawer", () -> CreativeModeTab.builder()
+    private static final RegistryObject<CreativeModeTab> UNIFIED_STORAGE_TAB = CREATIVE_MODE_TABS.register(
+            "unified_storage", () -> CreativeModeTab.builder()
                     .withTabsBefore(CreativeModeTabs.COMBAT)
-                    .icon(() -> Items.ACACIA_BUTTON.getDefaultInstance())
+                    .title(Component.translatable("creative." + ModUtils.MODID + ".tabName"))
+                    .icon(() -> new ItemStack(ItemRegistry.NETWORK_CARD.get()))
                     .displayItems((parameters, output) -> {
 
                         for(Supplier<? extends Item> supplier : TAB_ITEMS) {

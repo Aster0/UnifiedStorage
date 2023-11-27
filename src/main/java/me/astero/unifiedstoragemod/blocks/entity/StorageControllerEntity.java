@@ -56,6 +56,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
+
     private ItemStackHandler networkInventory =
             new NetworkCardItemStackHandler<>(this) {
 
@@ -66,10 +67,21 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                 }
             };
 
+    private ItemStackHandler visualItemInventory = new ItemStackHandler(1) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+
+            setChanged();
+        }
+    };
+
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.networkInventory);
 
+    private final LazyOptional<ItemStackHandler> optionalVisualItem = LazyOptional.of(() -> this.visualItemInventory);
+
     public StorageControllerEntity(BlockPos pos, BlockState state) {
-        super(BlockEntityRegistry.DRAWER_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
+        super(BlockEntityRegistry.STORAGE_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
 
     }
 
@@ -79,6 +91,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         return editedChestLocations;
     }
 
+
+
+
+
     public BlockEntity getStorageBlockAt(BlockPos blockPos) {
 
         BlockEntity blockEntity = level.getBlockEntity(blockPos);
@@ -87,6 +103,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         return blockEntity
                 .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent() ? blockEntity : null;
     }
+
+
 
     public void setMergedStorageContents(List<ItemIdentifier> mergedStorageContents) {
         this.mergedStorageContents = mergedStorageContents;
@@ -119,7 +137,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
         if(!chestLocations.contains(location)) {
-            System.out.println("not exist");
+
             addChests(location);
             this.setChanged();
 
@@ -127,7 +145,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         }
 
-        System.out.println("added " + chestLocations.size());
+
 
     }
 
@@ -200,7 +218,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
 
 
-        System.out.println(nbt);
+
     }
 
 
@@ -208,22 +226,17 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public void load(CompoundTag nbt) {
         super.load(nbt);
 
+
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
 
         this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
+        this.getVisualItemInventory().deserializeNBT(modNbt.getCompound("visual_item"));
 
 
 
 
         loadEditedChests(modNbt);
-
-
-
-
-
-
-
 
 
 
@@ -235,7 +248,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private List<SavedStorageData> queueToRemoveChest = new ArrayList<>();
     private void loadStorageContents(SavedStorageData chestData) {
 
-        System.out.println(level.isClientSide() + " Generating " + chestData);
 
         BlockEntity blockEntity = this.level.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
 
@@ -295,6 +307,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     }
 
+
     @Override
     protected void saveAdditional(CompoundTag nbt) {
         super.saveAdditional(nbt);
@@ -302,13 +315,16 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
+
         CompoundTag modNbt = new CompoundTag();
         modNbt.put("network_card", this.getNetworkInventory().serializeNBT());
+        modNbt.put("visual_item", this.getVisualItemInventory().serializeNBT());
 
         for(int i = 0; i < chestLocations.size(); i++) {
             modNbt.putString("chest" + i, this.chestLocations.get(i));
 
         }
+
 
 
         nbt.put(ModUtils.MODID, modNbt);
@@ -333,6 +349,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public void invalidateCaps() {
         super.invalidateCaps();
         this.optional.invalidate();
+        this.optionalVisualItem.invalidate();
     }
 
     @Nullable
@@ -350,6 +367,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         return networkInventory;
     }
 
+    public ItemStackHandler getVisualItemInventory() {
+        return visualItemInventory;
+    }
+
     public LazyOptional<ItemStackHandler> getOptional() {
         return optional;
     }
@@ -364,7 +385,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public void updateNetworkCardItems(ItemStack itemStack, Player player) {
 
 
-        System.out.println(player.level().isClientSide + " YEAAAA");
+
 
         if(itemStack.getItem() instanceof NetworkCardItem networkCardItem) {
 
@@ -375,11 +396,11 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             queueToRemoveChest.clear();
 
             networkCardItem.loadNbt(itemStack);
-            System.out.println(networkCardItem.getStorageLocations(itemStack));
+
 
             editedChestLocations = networkCardItem.getStorageLocations(itemStack);
 
-            updateStorageContents(player);
+            updateStorageContents(player, networkCardItem, itemStack);
 
 
 
@@ -411,8 +432,11 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
     }
 
-    private void updateStorageContents(Player player) {
+    private void updateStorageContents(Player player, NetworkCardItem networkCardItem, ItemStack itemStack) {
 
+
+        if(editedChestLocations == null)
+            return;
 
         for(SavedStorageData customBlockPosData : editedChestLocations) {
 
@@ -426,6 +450,12 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
         for(SavedStorageData customBlockPosData : queueToRemoveChest) {
+
+      
+            networkCardItem.getStorageLocations(itemStack).remove(customBlockPosData);
+            networkCardItem.saveNbt(itemStack);
+
+
             chestLocations.remove("x=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getX() + ", y=" +
                     customBlockPosData.getCustomBlockPosData().getBlockPos().getY()
                     + ", z=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getZ());
@@ -452,14 +482,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
         disabled = itemStack.equals(ItemStack.EMPTY, false);
-        System.out.println(disabled + " disabled " + player.level().isClientSide);
+
 
         if(!disabled)
             updateNetworkCardItems(itemStack, player);
 
 
         if(player instanceof ServerPlayer serverPlayer) {
-            System.out.println("SERVER PLAYERTR");
+
             ModNetwork.sendToClient(new UpdateStorageDisabledEntityPacket(disabled, this.getBlockPos()), serverPlayer);
         }
 

@@ -1,13 +1,11 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import me.astero.unifiedstoragemod.menu.Menu;
-import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
-import me.astero.unifiedstoragemod.menu.data.VisualBlockSlot;
+import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.items.ItemStackHandler;
 
@@ -35,10 +33,7 @@ public class VisualItemSlotGUI<T extends Menu> extends UpgradeSlotGUI<T> {
     @Override
     public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y, Slot slot) {
 
-        if(slot instanceof VisualBlockSlot) {
-
-            if(!slot.getItem().isEmpty())
-                return;
+        if(slot instanceof VisualItemSlot) {
 
             List<Component> componentList = new ArrayList<>();
             componentList.add(Component.translatable("container.unifiedstorage.visualItemSlotTitle"));

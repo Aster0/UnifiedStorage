@@ -35,9 +35,6 @@ import java.util.*;
 public class NetworkCardItem extends BaseItem {
 
 
-
-
-
     public NetworkCardItem(Properties properties) {
         super(properties);
 
@@ -57,7 +54,7 @@ public class NetworkCardItem extends BaseItem {
         return storageLocations.get(getKey(itemStack));
     }
 
-    private String getKey(ItemStack itemStack) {
+    public String getKey(ItemStack itemStack) {
         return String.valueOf(itemStack.hashCode());
     }
 

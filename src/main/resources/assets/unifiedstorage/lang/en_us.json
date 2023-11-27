@@ -5,6 +5,7 @@
   "item.unifiedstorage.grid_wrench" : "Grid Wrench",
   "item.unifiedstorage.network_card" : "Network Card",
   "lore.unifiedstorage.network_card" : "\n§7\"This item links storages and\n§7or terminal blocks together\"\n\n§4*Don't link a double chest twice!\n\n§a[%amount%]§c storages have been linked.\n§a[%amount%]§c terminal has been linked",
+  "lore.unifiedstorage.storage_controller" : "\n§7\"Use a network card to link\n§7various storages together to\n§7see it as one unified storage\"",
   "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a §c[Grid Controller] §fbefore continuing.",
   "language.unifiedstorage.linked_storage" : "§aSuccessfully linked this storage.",
   "language.unifiedstorage.unlinked_storage" : "§cUnlinked this storage.",
@@ -17,7 +18,7 @@
   "container.unifiedstorage.upgradeSlotTitle" : "Insert Upgrade Card",
   "container.unifiedstorage.upgradeSlotDescription" : "§7Upgrading provides a way to \n§7enhance the controller's capabilities.",
   "container.unifiedstorage.visualItemSlotTitle" : "Insert an Item",
-  "container.unifiedstorage.visualItemSlotDescription" : "§7Providing an item gives a visual for\n§7this controller block like an item frame."
-
+  "container.unifiedstorage.visualItemSlotDescription" : "§7Providing an item gives a visual for\n§7this controller block like an item frame.\n\n§7§o* Putting more of the same\n§7§o  items changes the visual.\n§7§o  (Only for Blocks)",
+  "creative.unifiedstorage.tabName" : "Unified Storage"
 
 }

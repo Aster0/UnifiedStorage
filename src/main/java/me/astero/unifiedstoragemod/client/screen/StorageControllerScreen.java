@@ -5,7 +5,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
-import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
+import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
@@ -17,7 +17,6 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.CraftingMenu;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
@@ -293,6 +292,16 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             return;
         }
+        else if(slot instanceof VisualItemSlot) {
+
+
+            if(!menu.getCarried().equals(ItemStack.EMPTY, false)) {
+
+                ItemStack stack = menu.getCarried().copy();
+
+
+            }
+        }
 
         if(clickType == ClickType.QUICK_MOVE) {
 
@@ -425,10 +434,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             poseStack.popPose();
 
             poseStack.pushPose();
-            poseStack.translate(0, 0, 200);
+            poseStack.translate(0, 0, 300); // 300 just to be safe.
 
 
-            String text = String.valueOf(customGUISlot.getActualItemCount());
+            String text = ModUtils.getUnit(customGUISlot.getActualItemCount());
             float textScale = 0.5f; // Adjust the scale factor as needed
             float scaledX = (actualSlotX) / textScale;
             float scaledY = (actualSlotY) / textScale;
@@ -490,6 +499,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         ICustomWidgetComponent.renderToolTipAll(menu.getWidgets(), guiGraphics, this.font, x, y, this.hoveredSlot);
 
-        super.renderTooltip(guiGraphics, x, y);
+
+
+        if(!(this.hoveredSlot instanceof VisualItemSlot)) // so it always present the visual item slot's custom tooltip.
+            super.renderTooltip(guiGraphics, x, y);
     }
 }

@@ -4,6 +4,8 @@ import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -75,6 +77,57 @@ public class ModUtils {
 
 
         return components;
+
+
+    }
+
+
+    public static String getUnit(long value) {
+
+        // 1000
+        // 10 000
+        // 100 000
+        // 999 999
+        // 4 length - 6 length
+
+        // 1 000 000
+        // 10 000 000
+        // 100 000 000
+        // 7 length - 9 length
+
+
+        String units = "";
+        int division = 1;
+
+
+        String longValueStr = Long.toString(value);
+
+        if(longValueStr.length() < 4) { // normal
+            // do nothing
+        }
+        else if(longValueStr.length() < 7) { // thousands
+
+            units = "K";
+
+            division = 1000;
+        }
+        else if(longValueStr.length() < 10) { // millions
+            units = "M";
+
+            division = 1000000;
+
+        }
+        else {
+            division = 1000000000;
+            units = "B";
+        }
+
+        float finalValue = (float) value / division;
+        DecimalFormat format = new DecimalFormat("0.#");
+        format.setRoundingMode(RoundingMode.DOWN); // Note this extra step
+
+        return format.format(finalValue) + units;
+
 
 
     }
