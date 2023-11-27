@@ -93,10 +93,6 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
 
                 ServerPlayer serverPlayer = context.getSender();
 
-                InventoryMenu playerInventory = serverPlayer.inventoryMenu;
-
-
-
 
 
                 if(serverPlayer.containerMenu instanceof GridControllerMenu menu) {

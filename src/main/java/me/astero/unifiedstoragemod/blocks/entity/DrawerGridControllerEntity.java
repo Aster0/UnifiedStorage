@@ -1,7 +1,9 @@
 package me.astero.unifiedstoragemod.blocks.entity;
 
+import me.astero.unifiedstoragemod.blocks.entity.handler.NetworkCardItemStackHandler;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.NetworkCardItem;
+import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
@@ -36,7 +38,7 @@ import org.jetbrains.annotations.Nullable;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DrawerGridControllerEntity extends BlockEntity implements MenuProvider {
+public class DrawerGridControllerEntity extends BaseBlockEntity implements MenuProvider {
 
 
 
@@ -48,16 +50,18 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     public List<String> chestLocations = new ArrayList<>();;
 
     public List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
-    private List<CustomBlockPosData> editedChestLocations = new ArrayList<>();
+    private List<SavedStorageData> editedChestLocations = new ArrayList<>();
 
 
-    private ItemStackHandler networkInventory = new ItemStackHandler(1) {
-        @Override
-        protected void onContentsChanged(int slot) {
-            super.onContentsChanged(slot);
-            setChanged();
-        }
-    };
+    private ItemStackHandler networkInventory =
+            new NetworkCardItemStackHandler<>(this) {
+
+                @Override
+                protected void onContentsChanged(int slot) {
+                    super.onContentsChanged(slot);
+                    setChanged();
+                }
+            };
 
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.networkInventory);
 
@@ -67,7 +71,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     }
 
 
-    public List<CustomBlockPosData> getEditedChestLocations() {
+    public List<SavedStorageData> getEditedChestLocations() {
         return editedChestLocations;
     }
 
@@ -156,7 +160,7 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
     private void addChests(String location) {
         chestLocations.add(location);
         CustomBlockPosData customBlockPosData = ModUtils.convertStringToBlockData(location.split(", "));
-        editedChestLocations.add(customBlockPosData);
+        editedChestLocations.add(new SavedStorageData(customBlockPosData));
     }
 
     private void loadEditedChests(CompoundTag nbt) {
@@ -224,12 +228,12 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
 
 
 
-    private List<CustomBlockPosData> queueToRemoveChest = new ArrayList<>();
-    private void loadStorageContents(CustomBlockPosData chestData, Player player) {
+    private List<SavedStorageData> queueToRemoveChest = new ArrayList<>();
+    private void loadStorageContents(SavedStorageData chestData) {
 
+        System.out.println(level.isClientSide() + " Generating " + chestData);
 
-
-        BlockEntity blockEntity = this.level.getBlockEntity(chestData.getBlockPos());
+        BlockEntity blockEntity = this.level.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
 
 
         if(blockEntity == null)  { // if the storage block is deleted, it will be null.
@@ -354,52 +358,98 @@ public class DrawerGridControllerEntity extends BlockEntity implements MenuProvi
         return MENU_TITLE;
     }
 
-    @Nullable
     @Override
-    public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
+    public void updateNetworkCardItems(ItemStack itemStack, Player player) {
 
 
-
-        mergedStorageContents.clear();
-        queueToRemoveChest.clear();
-
-
-        IItemHandler iItemHandler = getNetworkInventory();
-
-        ItemStack itemStack = iItemHandler.getStackInSlot(0);
 
 
         if(itemStack.getItem() instanceof NetworkCardItem networkCardItem) {
 
+            if(level.isClientSide())
+                return;
+
+            mergedStorageContents.clear();
+            queueToRemoveChest.clear();
+
+            networkCardItem.loadNbt(itemStack);
             System.out.println(networkCardItem.getStorageLocations(itemStack));
+
+            editedChestLocations = networkCardItem.getStorageLocations(itemStack);
+
+            updateStorageContents(player);
+
+
+
+
         }
 
-        for(CustomBlockPosData customBlockPosData : editedChestLocations) {
-
-
-            loadStorageContents(customBlockPosData, player);
-
+        if(player.containerMenu instanceof GridControllerMenu menu) {
+            menu.createBlockEntityInventory();
         }
+    }
 
+    @Override
+    public void actionWhenNetworkTakenOut(Player player) {
+        mergedStorageContents.clear();
+        queueToRemoveChest.clear();
+
+        if(player.containerMenu instanceof GridControllerMenu menu) {
+            menu.createBlockEntityInventory();
+        }
+    }
+    private void updateMergedStorageClient(Player player) {
         if(player instanceof ServerPlayer serverPlayer) {
+
 
             ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
                     this.getBlockPos()), serverPlayer);
 
 
         }
+    }
+
+    private void updateStorageContents(Player player) {
+
+
+        for(SavedStorageData customBlockPosData : editedChestLocations) {
+
+
+            loadStorageContents(customBlockPosData);
+
+        }
+
+        updateMergedStorageClient(player);
 
 
 
-        for(CustomBlockPosData customBlockPosData : queueToRemoveChest) {
-            chestLocations.remove("x=" + customBlockPosData.getBlockPos().getX() + ", y=" +
-                    customBlockPosData.getBlockPos().getY() + ", z=" + customBlockPosData.getBlockPos().getZ());
+        for(SavedStorageData customBlockPosData : queueToRemoveChest) {
+            chestLocations.remove("x=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getX() + ", y=" +
+                    customBlockPosData.getCustomBlockPosData().getBlockPos().getY()
+                    + ", z=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getZ());
 
             editedChestLocations.remove(customBlockPosData);
 
             AsteroLogger.info("Storage Block detected missing: " + customBlockPosData
                     + " - Removed automatically from data");
         }
+
+    }
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
+
+
+
+
+
+
+        IItemHandler iItemHandler = getNetworkInventory();
+
+        ItemStack itemStack = iItemHandler.getStackInSlot(0);
+
+        updateNetworkCardItems(itemStack, player);
+
 
 
         GridControllerMenu gridControllerMenu = new GridControllerMenu(pControllerId, pInventory, this);

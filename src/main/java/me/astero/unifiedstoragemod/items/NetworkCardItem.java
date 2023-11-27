@@ -54,7 +54,11 @@ public class NetworkCardItem extends BaseItem {
 
     public List<SavedStorageData> getStorageLocations(ItemStack itemStack) {
 
-        return storageLocations.get(itemStack.toString());
+        return storageLocations.get(getKey(itemStack));
+    }
+
+    private String getKey(ItemStack itemStack) {
+        return String.valueOf(itemStack.hashCode());
     }
 
     public void saveNbt(ItemStack itemStack) {
@@ -68,9 +72,10 @@ public class NetworkCardItem extends BaseItem {
 
         CompoundTag innerNbt = new CompoundTag();
 
-        List<SavedStorageData> savedStorageData = storageLocations.get(itemStack.toString());
+        List<SavedStorageData> savedStorageData = storageLocations.get(getKey(itemStack));
 
-        System.out.println(savedStorageData.size() + " SIZEEE");
+
+
 
         for(int i = 0; i < savedStorageData.size(); i++) {
             innerNbt.putString("storage" + i, savedStorageData.get(i)
@@ -92,7 +97,8 @@ public class NetworkCardItem extends BaseItem {
 
         CompoundTag nbt = itemStack.getTag();
 
-        storageLocations.clear();
+        //storageLocations.clear();
+
 
         if(nbt == null) {
             return;
@@ -169,7 +175,8 @@ public class NetworkCardItem extends BaseItem {
 
 
     private boolean saveToStorage(ItemStack itemStack, SavedStorageData savedStorageData) {
-        List<SavedStorageData> savedStorageDataList = storageLocations.computeIfAbsent(itemStack.toString(),
+
+        List<SavedStorageData> savedStorageDataList = storageLocations.computeIfAbsent(getKey(itemStack),
                 (s) -> new ArrayList<>());
 
 
@@ -187,7 +194,7 @@ public class NetworkCardItem extends BaseItem {
     private void removeFromStorage(ItemStack itemStack, SavedStorageData savedStorageData) {
 
 
-        List<SavedStorageData> savedStorageDataList = storageLocations.get(itemStack.toString());
+        List<SavedStorageData> savedStorageDataList = storageLocations.get(getKey(itemStack));
 
         System.out.println(savedStorageDataList);
 
@@ -212,7 +219,7 @@ public class NetworkCardItem extends BaseItem {
 
 
 
-            loadNbt(itemStack);
+
 
             BlockEntity hitBlockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
 
@@ -225,7 +232,7 @@ public class NetworkCardItem extends BaseItem {
 
 
 
-                    if(storageLocations.isEmpty())
+                    if(storageLocations.get(getKey(itemStack)) == null)
                         loadNbt(itemStack);
 
 
@@ -256,16 +263,14 @@ public class NetworkCardItem extends BaseItem {
     }
 
 
-    @Override
-    public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
-        super.appendHoverText(stack, level, components, flag);
 
-        loadNbt(stack);
-    }
 
     public List<Component> addShiftText(ItemStack itemStack) {
 
-        List<SavedStorageData> savedStorageData = storageLocations.get(itemStack.toString());
+        if(storageLocations.get(getKey(itemStack)) == null)
+            loadNbt(itemStack);
+
+        List<SavedStorageData> savedStorageData = storageLocations.get(getKey(itemStack));
 
         int amountOfStorages = 0;
         if(savedStorageData != null) {

@@ -4,6 +4,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.NetworkSlotGUI;
 import me.astero.unifiedstoragemod.client.screen.widgets.UpgradeSlotGUI;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
+import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
@@ -69,9 +70,11 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
         this.containerLevelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
 
-        createInventory(pInventory, drawerGridControllerEntity);
+        createInventory(pInventory);
 
         this.pInventory = pInventory;
+
+
 
     }
 
@@ -135,11 +138,11 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
     }
 
-    private void createInventory(Inventory pInventory, DrawerGridControllerEntity drawerGridControllerEntity) {
+    private void createInventory(Inventory pInventory) {
 
         createPlayerHotbar(pInventory);
         createPlayerInventory(pInventory);
-        createBlockEntityInventory(drawerGridControllerEntity);
+        createBlockEntityInventory();
         createUpgradeSlots();
 
 
@@ -147,10 +150,11 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-    private void createBlockEntityInventory(DrawerGridControllerEntity drawerGridControllerEntity) {
+    public void createBlockEntityInventory() {
 
-        drawerGridControllerEntity.getOptional();
+        //drawerGridControllerEntity.getOptional();
         generateStartPage();
+
 
     }
 
@@ -214,12 +218,13 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
+
                     if(currentIndex == VISIBLE_CONTENT_HEIGHT - 1)
                         finishedAdding = true;
                 }
 
                 else {
-
 
 
                     int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
@@ -229,10 +234,10 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
                     itemIdentifier =
                             drawerGridControllerEntity.getMergedStorageContents(slotToFetch,
                                     storageSearchData.getSearchedStorageList(), storageSearchData.isSearching());
-
 
 
                     if(slots.get(slotIndex) instanceof CustomGUISlot) {
@@ -245,6 +250,8 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
                 }
             }
         }
+
+
 
 
 
@@ -383,7 +390,7 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
                     itemStack.setCount(toFill);
 
-                    System.out.println(toFill + " TO FILL");
+
 
 
                     //remainingSlotItem.setCount(toFill + remainingSlotItem.getCount());
@@ -397,7 +404,7 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
 
             value = itemStack.getCount();
 
-            System.out.println(value + " VALUE");
+
 
             int actualValue = updateAllStorages(itemStack, value, true, quickMove, slotIndex);
             value = actualValue;
@@ -407,19 +414,17 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
             if(quickMove) {
 
 
-                System.out.println(slot);
+
 
                 if(slot != -1 && actualValue > 0) {
 
                     stack.setCount(actualValue +
                             (remainingSlotItem == null ? 0 : remainingSlotItem.getCount()));
-                    System.out.println("PUTTING! " + stack);
+
                     pInventory.setItem(slot, stack);
                 }
 
             }
-            
-
 
 
 
@@ -461,9 +466,10 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
         int valueLeft = value;
 
 
-        for(CustomBlockPosData blockPosData : drawerGridControllerEntity.getEditedChestLocations()) {
+        for(SavedStorageData blockPosData : drawerGridControllerEntity.getEditedChestLocations()) {
 
-            BlockEntity storageBlockEntity = drawerGridControllerEntity.getStorageBlockAt(blockPosData.getBlockPos());
+            BlockEntity storageBlockEntity = drawerGridControllerEntity.getStorageBlockAt(blockPosData
+                    .getCustomBlockPosData().getBlockPos());
 
             if(storageBlockEntity != null) {
 
@@ -581,8 +587,10 @@ public class GridControllerMenu extends Menu implements IMenuInteractor {
     public void updateInsertVisual(DrawerGridControllerEntity d, ItemStack itemStack, int value, boolean quickMove,
                                    int slotIndex, boolean take) {
 
+
         int index = d.mergedStorageContents
                 .indexOf(new ItemIdentifier(itemStack, 1));
+
 
 
 

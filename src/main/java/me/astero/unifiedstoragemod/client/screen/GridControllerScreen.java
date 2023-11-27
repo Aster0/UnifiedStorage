@@ -8,6 +8,7 @@ import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
+import me.astero.unifiedstoragemod.networking.packets.OnNetworkCardInsertClientEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -40,6 +41,7 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
 
 
+    private int savedPages = -1;
 
 
 
@@ -67,13 +69,15 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
         registerSearchField();
 
-        customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
-                this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+
+
         networkSlotGUI = menu.getNetworkSlotGUI();
 
         upgradeSlotGUI = menu.getUpgradeSlotGUI();
 
 
+        System.out.println(menu.getTotalPages() + " a "
+         + menu.getDrawerGridControllerEntity().getLevel().isClientSide);
 
     }
 
@@ -115,11 +119,24 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
         networkSlotGUI.tick(guiGraphics, leftPos, topPos);
         upgradeSlotGUI.tick(guiGraphics, leftPos, topPos);
 
+        if(savedPages != menu.getTotalPages()) {
+
+            customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
+                    this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+
+            savedPages = menu.getTotalPages();
+
+            System.out.println("LOAD PAGES");
+        }
+
 
         customScrollWheel.tick(guiGraphics, 0,0);
 
 
         renderCustomSlot(guiGraphics);
+
+
+
 
 
     }
@@ -243,6 +260,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
 
                 menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
 
+                System.out.println("DRAWER " + menu.getDrawerGridControllerEntity().mergedStorageContents.size() + " "
+                        + menu.getDrawerGridControllerEntity().getLevel().isClientSide);
+
 
             }
             else { // we want to put things into the storage
@@ -257,19 +277,29 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
                 menu.interactWithMenu(itemToPutIn, false,
                         modifiedValue, false, 0);
 
-                System.out.println("clicked");
+
 
             }
 
             return;
 
         }
+        else if(slot instanceof NetworkSlot networkSlot) {
+
+
+
+            super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
+
+            return;
+        }
 
         if(clickType == ClickType.QUICK_MOVE) {
 
+
+
             ItemStack itemToPutIn = slot.getItem();
             int modifiedValue = itemToPutIn.getCount();
-            System.out.println(modifiedValue);
+
 
             ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
                     modifiedValue, true, slot.getSlotIndex()));
@@ -277,7 +307,9 @@ public class GridControllerScreen extends AbstractContainerScreen<GridController
             menu.interactWithMenu(itemToPutIn, false,
                     modifiedValue, true, slot.getSlotIndex());
 
-            System.out.println("clicked");
+
+
+
 
         }
 
