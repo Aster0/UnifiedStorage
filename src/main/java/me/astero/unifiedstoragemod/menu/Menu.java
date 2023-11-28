@@ -1,11 +1,9 @@
 package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.client.screen.widgets.ICustomWidgetComponent;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

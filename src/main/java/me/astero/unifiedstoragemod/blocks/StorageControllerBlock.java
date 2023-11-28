@@ -2,7 +2,6 @@ package me.astero.unifiedstoragemod.blocks;
 
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
-import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -20,7 +19,6 @@ import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.ShulkerBoxBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
@@ -28,13 +26,10 @@ import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
-import net.minecraft.world.level.storage.loot.LootParams;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class StorageControllerBlock extends BaseBlock implements EntityBlock {

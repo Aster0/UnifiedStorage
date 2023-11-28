@@ -1,18 +1,13 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.Optional;

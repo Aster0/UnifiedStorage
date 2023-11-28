@@ -7,7 +7,6 @@ import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;

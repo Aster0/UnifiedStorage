@@ -2,18 +2,15 @@ package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
-import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class NetworkSlotGUI<T extends Menu> extends UpgradeSlotGUI<T> {
 

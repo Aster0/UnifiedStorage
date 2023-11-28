@@ -1,15 +1,11 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import com.mojang.blaze3d.vertex.PoseStack;
-import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.MutableComponent;
-import org.spongepowered.asm.mixin.Mutable;
-
-import java.awt.*;
 
 public abstract class CustomEditBox extends EditBox {
 

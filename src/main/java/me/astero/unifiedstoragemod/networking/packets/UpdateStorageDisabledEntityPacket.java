@@ -1,12 +1,9 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 

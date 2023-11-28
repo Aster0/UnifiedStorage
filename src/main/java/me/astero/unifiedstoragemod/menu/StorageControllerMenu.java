@@ -7,14 +7,12 @@ import me.astero.unifiedstoragemod.items.NetworkCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
-import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
-import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -23,17 +21,10 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-
-import java.util.List;
-import java.util.Optional;
 
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 

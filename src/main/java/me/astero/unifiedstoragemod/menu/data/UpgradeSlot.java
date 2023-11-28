@@ -1,7 +1,5 @@
 package me.astero.unifiedstoragemod.menu.data;
 
-import net.minecraft.world.Container;
-import net.minecraft.world.inventory.Slot;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
 

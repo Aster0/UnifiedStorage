@@ -1,6 +1,5 @@
 package me.astero.unifiedstoragemod.blocks.entity;
 
-import me.astero.unifiedstoragemod.items.NetworkCardItem;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;

@@ -1,7 +1,6 @@
 package me.astero.unifiedstoragemod.blocks.entity.handler;
 
 import me.astero.unifiedstoragemod.blocks.entity.BaseBlockEntity;
-import me.astero.unifiedstoragemod.menu.Menu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;

@@ -1,14 +1,6 @@
 package me.astero.unifiedstoragemod.items.data;
 
 import me.astero.unifiedstoragemod.utils.ModUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.block.entity.BlockEntity;
-import net.minecraftforge.common.util.LazyOptional;
-import net.minecraftforge.items.IItemHandler;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class SavedStorageData {
 

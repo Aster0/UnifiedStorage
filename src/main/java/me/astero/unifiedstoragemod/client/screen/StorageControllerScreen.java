@@ -9,7 +9,6 @@ import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.SendCraftingResultEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -204,19 +203,22 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             super.slotClicked(slot, slotIndex, btn, clickType);
         }
 
-        if(slot == null) // if somehow
-            return;
 
         if(menu.getDrawerGridControllerEntity().isDisabled()) {
 
 
-            if(slot instanceof CustomGUISlot ) {
-                return;
+            if(slot != null) { // somehow sometimes it's null
+                
+                if(slot instanceof CustomGUISlot ) {
+                    return;
+                }
+
+                if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
+                    super.slotClicked(slot, slotIndex, btn, clickType);
+                }
+
             }
 
-            if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
-                super.slotClicked(slot, slotIndex, btn, clickType);
-            }
 
             return;
         }
