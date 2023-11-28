@@ -1,4 +1,6 @@
 # Unified Storage
+![](https://cf.way2muchnoise.eu/title/943647.svg) ![](https://cf.way2muchnoise.eu/versions/943647.svg) ![](https://cf.way2muchnoise.eu/full_943647_downloads.svg)
+
 <br>
 <p align="center"><img src="https://github.com/Aster0/UnifiedStorage/assets/40921567/64ef283f-7f33-41e1-b26c-74c7e715a89c" height="300" ></p>
 <p align="center">Management of items has never been easier!</p>
@@ -28,10 +30,11 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 
 |                             |                             |
 | ----------------------------------- | ----------------------------------- |
-| ![image](https://github.com/Aster0/UnifiedStorage/assets/40921567/7417d743-f766-4463-85fc-6736546222c3)  |![image](https://github.com/Aster0/UnifiedStorage/assets/40921567/1d482aa0-101c-4509-9847-b8eae21fc669) |
+| ![image](https://i.imgur.com/PmBlAFz.png)  |![image](https://i.imgur.com/URubog3.png) |
 
 #### Planned Features
 - Range limiter for chests
+- Exporter/Importer/Placer/Breaker blocks
 - Storage Controller upgrades to hold more chests (currently no limit now)
 - Inter-dimension Storage & other upgrades (Planned in the future) 
 - Energy System? (Planned in the future)
@@ -49,4 +52,5 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 If you want to report any issues about the mod, please head over [here](https://github.com/Aster0/UnifiedStorage/issues "here").  For contributions, please make a pull request and I'll review it as soon as possible.
 
 If you want to make a suggestion or just want to chat up with me, please head over to my Discord server [here](https://discord.gg/ex27AefeNf "here")!
+
 
