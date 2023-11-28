@@ -8,6 +8,8 @@ import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
+import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.SendCraftingResultEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.GuiGraphics;
@@ -17,7 +19,9 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.inventory.ClickType;
+import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
 
@@ -200,7 +204,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 return;
             }
 
-            super.slotClicked(slot, slotIndex, btn, clickType);
+            if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
+                super.slotClicked(slot, slotIndex, btn, clickType);
+            }
+
             return;
         }
 
@@ -286,7 +293,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         else if(slot instanceof NetworkSlot networkSlot) {
 
 
-
+            System.out.println(slot.index);
             if(clickType != ClickType.QUICK_MOVE)
                 super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
 
@@ -295,12 +302,29 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         else if(slot instanceof VisualItemSlot) {
 
 
+
             if(!menu.getCarried().equals(ItemStack.EMPTY, false)) {
 
                 ItemStack stack = menu.getCarried().copy();
 
 
             }
+            super.slotClicked(slot, slotIndex, btn, clickType);
+            return;
+        }
+        else if(slot instanceof ResultSlot resultSlot) {
+
+            ItemStack resultStack = resultSlot.getItem();
+
+
+            boolean quickMove = clickType == ClickType.QUICK_MOVE;
+
+            menu.onItemCrafted(resultStack, quickMove);
+            ModNetwork.sendToServer(new CraftItemEntityPacket(resultStack, quickMove));
+
+
+
+            return;
         }
 
         if(clickType == ClickType.QUICK_MOVE) {
@@ -331,6 +355,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
     }
+
 
 
 

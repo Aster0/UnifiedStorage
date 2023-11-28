@@ -1,10 +1,7 @@
 package me.astero.unifiedstoragemod.networking;
 
 
-import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.*;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
@@ -50,6 +47,25 @@ public class ModNetwork {
                 .encoder(UpdateStorageDisabledEntityPacket::encode)
                 .decoder(UpdateStorageDisabledEntityPacket::new)
                 .consumerMainThread(UpdateStorageDisabledEntityPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(GetCraftingRecipesEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(GetCraftingRecipesEntityPacket::encode)
+                .decoder(GetCraftingRecipesEntityPacket::new)
+                .consumerMainThread(GetCraftingRecipesEntityPacket::handle)
+                .add();
+
+
+        INSTANCE.messageBuilder(SendCraftingResultEntityPacket.class, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(SendCraftingResultEntityPacket::encode)
+                .decoder(SendCraftingResultEntityPacket::new)
+                .consumerMainThread(SendCraftingResultEntityPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(CraftItemEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(CraftItemEntityPacket::encode)
+                .decoder(CraftItemEntityPacket::new)
+                .consumerMainThread(CraftItemEntityPacket::handle)
                 .add();
 
 

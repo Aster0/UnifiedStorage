@@ -3,27 +3,37 @@ package me.astero.unifiedstoragemod.menu;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.items.NetworkCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
+import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
+import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
+import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
+import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.inventory.ContainerLevelAccess;
-import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.List;
+import java.util.Optional;
 
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
@@ -40,15 +50,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     private final ContainerLevelAccess containerLevelAccess;
 
     private Inventory pInventory;
-
-
-
-    public int lastClickedSlot;
+    public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
+    private final ResultContainer resultSlots = new ResultContainer();
 
     public StorageControllerMenu(int containerId, Inventory pInventory, FriendlyByteBuf friendlyByteBuf) {
 
         this(containerId, pInventory, pInventory
                 .player.level().getBlockEntity(friendlyByteBuf.readBlockPos()));
+
+
 
 
 
@@ -69,15 +79,30 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         this.containerLevelAccess = ContainerLevelAccess.create(blockEntity.getLevel(), blockEntity.getBlockPos());
 
-        createInventory(pInventory);
 
         this.pInventory = pInventory;
+
+        createInventory(pInventory);
 
 
 
     }
 
 
+    @Override
+    public void removed(Player player) {
+        super.removed(player);
+
+        for(int i = 0; i < craftSlots.getItems().size(); i++) {
+
+            getDrawerGridControllerEntity().getCraftingInventory().setStackInSlot(i,
+                    craftSlots.getItem(i));
+        }
+
+
+
+
+    }
 
     public Inventory getPlayerInventory() {
         return pInventory;
@@ -137,6 +162,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         createBlockEntityInventory();
         createUpgradeSlots();
 
+        createCraftingSlots();
+
 
     }
 
@@ -185,7 +212,45 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return scrollPage;
     }
 
+    public void onItemCrafted(ItemStack itemStack, boolean quickMove) {
 
+
+        if(getCarried().equals(ItemStack.EMPTY, false) ||
+                ItemStack.isSameItem(itemStack, getCarried())) {
+
+            this.resultSlots.clearContent();
+
+
+
+
+            for(ItemStack stack : craftSlots.getItems()) {
+                stack.shrink(1);
+            }
+
+            ItemStack copiedStack = itemStack.copy();
+
+            if(!quickMove) {
+
+                if(!getCarried().equals(ItemStack.EMPTY, false)) {
+                    System.out.println(itemStack.getCount() + " COUNT!");
+
+
+                    copiedStack.setCount(itemStack.getCount() + getCarried().getCount());
+
+
+                }
+
+                setCarried(copiedStack);
+
+                return;
+            }
+
+
+
+
+
+        }
+    }
 
     public void generateSlots(int page) {
 
@@ -263,9 +328,43 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 addSlot(new Slot(pInventory, 9 + column + (row * 9),
                         8 + (column * 18),
                         153 + (row * 18)));
+
+
             }
         }
     }
+
+    private void createCraftingSlots() {
+
+        this.addSlot(new ResultSlot(pInventory.player,
+                this.craftSlots, this.resultSlots, 0, 131, 103));
+
+
+        for(int row = 0; row < 3; row++) {
+            for (int column = 0; column < 3; column++) {
+
+                // 37, 85
+
+                addSlot(new Slot(this.craftSlots, column + (row * 3),
+                        37 + (column * 18), 85 + (row * 18)));
+
+            }
+        }
+
+
+        for(int i = 0; i < getDrawerGridControllerEntity().getCraftingInventory().getSlots(); i++) {
+
+            ItemStack stack = getDrawerGridControllerEntity().getCraftingInventory().getStackInSlot(i);
+
+            if(!stack.equals(ItemStack.EMPTY, false)) {
+
+                this.craftSlots.setItem(i, stack);
+            }
+        }
+
+
+    }
+
 
     private void createPlayerHotbar(Inventory pInventory) {
         for (int column = 0; column < 9; column++) {
@@ -274,6 +373,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     211));
         }
     }
+
 
     private void createUpgradeSlots() {
 
@@ -305,35 +405,61 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         Slot fromSlot = getSlot(index);
         ItemStack fromStack = fromSlot.getItem();
 
-        if(fromStack.getCount() <= 0)
-            fromSlot.set(ItemStack.EMPTY);
 
-        if(!fromSlot.hasItem())
-            return ItemStack.EMPTY;
 
-        ItemStack copyFromStack = fromStack.copy();
+        if(fromStack.getItem() instanceof NetworkCardItem) {
 
-        if(index < 36) {
-            if(!moveItemStackTo(fromStack, 36, 63, false))
-                return ItemStack.EMPTY;
-
-        } else if (index < 63) {
-            if(!moveItemStackTo(fromStack, 0, 36, false))
-                return ItemStack.EMPTY;
-
+            moveItemStackTo(fromStack, 63, 64, false);
+        }
+        else if(fromSlot.container instanceof TransientCraftingContainer || fromSlot instanceof VisualItemSlot) {
+            moveItemStackTo(fromStack, 0, 36, false); // move to inventory
         }
 
-        fromSlot.setChanged();
-        fromSlot.onTake(player, fromStack);
 
-        return copyFromStack;
+        fromSlot.setChanged();
+
+
+
+        return ItemStack.EMPTY;
     }
+
 
     @Override
     public boolean stillValid(Player player) {
         return stillValid(this.containerLevelAccess, player, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
     }
 
+    @Override
+    public void slotsChanged(Container container) {
+        super.slotsChanged(container);
+
+
+
+        if(container instanceof TransientCraftingContainer) {
+            findRecipe();
+            getDrawerGridControllerEntity().setChanged();
+        }
+
+
+
+
+    }
+
+    private void findRecipe() {
+
+
+        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket());
+
+
+
+
+
+    }
+
+    public void changeCraftingResultSlot(ItemStack itemStack) {
+        if(itemStack != null)
+            resultSlots.setItem(0, itemStack);
+    }
 
     @Override
     public void interactWithMenu(ItemStack itemStack, boolean take, int value, boolean quickMove, int slotIndex) {

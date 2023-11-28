@@ -57,6 +57,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
+
     private ItemStackHandler networkInventory =
             new NetworkCardItemStackHandler<>(this) {
 
@@ -76,10 +77,20 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
     };
 
+    private ItemStackHandler craftingInventory = new ItemStackHandler(9) {
+        @Override
+        protected void onContentsChanged(int slot) {
+            super.onContentsChanged(slot);
+
+            setChanged();
+        }
+    };
+
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.networkInventory);
 
     private final LazyOptional<ItemStackHandler> optionalVisualItem = LazyOptional.of(() -> this.visualItemInventory);
 
+    private final LazyOptional<ItemStackHandler> optionalCraftingInventory = LazyOptional.of(() -> this.craftingInventory);
     public StorageControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.STORAGE_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
 
@@ -233,7 +244,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
         this.getVisualItemInventory().deserializeNBT(modNbt.getCompound("visual_item"));
 
-
+        this.getCraftingInventory().deserializeNBT(modNbt.getCompound("crafting_inventory"));
 
 
         loadEditedChests(modNbt);
@@ -314,11 +325,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-
-
         CompoundTag modNbt = new CompoundTag();
         modNbt.put("network_card", this.getNetworkInventory().serializeNBT());
         modNbt.put("visual_item", this.getVisualItemInventory().serializeNBT());
+        modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
 
         for(int i = 0; i < chestLocations.size(); i++) {
             modNbt.putString("chest" + i, this.chestLocations.get(i));
@@ -369,6 +379,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     public ItemStackHandler getVisualItemInventory() {
         return visualItemInventory;
+    }
+
+    public ItemStackHandler getCraftingInventory() {
+        return craftingInventory;
     }
 
     public LazyOptional<ItemStackHandler> getOptional() {
@@ -496,7 +510,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-        StorageControllerMenu storageControllerMenu = new StorageControllerMenu(pControllerId, pInventory, this);
+        StorageControllerMenu storageControllerMenu = new
+                StorageControllerMenu(pControllerId, pInventory, this);
 
         this.menu = storageControllerMenu;
 
