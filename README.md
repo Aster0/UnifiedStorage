@@ -30,7 +30,7 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 
 |                             |                             |
 | ----------------------------------- | ----------------------------------- |
-| ![image](https://github.com/Aster0/UnifiedStorage/assets/40921567/7417d743-f766-4463-85fc-6736546222c3)  |![image](https://github.com/Aster0/UnifiedStorage/assets/40921567/1d482aa0-101c-4509-9847-b8eae21fc669) |
+| ![image](https://github.com/Aster0/UnifiedStorage/assets/40921567/7c39e033-299f-4fb1-9e78-011400f38af3)  |![image](https://github.com/Aster0/UnifiedStorage/assets/40921567/1d482aa0-101c-4509-9847-b8eae21fc669) |
 
 #### Planned Features
 - Range limiter for chests
@@ -52,4 +52,5 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 If you want to report any issues about the mod, please head over [here](https://github.com/Aster0/UnifiedStorage/issues "here").  For contributions, please make a pull request and I'll review it as soon as possible.
 
 If you want to make a suggestion or just want to chat up with me, please head over to my Discord server [here](https://discord.gg/ex27AefeNf "here")!
+
 
