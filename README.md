@@ -39,7 +39,7 @@ This mod aims to be as simple as it could be, and also helping to keep your ches
 
 <img src="https://github.com/Aster0/UnifiedStorage/assets/40921567/eb85460f-c881-4206-85bb-a45725068eb2" height="250">
 <br>
-lol.
+:thinking:
 
 
 
