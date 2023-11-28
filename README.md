@@ -37,6 +37,12 @@ This mod aims to be as simple as it could be, and also helping to keep your ches
 - In-game book guide
 
 
+<img src="https://github.com/Aster0/UnifiedStorage/assets/40921567/eb85460f-c881-4206-85bb-a45725068eb2" height="250">
+<br>
+lol.
+
+
+
 ## How to Reach Me
 If you want to report any issues about the mod, please head over [here](https://github.com/Aster0/UnifiedStorage/issues "here").  For contributions, please make a pull request and I'll review it as soon as possible.
 
