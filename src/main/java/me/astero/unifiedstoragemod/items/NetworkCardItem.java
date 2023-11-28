@@ -138,11 +138,6 @@ public class NetworkCardItem extends BaseItem {
 
         if(saveToStorage(itemStack, savedStorageData)) {
 
-
-
-            saveNbt(itemStack);
-
-
             added = true;
         }
         else {
@@ -152,6 +147,8 @@ public class NetworkCardItem extends BaseItem {
             removeFromStorage(itemStack, savedStorageData);
 
         }
+
+        saveNbt(itemStack);
 
         return added;
 
@@ -181,10 +178,12 @@ public class NetworkCardItem extends BaseItem {
         List<SavedStorageData> savedStorageDataList = storageLocations.get(getKey(itemStack));
 
 
-
         savedStorageDataList.removeIf((value) ->
                 value.getCustomBlockPosData()
                         .equals(savedStorageData.getCustomBlockPosData()));
+
+
+
     }
 
 

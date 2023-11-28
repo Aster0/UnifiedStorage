@@ -209,19 +209,18 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             return;
         }
 
+        ItemStack copiedStack = itemStack.copy();
+
         if(getCarried().equals(ItemStack.EMPTY, false) ||
                 ItemStack.isSameItem(itemStack, getCarried())) {
 
 
 
-            ItemStack copiedStack = itemStack.copy();
 
 
+            if (!quickMove) {
 
-
-            if(!quickMove) {
-
-                if(!getCarried().equals(ItemStack.EMPTY, false)) {
+                if (!getCarried().equals(ItemStack.EMPTY, false)) {
 
                     copiedStack.setCount(itemStack.getCount() + getCarried().getCount());
 
@@ -230,48 +229,49 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 setCarried(copiedStack);
 
-                for(ItemStack stack : craftSlots.getItems()) {
+                for (ItemStack stack : craftSlots.getItems()) {
                     stack.shrink(1);
                 }
 
                 return;
             }
+        }
 
-            int lowestCount = 999;
-            for(ItemStack stack : craftSlots.getItems()) { // see how many times i can craft
+        int lowestCount = 999;
+        for(ItemStack stack : craftSlots.getItems()) { // see how many times i can craft
 
-                if(!stack.equals(ItemStack.EMPTY, false))
-                    if(stack.getCount() < lowestCount)
-                        lowestCount = stack.getCount();
+            if(!stack.equals(ItemStack.EMPTY, false))
+                if(stack.getCount() < lowestCount)
+                    lowestCount = stack.getCount();
 
-            }
-
-
-
-            copiedStack.setCount(copiedStack.getCount() * lowestCount);
+        }
 
 
 
-            if(moveItemStackTo(copiedStack, 0, 36, false)) {
+        copiedStack.setCount(copiedStack.getCount() * lowestCount);
 
 
-                for(int i = 0; i < lowestCount; i++) {
-                    for(ItemStack stack : craftSlots.getItems()) {
-                        stack.shrink(1);
 
-                    }
+        if(moveItemStackTo(copiedStack, 0, 36, false)) {
+
+
+            for(int i = 0; i < lowestCount; i++) {
+                for(ItemStack stack : craftSlots.getItems()) {
+                    stack.shrink(1);
+
                 }
-
-
             }
-
-
-
-
-
 
 
         }
+
+
+
+
+
+
+
+
     }
 
     public void generateSlots(int page) {
@@ -435,6 +435,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
         else if(fromSlot.container instanceof TransientCraftingContainer || fromSlot instanceof VisualItemSlot) {
             moveItemStackTo(fromStack, 0, 36, false); // move to inventory
+
+
+            if(fromSlot.container instanceof TransientCraftingContainer) {
+                slotsChanged(fromSlot.container);
+            }
         }
 
 
@@ -458,7 +463,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
         if(container instanceof TransientCraftingContainer) {
+
             findRecipe();
             getDrawerGridControllerEntity().setChanged();
         }
@@ -468,7 +475,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     }
 
-    private void findRecipe() {
+    public void findRecipe() {
 
 
         ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket());
@@ -602,6 +609,18 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
     }
 
+    private void tryToMoveIntoStorage( IItemHandler chestInventory, ItemStack itemStack, ItemStack remainingStack) {
+
+        for(int i = 0; i < chestInventory.getSlots(); i++) {
+
+            // we find slots that have this item stack first to put in
+            ItemStack stackInSlot = chestInventory.getStackInSlot(i);
+            if(ItemStack.isSameItem(stackInSlot, itemStack)) {
+                remainingStack = chestInventory.insertItem(i, remainingStack, false);
+            }
+        }
+
+    }
 
 
     private int updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
@@ -614,7 +633,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             return 0;
 
         int valueLeft = value;
-
+        remainingStack.setCount(value);
 
         for(SavedStorageData blockPosData : storageControllerEntity.getEditedChestLocations()) {
 
@@ -627,7 +646,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 IItemHandler chestInventory = storageBlockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
                         .orElse(new ItemStackHandler(0));
 
-
+                if(!take) {
+                    tryToMoveIntoStorage(chestInventory, itemStack, remainingStack);
+                }
 
 
                 for(int i = 0; i < chestInventory.getSlots(); i++) {
@@ -636,12 +657,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                     if(!take) {
 
+                        // if not we put into empty slots
 
 
-                        ItemStack clonedItemStack = itemStack.copy();
-                        clonedItemStack.setCount(remainingStack.getCount());
-
-                        remainingStack = chestInventory.insertItem(i, clonedItemStack, false);
+                        remainingStack = chestInventory.insertItem(i, remainingStack, false);
 
 
 
@@ -654,9 +673,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                     if(ItemStack.isSameItemSameTags(itemStack, stackInSlot)) {
-
-
-
 
                         if(take) {
 
@@ -701,8 +717,22 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         if(!take) { // if put into the storage
 
-            if(!quickMove)
+            ItemStack temporaryStack = itemStack.copy();
+
+
+            temporaryStack.setCount(itemStack.getCount() - (value - remainingStack.getCount()));
+            remainingStack = temporaryStack;
+
+
+            if(!quickMove) {
+
+
+
+
                 setCarried(remainingStack);
+            }
+
+
 
             ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
                     storageControllerEntity.getBlockPos(),
@@ -714,6 +744,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         else {
 
             remainingStack.setCount(valueTakenOut);
+
 
             if(!quickMove) {
                 setCarried(remainingStack); // we take whatever that was clicked in the slot

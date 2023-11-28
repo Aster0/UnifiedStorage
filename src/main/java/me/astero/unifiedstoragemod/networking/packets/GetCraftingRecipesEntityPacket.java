@@ -10,6 +10,7 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
+import java.util.Arrays;
 import java.util.Optional;
 
 public class GetCraftingRecipesEntityPacket implements EntityPacket {
@@ -69,9 +70,11 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
                     changeCraftingResult(ItemStack.EMPTY, menu, player);
+
                     RecipeHolder<CraftingRecipe> recipeHolder = optional.get();
                     CraftingRecipe craftingRecipe = recipeHolder.value();
                     ItemStack result = craftingRecipe.assemble(menu.craftSlots, player.level().registryAccess());
+
 
 
 

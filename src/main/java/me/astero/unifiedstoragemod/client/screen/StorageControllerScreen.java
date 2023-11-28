@@ -11,6 +11,7 @@ import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -101,6 +102,16 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
     }
+
+    @Override
+    public void resize(Minecraft p_96575_, int p_96576_, int p_96577_) {
+        super.resize(p_96575_, p_96576_, p_96577_);
+
+
+        customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
+                this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+    }
+
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         //renderTransparentBackground(guiGraphics);
@@ -110,10 +121,13 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         ICustomWidgetComponent.tickAll(menu.getWidgets(), guiGraphics, leftPos, topPos);
 
+
         if(savedPages != menu.getTotalPages()) {
 
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                     this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+
+
 
             savedPages = menu.getTotalPages();
 
@@ -192,32 +206,30 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
     }
-
     @Override
     protected void slotClicked(Slot slot, int slotIndex, int btn, ClickType clickType) {
 
 
+        if(slot == null) { // somehow it happens sometimes
+            super.slotClicked(slot, slotIndex, btn, clickType); // just do normal things
 
-
-        if(clickType == ClickType.QUICK_CRAFT) {
-            super.slotClicked(slot, slotIndex, btn, clickType);
+            return;
         }
-
 
         if(menu.getDrawerGridControllerEntity().isDisabled()) {
 
 
-            if(slot != null) { // somehow sometimes it's null
-                
-                if(slot instanceof CustomGUISlot ) {
-                    return;
-                }
 
-                if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
-                    super.slotClicked(slot, slotIndex, btn, clickType);
-                }
 
+            if(slot instanceof CustomGUISlot ) {
+                return;
             }
+
+            if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
+                super.slotClicked(slot, slotIndex, btn, clickType);
+            }
+
+
 
 
             return;
@@ -226,12 +238,12 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         // 0 = place down? 1 = place one. clickType cant track this
 
-
+        MouseAction action = btn == 0 ? MouseAction.LEFT_CLICK : MouseAction.RIGHT_CLICK;
 
         if(slot instanceof CustomGUISlot v) {
 
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
-                MouseAction action = btn == 0 ? MouseAction.LEFT_CLICK : MouseAction.RIGHT_CLICK;
+
 
 
                 if(v.getActualItem().equals(ItemStack.EMPTY))
@@ -287,6 +299,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 ItemStack itemToPutIn = menu.getCarried();
                 int modifiedValue = itemToPutIn.getCount();
 
+                if(action == MouseAction.RIGHT_CLICK)
+                    modifiedValue = 1;
+
+
                 ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
                         modifiedValue, false));
 
@@ -300,7 +316,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             return;
 
         }
-        else if(slot instanceof NetworkSlot networkSlot) {
+        else if(slot instanceof NetworkSlot) {
 
 
 
@@ -309,16 +325,11 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             return;
         }
-        else if(slot instanceof VisualItemSlot) {
+        else if(slot instanceof VisualItemSlot || slot.container instanceof TransientCraftingContainer) {
 
 
 
-            if(!menu.getCarried().equals(ItemStack.EMPTY, false)) {
 
-                ItemStack stack = menu.getCarried().copy();
-
-
-            }
             super.slotClicked(slot, slotIndex, btn, clickType);
             return;
         }
@@ -356,7 +367,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
         }
-
 
 
 
