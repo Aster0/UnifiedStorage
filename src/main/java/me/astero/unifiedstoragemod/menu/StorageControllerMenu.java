@@ -609,18 +609,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
     }
 
-    private void tryToMoveIntoStorage( IItemHandler chestInventory, ItemStack itemStack, ItemStack remainingStack) {
 
-        for(int i = 0; i < chestInventory.getSlots(); i++) {
-
-            // we find slots that have this item stack first to put in
-            ItemStack stackInSlot = chestInventory.getStackInSlot(i);
-            if(ItemStack.isSameItem(stackInSlot, itemStack)) {
-                remainingStack = chestInventory.insertItem(i, remainingStack, false);
-            }
-        }
-
-    }
 
 
     private int updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
@@ -647,9 +636,20 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                         .orElse(new ItemStackHandler(0));
 
                 if(!take) {
-                    tryToMoveIntoStorage(chestInventory, itemStack, remainingStack);
+                    for(int i = 0; i < chestInventory.getSlots(); i++) {
+
+                        // we find slots that have this item stack first to put in
+                        ItemStack stackInSlot = chestInventory.getStackInSlot(i);
+                        if(ItemStack.isSameItem(stackInSlot, itemStack)) {
+
+
+                            remainingStack = chestInventory.insertItem(i, remainingStack, false);
+                            System.out.println(remainingStack + " yea?");
+                        }
+                    }
                 }
 
+                System.out.println(remainingStack);
 
                 for(int i = 0; i < chestInventory.getSlots(); i++) {
 
