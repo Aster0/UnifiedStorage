@@ -34,6 +34,7 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 
 #### Planned Features
 - Range limiter for chests
+- Exporter/Importer/Placer/Breaker blocks
 - Storage Controller upgrades to hold more chests (currently no limit now)
 - Inter-dimension Storage & other upgrades (Planned in the future) 
 - Energy System? (Planned in the future)
