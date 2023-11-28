@@ -90,7 +90,6 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
                     if(abstractMenu instanceof StorageControllerMenu menu) {
 
 
-                        System.out.println(d.mergedStorageContents.size() + " INSIDE");
 
                         menu.updateInsertVisual(d, packet.itemStack,
                                 packet.amount, packet.quickMove, packet.slotIndex, packet.take);

@@ -78,8 +78,7 @@ public class NetworkCardItem extends BaseItem {
             innerNbt.putString("storage" + i, savedStorageData.get(i)
                     .getCustomBlockPosData().toString());
 
-            System.out.println("storage" + i + " "  + savedStorageData.get(i)
-                    .getCustomBlockPosData().toString());
+
         }
 
         nbt.put(ModUtils.MODID, innerNbt);
@@ -161,7 +160,7 @@ public class NetworkCardItem extends BaseItem {
         else {
 
 
-            System.out.println("removed");
+
             removeFromStorage(itemStack, savedStorageData);
 
         }
@@ -193,7 +192,7 @@ public class NetworkCardItem extends BaseItem {
 
         List<SavedStorageData> savedStorageDataList = storageLocations.get(getKey(itemStack));
 
-        System.out.println(savedStorageDataList);
+
 
         savedStorageDataList.removeIf((value) ->
                 value.getCustomBlockPosData()

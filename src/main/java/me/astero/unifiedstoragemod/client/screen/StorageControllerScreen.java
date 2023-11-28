@@ -118,7 +118,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             savedPages = menu.getTotalPages();
 
-            System.out.println("LOAD PAGES");
+
         }
 
 
@@ -197,8 +197,18 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     @Override
     protected void slotClicked(Slot slot, int slotIndex, int btn, ClickType clickType) {
 
-        System.out.println(menu.getDrawerGridControllerEntity().isDisabled());
+
+
+
+        if(clickType == ClickType.QUICK_CRAFT) {
+            super.slotClicked(slot, slotIndex, btn, clickType);
+        }
+
+        if(slot == null) // if somehow
+            return;
+
         if(menu.getDrawerGridControllerEntity().isDisabled()) {
+
 
             if(slot instanceof CustomGUISlot ) {
                 return;
@@ -266,8 +276,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
                 menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
 
-                System.out.println("DRAWER " + menu.getDrawerGridControllerEntity().mergedStorageContents.size() + " "
-                        + menu.getDrawerGridControllerEntity().getLevel().isClientSide);
 
 
             }
@@ -293,7 +301,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         else if(slot instanceof NetworkSlot networkSlot) {
 
 
-            System.out.println(slot.index);
+
             if(clickType != ClickType.QUICK_MOVE)
                 super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
 

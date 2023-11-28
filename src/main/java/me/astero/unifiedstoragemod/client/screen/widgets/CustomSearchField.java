@@ -55,7 +55,7 @@ public class CustomSearchField extends CustomEditBox {
 
     @Override
     public void setCanLoseFocus(boolean p_94191_) {
-        System.out.println(p_94191_);
+
         super.setCanLoseFocus(p_94191_);
     }
 }

@@ -63,13 +63,13 @@ public class CraftItemEntityPacket implements EntityPacket {
 
             if (!context.isClientSide()) {
 
-                System.out.println("SERVER!!!!");
+
                 ServerPlayer player = context.getSender();
 
                 if(player.containerMenu instanceof StorageControllerMenu menu) {
 
 
-                    System.out.println("SERVER!!!");
+
                     menu.onItemCrafted(packet.itemStack, packet.quickMove);
 
 

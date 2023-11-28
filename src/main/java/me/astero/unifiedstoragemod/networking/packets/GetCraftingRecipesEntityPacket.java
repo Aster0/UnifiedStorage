@@ -66,18 +66,19 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
                 if(player.containerMenu instanceof StorageControllerMenu menu) {
 
-                    System.out.println("yes");
+
 
                     Optional<RecipeHolder<CraftingRecipe>> optional =
                             player.level().getServer().getRecipeManager()
                                     .getRecipeFor(RecipeType.CRAFTING, menu.craftSlots, player.level());
 
-                    System.out.println("recipe?");
+
                     changeCraftingResult(ItemStack.EMPTY, menu, player);
                     RecipeHolder<CraftingRecipe> recipeHolder = optional.get();
                     CraftingRecipe craftingRecipe = recipeHolder.value();
                     ItemStack result = craftingRecipe.assemble(menu.craftSlots, player.level().registryAccess());
-                    System.out.println("result?? " + result);
+
+
 
 
                     changeCraftingResult(result, menu, player);

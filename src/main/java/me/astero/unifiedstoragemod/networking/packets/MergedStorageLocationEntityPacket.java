@@ -88,7 +88,6 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
                     storageControllerEntity.setMergedStorageContents(packet.data);
 
 
-                    System.out.println(storageControllerEntity.mergedStorageContents.size() + " SIZE FROM CLIENT");
 
                     Player player = Minecraft.getInstance().player;
 

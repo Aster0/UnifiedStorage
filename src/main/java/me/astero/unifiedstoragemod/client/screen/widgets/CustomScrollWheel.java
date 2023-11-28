@@ -200,7 +200,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
             forceHitThreshold(-1);
 
-            System.out.println(currentPage);
+
 
             if(currentPage == 1) {
                 yPos = this.minY;

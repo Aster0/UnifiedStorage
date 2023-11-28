@@ -77,6 +77,7 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
             }
 
 
+
             renderItem(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity);
 
         }
@@ -97,10 +98,16 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
 
         poseStack.translate(0.5 / scale, 1.05 / scale, 0.5 / scale);
 
+        // Get the block's rotation
+        Direction blockFacing = storageControllerEntity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
 
+        float rotationYaw = blockFacing.toYRot();
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotationYaw));
 
         poseStack.mulPose(Axis.XP.rotationDegrees(90.0F));
-        poseStack.mulPose(Axis.ZP.rotationDegrees(180.0F));
+
+
+
 
         itemRenderer.renderStatic(renderItem, ItemDisplayContext.FIXED,
                 LightTexture.FULL_SKY,

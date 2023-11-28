@@ -52,7 +52,7 @@ public class GridWrenchItem extends Item {
     public CustomBlockPosData loadNbt(ItemStack itemStack, String key) {
 
         CompoundTag nbt = itemStack.getTag();
-        System.out.println("NBT " + nbt);
+
 
 
 
@@ -98,7 +98,7 @@ public class GridWrenchItem extends Item {
             BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
 
 
-            System.out.println(loadNbt(itemStack, "grid_pos"));
+
 
 
 
@@ -116,7 +116,7 @@ public class GridWrenchItem extends Item {
                 if(hitBlockEntity instanceof StorageControllerEntity entity) {
 
                     for(ItemIdentifier d : entity.mergedStorageContents) {
-                        System.out.println(d.getItemStack());
+
                     }
 
                     saveNbt(itemStack, "grid_pos", entity.getBlockPos().toString());
@@ -124,7 +124,7 @@ public class GridWrenchItem extends Item {
                 else if(hitBlockEntity
                         .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
 
-                    System.out.println("A storage block");
+
 
                     CustomBlockPosData gridPos = loadNbt(itemStack, "grid_pos");
 

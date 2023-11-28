@@ -214,26 +214,23 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void onItemCrafted(ItemStack itemStack, boolean quickMove) {
 
+        if(itemStack == null || itemStack.equals(ItemStack.EMPTY, false)) {
+            return;
+        }
 
         if(getCarried().equals(ItemStack.EMPTY, false) ||
                 ItemStack.isSameItem(itemStack, getCarried())) {
 
-            this.resultSlots.clearContent();
 
-
-
-
-            for(ItemStack stack : craftSlots.getItems()) {
-                stack.shrink(1);
-            }
 
             ItemStack copiedStack = itemStack.copy();
+
+
+
 
             if(!quickMove) {
 
                 if(!getCarried().equals(ItemStack.EMPTY, false)) {
-                    System.out.println(itemStack.getCount() + " COUNT!");
-
 
                     copiedStack.setCount(itemStack.getCount() + getCarried().getCount());
 
@@ -242,8 +239,42 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 setCarried(copiedStack);
 
+                for(ItemStack stack : craftSlots.getItems()) {
+                    stack.shrink(1);
+                }
+
                 return;
             }
+
+            int lowestCount = 999;
+            for(ItemStack stack : craftSlots.getItems()) { // see how many times i can craft
+
+                if(!stack.equals(ItemStack.EMPTY, false))
+                    if(stack.getCount() < lowestCount)
+                        lowestCount = stack.getCount();
+
+            }
+
+
+
+            copiedStack.setCount(copiedStack.getCount() * lowestCount);
+
+
+
+            if(moveItemStackTo(copiedStack, 0, 36, false)) {
+
+
+                for(int i = 0; i < lowestCount; i++) {
+                    for(ItemStack stack : craftSlots.getItems()) {
+                        stack.shrink(1);
+
+                    }
+                }
+
+
+            }
+
+
 
 
 
@@ -435,6 +466,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
         if(container instanceof TransientCraftingContainer) {
             findRecipe();
             getDrawerGridControllerEntity().setChanged();
@@ -466,9 +498,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         if(take) {
-
-
-
 
             int index = storageControllerEntity.mergedStorageContents
                     .indexOf(new ItemIdentifier(itemStack, 1));
