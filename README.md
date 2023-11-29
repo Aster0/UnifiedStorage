@@ -31,7 +31,9 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 
 |                             |                             |
 | ----------------------------------- | ----------------------------------- |
-| ![image](https://i.imgur.com/PmBlAFz.png)  |![image](https://i.imgur.com/URubog3.png) |
+| ![image](https://i.imgur.com/p1pFAaa.png)  |![image](https://i.imgur.com/251oNk6.png) |
+
+![image](https://i.imgur.com/eMbFEdW.png)
 
 #### Planned Features
 - Range limiter for chests
