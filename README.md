@@ -12,6 +12,7 @@
 
 * [About](#about)
 * [Features](#features)
+* [Platforms](#platforms)
 * [How to Reach Me](#reach)
 
 
@@ -46,6 +47,13 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 <br>
 :thinking:
 
+
+## Platforms
+You can find my mods here:
+
+Curseforge https://www.curseforge.com/minecraft/mc-mods/unified-storage/
+
+Modrinth https://modrinth.com/mod/unifiedstorage (Still under approval)
 
 
 ## How to Reach Me
