@@ -11,7 +11,9 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class MergedStorageLocationEntityPacket implements EntityPacket {
 
@@ -22,6 +24,9 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
     public MergedStorageLocationEntityPacket(List<ItemIdentifier> data, BlockPos blockPos) {
         this.data = data;
         this.blockPos = blockPos;
+
+
+
     }
 
     public MergedStorageLocationEntityPacket(FriendlyByteBuf buffer) {
@@ -33,8 +38,15 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
 
         for (int i = 0; i < size; i++) {
 
+            int size2 = buffer.readInt();
+            Map<String, Integer> locations = new HashMap<>();
+
+            for(int x = 0; x < size2; x++) {
+                locations.put(buffer.readUtf(), buffer.readInt());
+            }
+
             ItemIdentifier itemIdentifier = new ItemIdentifier(buffer.readItem(),
-                    buffer.readInt());
+                    buffer.readInt(), locations);
 
             list.add(itemIdentifier);
         }
@@ -56,6 +68,13 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
         buffer.writeInt(this.data.size());
 
         for (ItemIdentifier item : this.data) {
+
+            buffer.writeInt(item.getLocations().size());
+            for(String key : item.getLocations().keySet()) {
+                buffer.writeUtf(key);
+                buffer.writeInt(item.getLocations().get(key));
+            }
+
             buffer.writeItemStack(item.getItemStack(), false);
             buffer.writeInt(item.getCount());
 
@@ -86,6 +105,8 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
 
                 if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
                     storageControllerEntity.setMergedStorageContents(packet.data);
+
+
 
 
 

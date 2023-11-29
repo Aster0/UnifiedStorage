@@ -1,11 +1,16 @@
 package me.astero.unifiedstoragemod.menu.data;
 
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.SimpleContainer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.item.ItemStack;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class CustomGUISlot extends Slot {
 
@@ -34,6 +39,29 @@ public class CustomGUISlot extends Slot {
     public void setActualItemCount(int value) {
         this.itemIdentifier.setCount(value);
     }
+
+
+    public List<Component> getItemLocations() {
+
+        List<Component> components = new ArrayList<>();
+
+        components.add(Component.literal(" "));
+
+        for(String key : itemIdentifier.getLocations().keySet()) {
+
+            int value = itemIdentifier.getLocations().get(key);
+
+            components.add(Component.literal(Component.translatable("container." + ModUtils.MODID
+                    + ".itemTooltip").getString().replace("%amount%",
+                    String.valueOf(value)).replace("%block%", key)));
+
+        }
+
+
+        return components;
+
+    }
+
 
 
     public ItemStack getActualItem() {

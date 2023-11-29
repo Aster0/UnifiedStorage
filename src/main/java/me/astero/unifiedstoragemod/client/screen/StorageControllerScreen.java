@@ -23,7 +23,12 @@ import net.minecraft.world.inventory.ResultSlot;
 import net.minecraft.world.inventory.Slot;
 import net.minecraft.world.inventory.TransientCraftingContainer;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 
 public class StorageControllerScreen extends AbstractContainerScreen<StorageControllerMenu> {
@@ -533,19 +538,18 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         if(this.hoveredSlot instanceof CustomGUISlot customGUISlot) { // on our custom inventory
 
-
-
             ItemStack item = customGUISlot.getActualItem();
-
-
 
             if(!item.equals(ItemStack.EMPTY, false)) {
 
-                guiGraphics.renderTooltip(this.font, item, x, y);
+
+                List<Component> textComponents = item.getTooltipLines(Minecraft.getInstance().player,
+                        TooltipFlag.NORMAL);
+
+                textComponents.addAll(customGUISlot.getItemLocations());
+                guiGraphics.renderTooltip(this.font, textComponents, Optional.empty(), item, x, y);
 
             }
-
-
 
 
         }

@@ -27,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
@@ -299,15 +300,43 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
                     existingItemIdentifier.addCount(chestItemStack.getCount());
 
+                    itemIdentifier = existingItemIdentifier;
+
                 }
                 else {
                     mergedStorageContents.add(itemIdentifier);
 
                 }
 
+                // mark down where we found these items
+                String blockName = "";
+
+                // e.g., shulker_box
+                for(String str : blockEntity.getBlockState().getBlock().asItem().toString().split("_")) {
+
+                    String revisedName = str.substring(0, 1).toUpperCase()
+                            + str.substring(1);
+
+                    blockName += revisedName + " ";
+                }
+
+
+
+
+                itemIdentifier.getLocations().putIfAbsent(blockName, 0);
+
+                int oldValue = itemIdentifier.getLocations().get(blockName);
+                itemIdentifier.getLocations().put(blockName, oldValue + chestItemStack.getCount());
+
+
+
+
+
+
             }
 
         }
+
 
 
 
@@ -483,10 +512,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     @Nullable
     @Override
     public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
-
-
-
-
 
 
         IItemHandler iItemHandler = getNetworkInventory();

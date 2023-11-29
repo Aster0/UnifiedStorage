@@ -19,6 +19,7 @@
   "container.unifiedstorage.upgradeSlotTitle" : "Insert Upgrade Card",
   "container.unifiedstorage.upgradeSlotDescription" : "§7Upgrading provides a way to \n§7enhance the controller's capabilities.",
   "container.unifiedstorage.visualItemSlotTitle" : "Insert an Item",
+  "container.unifiedstorage.itemTooltip" : "§e%amount% in %block%",
   "container.unifiedstorage.visualItemSlotDescription" : "§7Providing an item gives a visual for\n§7this controller block like an item frame.\n\n§7§o* Putting more of the same\n§7§o  items changes the visual.\n§7§o  (Only for Blocks)",
   "creative.unifiedstorage.tabName" : "Unified Storage"
 
