@@ -21,7 +21,7 @@
 
 This mod aims to be as simple as it could be, and also helping to keep your chest/any other storage block aesthetics in your world!
 
-_* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I felt that players new to Minecraft Mods might not understand such an intricate system at the get-go. So, this mod is targeted mainly for early game setups, where you might not have enough resources to setup other mods' intricate storage systems._
+_* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I felt that players new to Minecraft Mods might not understand such an intricate system at the get-go. So, this mod is targeted mainly for early game setups, where you might not have enough understanding (for new players) to setup other mods' intricate storage systems._
 
 ## Features
 - Easy to learn - Just use a network card & link up all your storages!
