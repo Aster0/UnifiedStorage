@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.items;
 
+import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.Item;
@@ -24,18 +25,16 @@ public abstract class BaseItem extends Item {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
 
 
+
         if(Screen.hasShiftDown()) {
 
-
-
             components.addAll(addShiftText(stack));
-
-
 
             return;
         }
 
-        components.add(Component.translatable("lore.unifiedstorage.default"));
+        components.addAll(ModUtils.breakComponentLine(Component.translatable("lore.unifiedstorage.default")));
+
 
     }
 }

@@ -1,18 +1,20 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceLocation;
 
 public abstract class CustomEditBox extends EditBox {
 
-
+    private static final ResourceLocation TEXT_FIELD =
+            new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
     private MutableComponent hint;
 
-    private float offsetX, offsetY;
 
     private boolean showHint = false;
 
@@ -22,15 +24,15 @@ public abstract class CustomEditBox extends EditBox {
     public CustomEditBox(Font font, int x, int y, int width, int height) {
         super(font, x, y, width, height, null);
 
+        setBordered(false);
+
     }
 
 
 
-    public void setHint(MutableComponent hint, float offsetX, float offsetY) {
-        this.hint = hint;
 
-        this.offsetX = offsetX;
-        this.offsetY = offsetY;
+    public void setHint(MutableComponent hint) {
+        this.hint = hint;
 
         showHint = true;
 
@@ -41,6 +43,8 @@ public abstract class CustomEditBox extends EditBox {
         super.render(guiGraphics, p_93658_, p_93659_, p_93660_);
 
 
+        guiGraphics.blit(TEXT_FIELD, getX()- 5, getY() - 2,   122, 3,
+                this.width + 15, this.height);
 
         if(!text.equals(getValue())) { // char type doesn't work. gives the previous text before char :( makeshift right here.
 
@@ -71,11 +75,15 @@ public abstract class CustomEditBox extends EditBox {
 
             poseStack.scale(textScale, textScale, textScale);
 
+
+
             guiGraphics.drawString(Minecraft.getInstance().font,
                     hint.getString(),
-                    scaledX + offsetX,
-                    scaledY + offsetY,
+                    scaledX + 0.3f,
+                    scaledY + 0.7f,
                     color, false);
+
+
 
 
             poseStack.popPose();

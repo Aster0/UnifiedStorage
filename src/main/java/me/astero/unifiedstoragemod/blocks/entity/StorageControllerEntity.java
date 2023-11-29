@@ -45,7 +45,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     private int maxChests = 100;
     private static final Component MENU_TITLE = Component.translatable("container."
-            + ModUtils.MODID + ".grid_controller_menu_title");
+            + ModUtils.MODID + ".storage_controller_menu_title");
 
     public List<String> chestLocations = new ArrayList<>();;
 

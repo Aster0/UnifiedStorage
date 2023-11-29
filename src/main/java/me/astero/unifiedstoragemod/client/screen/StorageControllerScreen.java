@@ -71,12 +71,15 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         registerSearchField();
 
 
+        this.inventoryLabelY = 142; // shifting the inventory label
+
+
     }
 
 
 
     private void registerSearchField() {
-        searchField = new CustomSearchField(font, leftPos + 90, topPos + 3, 100, 12) {
+        searchField = new CustomSearchField(font, leftPos + 84, topPos + 6, 76, 12) {
             @Override
             public void onPlayerType(String text) {
 
@@ -158,6 +161,11 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
+        guiGraphics.drawString
+                (this.font, "Crafting Terminal",
+                        leftPos + this.inventoryLabelX, topPos + 74,
+                        4210752, false);
+
         renderTooltip(guiGraphics, mouseX, mouseY);
 
         searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
@@ -399,6 +407,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 startingIndex + StorageControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
 
             try {
+
 
 
                 Slot slot = this.menu.slots.get(i);

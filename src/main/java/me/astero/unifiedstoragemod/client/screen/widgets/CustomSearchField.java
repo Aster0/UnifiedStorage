@@ -10,8 +10,7 @@ public class CustomSearchField extends CustomEditBox {
     public CustomSearchField(Font font, int x, int y, int width, int height) {
         super(font, x, y, width, height);
 
-        super.setHint(Component.translatable("container." + ModUtils.MODID + ".searchField"),
-                4.8f, 3);
+        super.setHint(Component.translatable("container." + ModUtils.MODID + ".searchField"));
 
     }
 

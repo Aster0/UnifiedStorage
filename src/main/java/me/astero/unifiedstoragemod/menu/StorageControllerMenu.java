@@ -644,12 +644,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                             remainingStack = chestInventory.insertItem(i, remainingStack, false);
-                            System.out.println(remainingStack + " yea?");
+
                         }
                     }
                 }
 
-                System.out.println(remainingStack);
+
 
                 for(int i = 0; i < chestInventory.getSlots(); i++) {
 
