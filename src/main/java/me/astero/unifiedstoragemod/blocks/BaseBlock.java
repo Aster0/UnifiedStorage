@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.blocks;
 
+import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
@@ -38,7 +39,7 @@ public abstract class BaseBlock extends Block {
             return;
         }
 
-        components.add(Component.translatable("lore.unifiedstorage.default"));
+        components.addAll(ModUtils.breakComponentLine(Component.translatable("lore.unifiedstorage.default")));
 
     }
 }
