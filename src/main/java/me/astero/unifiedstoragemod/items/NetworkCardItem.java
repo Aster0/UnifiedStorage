@@ -2,6 +2,7 @@ package me.astero.unifiedstoragemod.items;
 
 
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
+import me.astero.unifiedstoragemod.items.data.NetworkBlockType;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.items.data.UpgradeTier;
 import me.astero.unifiedstoragemod.utils.ModUtils;
@@ -26,79 +27,15 @@ public class NetworkCardItem extends NetworkItem {
 
 
     public NetworkCardItem(Properties properties) {
-        super(properties, "Storages", Component.translatable("lore.unifiedstorage.network_card"));
+        super(properties, "Storages", Component.translatable("lore.unifiedstorage.network_card"),
+                Integer.MAX_VALUE, NetworkBlockType.STORAGE);
 
 
     }
-
-
-
-
-
-
-
-
-
-
 
 
     @Override
-    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
-
-
-
-
-        if(!level.isClientSide) {
-
-
-            ItemStack itemStack = player.getItemInHand(interactionHand);
-            BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-
-
-
-
-
-
-            BlockEntity hitBlockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
-
-
-
-            if(hitBlockEntity != null) {
-
-                if(hitBlockEntity
-                        .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()) {
-
-
-
-                    if(storageLocations.get(getKey(itemStack)) == null)
-                        loadNbt(itemStack);
-
-
-
-
-                    String language = "language."
-                                    + ModUtils.MODID + ".unlinked_storage";
-
-
-                    if(addStorageData(ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()),
-                            itemStack)) {
-                        language = "language."
-                                + ModUtils.MODID + ".linked_storage";
-                    }
-
-                    player.displayClientMessage(Component.translatable(language), true);
-                }
-
-            }
-
-        }
-
-
-        return super.use(level, player, interactionHand);
-
-
+    public void onNetworkBlockInteract() {
 
     }
-
-
 }

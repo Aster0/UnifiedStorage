@@ -66,7 +66,7 @@ public class CustomGUISlot extends Slot {
 
     public ItemStack getActualItem() {
 
-        ItemStack stack = itemIdentifier.getItemStack().copy();
+        ItemStack stack = itemIdentifier.getItemStack();
 
 
         return stack;

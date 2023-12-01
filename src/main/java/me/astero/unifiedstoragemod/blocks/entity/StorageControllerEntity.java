@@ -440,7 +440,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             networkCardItem.loadNbt(itemStack);
 
 
-            editedChestLocations = networkCardItem.getStorageLocations(itemStack);
+            editedChestLocations = networkCardItem.getStorageLocations();
 
             updateStorageContents(player, networkCardItem, itemStack);
 
@@ -494,7 +494,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         for(SavedStorageData customBlockPosData : queueToRemoveChest) {
 
 
-            networkCardItem.getStorageLocations(itemStack).remove(customBlockPosData);
+            networkCardItem.getStorageLocations().remove(customBlockPosData);
             networkCardItem.saveNbt(itemStack);
 
 

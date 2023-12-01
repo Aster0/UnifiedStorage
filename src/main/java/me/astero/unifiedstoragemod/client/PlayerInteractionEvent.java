@@ -15,13 +15,13 @@ public class PlayerInteractionEvent {
     @SubscribeEvent
     public static void onKeyInput(InputEvent.Key event) {
 
-
-        if(event.getKey() == GLFW.GLFW_KEY_SPACE) {
-
-            Player player = Minecraft.getInstance().player;
-
-            player.getAbilities().flying = true;
-        }
+//
+//        if(event.getKey() == GLFW.GLFW_KEY_SPACE) {
+//
+//            Player player = Minecraft.getInstance().player;
+//
+//            player.getAbilities().flying = true;
+//        }
 
     }
 

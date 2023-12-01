@@ -1,7 +1,9 @@
 package me.astero.unifiedstoragemod.items;
 
 
+import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
+import me.astero.unifiedstoragemod.items.data.NetworkBlockType;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.items.data.UpgradeTier;
 import me.astero.unifiedstoragemod.utils.ModUtils;
@@ -10,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
+import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.entity.item.ItemEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
@@ -20,40 +24,38 @@ import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 // any items that can connect to a network should extend this.
-public class NetworkItem extends BaseItem {
+public abstract class NetworkItem extends BaseItem {
 
 
     private String linkedBlock;
     private MutableComponent shiftText;
-    public NetworkItem(Properties properties, String linkedBlock, MutableComponent shiftText) {
+
+    private NetworkBlockType networkBlockType;
+
+    private int maxLinkedLimit;
+    public NetworkItem(Properties properties, String linkedBlock, MutableComponent shiftText, int maxLinkedLimit, NetworkBlockType networkBlockType) {
         super(properties);
 
 
         this.linkedBlock = linkedBlock;
         this.shiftText = shiftText;
+        this.maxLinkedLimit = maxLinkedLimit;
+        this.networkBlockType = networkBlockType;
     }
 
 
 
 
 
-    protected Map<String, List<SavedStorageData>> storageLocations = new HashMap<>();
+    protected List<SavedStorageData> storageLocations = new ArrayList<>();
 
 
-    public List<SavedStorageData> getStorageLocations(ItemStack itemStack) {
-
-        return storageLocations.get(getKey(itemStack));
-    }
-
-    public String getKey(ItemStack itemStack) {
-        return String.valueOf(itemStack.hashCode());
+    public List<SavedStorageData> getStorageLocations() {
+        return storageLocations;
     }
 
     public void saveNbt(ItemStack itemStack) {
@@ -67,13 +69,15 @@ public class NetworkItem extends BaseItem {
 
         CompoundTag innerNbt = new CompoundTag();
 
-        List<SavedStorageData> savedStorageData = storageLocations.get(getKey(itemStack));
 
 
 
 
-        for(int i = 0; i < savedStorageData.size(); i++) {
-            innerNbt.putString("storage" + i, savedStorageData.get(i)
+
+
+
+        for(int i = 0; i < storageLocations.size(); i++) {
+            innerNbt.putString("storage" + i, storageLocations.get(i)
                     .getCustomBlockPosData().toString());
 
 
@@ -91,7 +95,7 @@ public class NetworkItem extends BaseItem {
 
         CompoundTag nbt = itemStack.getTag();
 
-        //storageLocations.clear();
+        storageLocations.clear();
 
 
         if(nbt == null) {
@@ -100,6 +104,7 @@ public class NetworkItem extends BaseItem {
 
 
         nbt = nbt.getCompound(ModUtils.MODID);
+
 
 
 
@@ -120,7 +125,7 @@ public class NetworkItem extends BaseItem {
                 SavedStorageData savedStorageData = new SavedStorageData(customBlockPosData);
 
 
-                saveToStorage(itemStack, savedStorageData);
+                saveToStorage(savedStorageData, null);
 
                 continue;
             }
@@ -134,7 +139,8 @@ public class NetworkItem extends BaseItem {
     }
 
 
-    protected boolean addStorageData(String blockCoordinate, ItemStack itemStack) {
+
+    protected boolean addStorageData(String blockCoordinate, ItemStack itemStack, Player player) {
 
 
 
@@ -146,71 +152,107 @@ public class NetworkItem extends BaseItem {
 
 
 
-        if(saveToStorage(itemStack, savedStorageData)) {
+        if(saveToStorage(savedStorageData, player)) {
 
             added = true;
+
+
         }
         else {
 
 
 
-            removeFromStorage(itemStack, savedStorageData);
+            removeFromStorage(savedStorageData, player);
 
         }
 
         saveNbt(itemStack);
+
+
 
         return added;
 
     }
 
 
-    protected boolean saveToStorage(ItemStack itemStack, SavedStorageData savedStorageData) {
-
-        List<SavedStorageData> savedStorageDataList = storageLocations.computeIfAbsent(getKey(itemStack),
-                (s) -> new ArrayList<>());
+    protected boolean saveToStorage(SavedStorageData savedStorageData, Player player) {
 
 
-        if(!savedStorageDataList.contains(savedStorageData)) {
-            savedStorageDataList.add(savedStorageData);
+
+
+        if(!storageLocations.contains(savedStorageData)) {
+
+
+            if(storageLocations.size() >= maxLinkedLimit) { // cannot save but can unlink it (else)
+
+                sendClientMessage(player, "language." + ModUtils.MODID +
+                        ".unable_to_link_block");
+
+
+                return true;
+            }
+
+
+
+            storageLocations.add(savedStorageData);
+
+
+            sendClientMessage(player, "language."
+                    + ModUtils.MODID + ".linked_storage");
+
 
             return true;
         }
+
 
 
         return false;
 
     }
 
-    private void removeFromStorage(ItemStack itemStack, SavedStorageData savedStorageData) {
+    private void sendClientMessage(Player player, String message) {
+        if(player != null)
+            player.displayClientMessage(Component.translatable(message), true);
+    }
+
+    private void removeFromStorage(SavedStorageData savedStorageData, Player player) {
 
 
-        List<SavedStorageData> savedStorageDataList = storageLocations.get(getKey(itemStack));
+//        System.out.println("Remove??? ");
+//        List<SavedStorageData> savedStorageDataList = storageLocations.get(getKey(itemStack));
+//
+//
+//        savedStorageDataList.removeIf((value) ->
+//                value.getCustomBlockPosData()
+//                        .equals(savedStorageData.getCustomBlockPosData()));
+
+        storageLocations.remove(savedStorageData);
 
 
-        savedStorageDataList.removeIf((value) ->
-                value.getCustomBlockPosData()
-                        .equals(savedStorageData.getCustomBlockPosData()));
+        sendClientMessage(player, "language."
+                + ModUtils.MODID + ".unlinked_storage");
 
 
 
     }
 
+
+
+
     @Override
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
 
-        if(storageLocations.get(getKey(stack)) == null)
-            loadNbt(stack);
+
+
+        loadNbt(stack);
 
         String lore = Component.translatable("lore." + ModUtils.MODID + ".network_card_storages").getString();
 
-        List<SavedStorageData> savedStorageData = storageLocations.get(getKey(stack));
 
-        int amountOfStorages = 0;
-        if(savedStorageData != null) {
-            amountOfStorages = savedStorageData.size();
-        }
+
+        int amountOfStorages = storageLocations.size();
+
 
         components.addAll(ModUtils.
                         breakComponentLine(
@@ -226,4 +268,66 @@ public class NetworkItem extends BaseItem {
                 breakComponentLine(shiftText);
 
     }
+
+    @Override
+    public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
+
+
+
+
+        if(!level.isClientSide) {
+
+
+
+            ItemStack itemStack = player.getItemInHand(interactionHand);
+            BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
+
+
+
+
+
+
+            BlockEntity hitBlockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
+
+
+
+            if(hitBlockEntity != null) {
+
+
+                boolean isBlock = networkBlockType == NetworkBlockType.STORAGE ? hitBlockEntity
+                        .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent()
+                        : hitBlockEntity instanceof StorageControllerEntity;
+
+
+                if(isBlock) {
+
+
+
+                    loadNbt(itemStack);
+
+
+
+                    onNetworkBlockInteract();
+
+                    addStorageData(ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()),
+                            itemStack, player);
+
+
+
+
+                }
+
+            }
+
+        }
+
+
+        return super.use(level, player, interactionHand);
+
+
+
+    }
+
+
+    public abstract void onNetworkBlockInteract();
 }

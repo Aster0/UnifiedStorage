@@ -263,7 +263,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                     return;
 
 
-
                 ItemStack itemStack =  v.getActualItem().copy();
                 int modifiedValue = Math.min(v.getActualItemCount(), itemStack.getMaxStackSize());
                 boolean quickMove = false;

@@ -17,11 +17,13 @@ public class ItemIdentifier {
         this.itemStack = itemStack;
         this.count = count;
         this.locations = locations;
+
     }
 
     public ItemIdentifier(ItemStack itemStack, int count) {
         this.itemStack = itemStack;
         this.count = count;
+
     }
 
     public Map<String, Integer> getLocations() {
@@ -61,6 +63,7 @@ public class ItemIdentifier {
     }
 
     public ItemStack getItemStack() {
+
         return itemStack;
     }
 
