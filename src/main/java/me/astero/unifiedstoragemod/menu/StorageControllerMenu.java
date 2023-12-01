@@ -77,6 +77,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
     }
 
 
@@ -86,7 +87,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         for(int i = 0; i < craftSlots.getItems().size(); i++) {
 
-            getDrawerGridControllerEntity().getCraftingInventory().setStackInSlot(i,
+            getStorageControllerEntity().getCraftingInventory().setStackInSlot(i,
                     craftSlots.getItem(i));
         }
 
@@ -99,7 +100,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return pInventory;
     }
 
-    public StorageControllerEntity getDrawerGridControllerEntity() {
+    public StorageControllerEntity getStorageControllerEntity() {
         return storageControllerEntity;
     }
 
@@ -374,9 +375,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
 
 
-        for(int i = 0; i < getDrawerGridControllerEntity().getCraftingInventory().getSlots(); i++) {
+        for(int i = 0; i < getStorageControllerEntity().getCraftingInventory().getSlots(); i++) {
 
-            ItemStack stack = getDrawerGridControllerEntity().getCraftingInventory().getStackInSlot(i);
+            ItemStack stack = getStorageControllerEntity().getCraftingInventory().getStackInSlot(i);
 
             if(!stack.equals(ItemStack.EMPTY, false)) {
 
@@ -467,7 +468,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(container instanceof TransientCraftingContainer) {
 
             findRecipe();
-            getDrawerGridControllerEntity().setChanged();
+            getStorageControllerEntity().setChanged();
         }
 
 
@@ -499,6 +500,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             int index = storageControllerEntity.mergedStorageContents
                     .indexOf(new ItemIdentifier(itemStack, 1));
+
+
 
             if(index == -1) return;
 
@@ -562,7 +565,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             value = itemStack.getCount();
 
 
-
             int actualValue = updateAllStorages(itemStack, value, true, quickMove, slotIndex);
             value = actualValue;
 
@@ -624,6 +626,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         int valueLeft = value;
         remainingStack.setCount(value);
+
+
 
         for(SavedStorageData blockPosData : storageControllerEntity.getEditedChestLocations()) {
 
@@ -718,7 +722,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             ItemStack temporaryStack = itemStack.copy();
 
-
             temporaryStack.setCount(itemStack.getCount() - (value - remainingStack.getCount()));
             remainingStack = temporaryStack;
 
@@ -729,6 +732,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                 setCarried(remainingStack);
+
             }
 
 

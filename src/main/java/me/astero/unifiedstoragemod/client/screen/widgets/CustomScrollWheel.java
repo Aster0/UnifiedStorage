@@ -42,7 +42,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
         savedTime = System.currentTimeMillis();
 
 
-        if(menu.getDrawerGridControllerEntity().mergedStorageContents.size() == 0) {
+        if(menu.getStorageControllerEntity().mergedStorageContents.size() == 0) {
             disabled = true;
         }
 

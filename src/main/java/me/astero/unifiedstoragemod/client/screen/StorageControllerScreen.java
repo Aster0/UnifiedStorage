@@ -26,7 +26,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,15 +36,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
     private CustomSearchField searchField;
     private CustomScrollWheel customScrollWheel;
-
-    private int scrollbarPosition = 0;
-    private int scrollbarHeight = 0;
-    private int totalContentHeight = 27;
-    private int visibleContentHeight = 7; // Adjust this based on your needs
-
-
-
-
 
     private int savedPages = -1;
 
@@ -61,7 +51,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     public StorageControllerScreen(StorageControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
 
-        this.imageWidth = 199;
+        this.imageWidth = 256;
         this.imageHeight = 235;
 
 
@@ -229,7 +219,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             return;
         }
 
-        if(menu.getDrawerGridControllerEntity().isDisabled()) {
+        if(menu.getStorageControllerEntity().isDisabled()) {
 
 
 
@@ -301,6 +291,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                         modifiedValue, quickMove));
 
                 menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
+                System.out.println("interact");
 
 
 
@@ -463,7 +454,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-            if(menu.getDrawerGridControllerEntity().isDisabled()) {
+            if(menu.getStorageControllerEntity().isDisabled()) {
                 guiGraphics.fill(actualSlotX, actualSlotY, 16 + actualSlotX, 16 + actualSlotY,
                         0xFF686868);
 

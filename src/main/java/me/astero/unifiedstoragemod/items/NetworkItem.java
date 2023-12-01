@@ -103,6 +103,7 @@ public abstract class NetworkItem extends BaseItem {
         }
 
 
+
         nbt = nbt.getCompound(ModUtils.MODID);
 
 
@@ -246,6 +247,7 @@ public abstract class NetworkItem extends BaseItem {
 
 
         loadNbt(stack);
+
 
         String lore = Component.translatable("lore." + ModUtils.MODID + ".network_card_storages").getString();
 

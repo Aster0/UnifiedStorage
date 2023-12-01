@@ -247,7 +247,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         this.getCraftingInventory().deserializeNBT(modNbt.getCompound("crafting_inventory"));
 
 
-        loadEditedChests(modNbt);
+        //loadEditedChests(modNbt);
 
 
 
@@ -388,6 +388,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         super.invalidateCaps();
         this.optional.invalidate();
         this.optionalVisualItem.invalidate();
+        this.optionalCraftingInventory.invalidate();
     }
 
     @Nullable
@@ -437,10 +438,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             mergedStorageContents.clear();
             queueToRemoveChest.clear();
 
+
+
             networkCardItem.loadNbt(itemStack);
 
 
-            editedChestLocations = networkCardItem.getStorageLocations();
+            editedChestLocations = new ArrayList<>(networkCardItem.getStorageLocations());
+
+
 
             updateStorageContents(player, networkCardItem, itemStack);
 
@@ -536,6 +541,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         StorageControllerMenu storageControllerMenu = new
                 StorageControllerMenu(pControllerId, pInventory, this);
+
 
         this.menu = storageControllerMenu;
 
