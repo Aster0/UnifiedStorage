@@ -14,6 +14,7 @@ import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPa
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
+import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
@@ -25,6 +26,10 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
@@ -230,26 +235,102 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 setCarried(copiedStack);
 
+
+
+
                 for (ItemStack stack : craftSlots.getItems()) {
-                    stack.shrink(1);
+
+
+                    if(!canRemoveItemFromInventory(stack, true, false, 1)) {
+                        stack.shrink(1);
+                    }
                 }
+
+
+
+
 
                 return;
             }
         }
 
+
+        List<ItemIdentifier> itemOccurrence = new ArrayList<>();
+
         int lowestCount = 999;
         for(ItemStack stack : craftSlots.getItems()) { // see how many times i can craft
 
-            if(!stack.equals(ItemStack.EMPTY, false))
-                if(stack.getCount() < lowestCount)
-                    lowestCount = stack.getCount();
+            if(!stack.equals(ItemStack.EMPTY, false)) {
+
+                ItemIdentifier itemIdentifier = new ItemIdentifier(stack, 1);
+
+                boolean justAdded = false;
+
+                int index = itemOccurrence.indexOf(itemIdentifier);
+
+                if(index == -1) {
+                    itemOccurrence.add(itemIdentifier);
+                    justAdded = true;
+                }
+
+                if(!justAdded) {
+                    itemIdentifier = itemOccurrence.get(index);
+                    itemIdentifier.setCount(itemIdentifier.getCount() + 1);
+                }
+
+
+//
+//                if(stack.getCount() < lowestCount)
+//                    lowestCount = stack.getCount();
+            }
+
+        }
+
+        for(ItemIdentifier itemIdentifier : itemOccurrence) {
+
+            int index = getStorageControllerEntity().mergedStorageContents.indexOf(itemIdentifier);
+
+            int stackCount = index != -1 ? getStorageControllerEntity().getMergedStorageContents(index).getCount() : 0;
+            int stackCountRevised = stackCount / itemIdentifier.getCount(); // divided by the occurrence
+
+            System.out.println("STACK COUNT: " + stackCount + " OCCURRENCE: " + itemIdentifier.getCount()
+             + " ITEM: " + itemIdentifier.getItemStack().getItem() + " " + getPlayerInventory().player.level().isClientSide);
+
+            if(stackCountRevised < lowestCount) {
+                lowestCount = stackCountRevised;
+            }
+
+        }
+        System.out.println(lowestCount + " LOWEST BEFORE");
+
+        int craftedAmount = copiedStack.getCount() * lowestCount;
+        System.out.println("crafted amount: " + craftedAmount);
+
+        if(craftedAmount > itemStack.getMaxStackSize()) {
+
+            int divideBy = (int) Math.ceil((double) craftedAmount / itemStack.getMaxStackSize());
+
+            lowestCount = (int) Math.ceil((double) lowestCount / divideBy); // new lowest amount to hit 64
 
         }
 
 
-
         copiedStack.setCount(copiedStack.getCount() * lowestCount);
+
+
+
+
+        // occurrence * lowest stack count to remove * must be after we confirmed the lowest stack count
+        for(ItemIdentifier itemIdentifier : itemOccurrence) {
+            canRemoveItemFromInventory(itemIdentifier.getItemStack(),
+                    true, false, itemIdentifier.getCount() * lowestCount);
+
+            System.out.println(" removing: " + itemIdentifier.getCount() * lowestCount + " for "
+                    + itemIdentifier.getItemStack().getItem());
+        }
+
+
+
 
 
 
@@ -476,15 +557,14 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     }
 
+    public void findRecipe(ItemStack itemStack, int slot) {
+
+        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(itemStack, slot, true));
+    }
+
     public void findRecipe() {
 
-
-        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket());
-
-
-
-
-
+        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(ItemStack.EMPTY, 0, false));
     }
 
     public void changeCraftingResultSlot(ItemStack itemStack) {
@@ -615,7 +695,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-    private int updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
+    public int updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
 
 
         int valueTakenOut = 0;
@@ -626,6 +706,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         int valueLeft = value;
         remainingStack.setCount(value);
+        System.out.println(" update " + itemStack);
 
 
 
@@ -742,7 +823,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     remainingStack.getCount(), itemStack, slotIndex, quickMove, false), (ServerPlayer) pInventory.player);
 
             updateInsertVisual(storageControllerEntity, itemStack,
-                    remainingStack.getCount(), quickMove, slotIndex, false);
+                   remainingStack.getCount(), quickMove, slotIndex, false);
         }
         else {
 
@@ -843,6 +924,83 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
     }
 
+    public void onRecipeTransfer(IRecipeSlotsView recipeSlots) {
+
+
+        for(int i = 1; i < recipeSlots.getSlotViews().size(); i++) {
+
+            Optional<ItemStack> currentItemStack = recipeSlots.getSlotViews().get(i).getDisplayedItemStack();
+
+            if(currentItemStack.isPresent()) {
+
+                //populateCraftSlots(currentItemStack.get().copy(), i -1); // client
+                findRecipe(currentItemStack.get().copy(), i - 1); // server
+
+
+            }
+
+
+
+        }
+    }
+
+    public void populateCraftSlots(ItemStack itemStack, int slot) {
+
+
+        this.craftSlots.setItem(slot, itemStack);
+
+
+    }
+
+
+    public boolean canRemoveItemFromInventory(ItemStack itemStack, boolean remove, boolean removeFromPlayer, int value) {
+
+        ItemIdentifier temporaryIdentifier = new ItemIdentifier(itemStack, 1);
+
+        int index = getStorageControllerEntity().mergedStorageContents.indexOf(temporaryIdentifier);
+
+        ItemIdentifier itemIdentifier = getStorageControllerEntity().getMergedStorageContents(index);
+
+        /*
+
+            PRIORITY = TAKE FROM STORAGE FIRST THEN TAKE FROM PLAYER'S INVENTORY!
+         */
+
+        if(index != -1 && itemIdentifier.getCount() >= value) {
+
+            if(remove) {
+                updateAllStorages(itemStack, value, true, true, 0);
+
+
+
+
+                if(!pInventory.player.level().isClientSide()) {
+                    itemIdentifier.setCount(itemIdentifier.getCount() - value);
+
+                    ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
+                            storageControllerEntity.getBlockPos(),
+                            value, itemStack, 0, false, true), (ServerPlayer) pInventory.player);
+                }
+            }
+
+            return true;
+        }
+        else if(getPlayerInventory().findSlotMatchingItem(itemStack) != -1) { // check player's inventory
+
+            if(remove && removeFromPlayer) {
+                getPlayerInventory().getItem(getPlayerInventory().findSlotMatchingItem(itemStack)).shrink(1);
+            }
+
+            return true;
+
+
+        }
+
+
+        return false;
+
+
+    }
 
     public void updateStorageContents(ItemStack itemStack, int value) {
 
@@ -876,6 +1034,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
     }
+
+
+
 
 
     @Override

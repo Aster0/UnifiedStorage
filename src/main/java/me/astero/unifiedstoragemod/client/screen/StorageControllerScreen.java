@@ -163,7 +163,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         renderTooltip(guiGraphics, mouseX, mouseY);
 
-        searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
+
+        if(searchField != null)
+            searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
 
 
 
@@ -184,7 +186,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
         if (guiBounds.contains(((int) mouseX), (int) mouseY)) {
-            customScrollWheel.onMouseDrag(mouseX, mouseY, button, dragX, dragY);
+
+            if(customScrollWheel!= null)
+                customScrollWheel.onMouseDrag(mouseX, mouseY, button, dragX, dragY);
         }
 
 
@@ -194,7 +198,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     @Override
     public boolean mouseReleased(double p_97812_, double p_97813_, int p_97814_) {
 
-        customScrollWheel.onMouseRelease();
+        if(customScrollWheel != null)
+            customScrollWheel.onMouseRelease();
+
         return super.mouseReleased(p_97812_, p_97813_, p_97814_);
     }
 
@@ -202,8 +208,11 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     public boolean mouseClicked(double mouseX, double mouseY, int p_97750_) {
 
 
-        customScrollWheel.onMouseClick(mouseX, mouseY);
-        searchField.setFocused(false);
+        if(customScrollWheel != null)
+            customScrollWheel.onMouseClick(mouseX, mouseY);
+
+        if(searchField != null)
+            searchField.setFocused(false);
 
         return super.mouseClicked(mouseX, mouseY, p_97750_);
 

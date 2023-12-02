@@ -19,17 +19,25 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
 
+    private ItemStack itemStack;
+    private int slot;
+    private boolean populateCraftingSlot;
 
 
-    public GetCraftingRecipesEntityPacket() {
+    public GetCraftingRecipesEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot) {
 
-
+        this.itemStack = itemStack;
+        this.slot = slot;
+        this.populateCraftingSlot = populateCraftingSlot;
 
     }
 
     public GetCraftingRecipesEntityPacket(FriendlyByteBuf buffer) {
 
         // Decode your packet data here
+        this.itemStack = buffer.readItem();
+        this.slot = buffer.readInt();
+        this.populateCraftingSlot = buffer.readBoolean();
 
 
     }
@@ -37,6 +45,9 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
     @Override
     public void encode(FriendlyByteBuf buffer) {
 
+        buffer.writeItemStack(this.itemStack, false);
+        buffer.writeInt(this.slot);
+        buffer.writeBoolean(this.populateCraftingSlot);
 
     }
 
@@ -62,6 +73,19 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
                 if(player.containerMenu instanceof StorageControllerMenu menu) {
 
+
+
+                    if(packet.populateCraftingSlot) {
+
+                        System.out.println("removing::: " + packet.itemStack);
+                        // check if enough
+                        if(menu.canRemoveItemFromInventory(packet.itemStack, true, true, 1)) {
+                            menu.populateCraftSlots(packet.itemStack, packet.slot);
+                        }
+
+
+                        return;
+                    }
 
 
                     Optional<RecipeHolder<CraftingRecipe>> optional =

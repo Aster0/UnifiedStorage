@@ -8,10 +8,12 @@ import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -53,7 +55,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
     private List<SavedStorageData> editedChestLocations = new ArrayList<>();
 
-
+    public StorageControllerMenu menu;
 
 
 
@@ -545,8 +547,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         this.menu = storageControllerMenu;
 
+
         return storageControllerMenu;
     }
 
-    public StorageControllerMenu menu;
+
+
 }
