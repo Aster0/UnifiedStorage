@@ -252,12 +252,16 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 return;
             }
+
+
         }
 
 
         List<ItemIdentifier> itemOccurrence = new ArrayList<>();
 
+
         int lowestCount = 999;
+        int lowestCountOnGrid = 999;
         for(ItemStack stack : craftSlots.getItems()) { // see how many times i can craft
 
             if(!stack.equals(ItemStack.EMPTY, false)) {
@@ -279,12 +283,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
 
 
-//
-//                if(stack.getCount() < lowestCount)
-//                    lowestCount = stack.getCount();
+
+                if(stack.getCount() < lowestCountOnGrid)
+                    lowestCountOnGrid = stack.getCount();
             }
 
         }
+
+        System.out.println("LOWEST ON GRID: " + lowestCountOnGrid);
+        int craftableFromGrid = copiedStack.getCount() * lowestCountOnGrid;
 
         for(ItemIdentifier itemIdentifier : itemOccurrence) {
 
@@ -301,6 +308,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             }
 
         }
+
         System.out.println(lowestCount + " LOWEST BEFORE");
 
         int craftedAmount = copiedStack.getCount() * lowestCount;
@@ -315,9 +323,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
 
 
-        copiedStack.setCount(copiedStack.getCount() * lowestCount);
+        int newCraftedAmount = copiedStack.getCount() * lowestCount;
 
+        System.out.println("new crafted amount: " + newCraftedAmount);
+        if(newCraftedAmount == copiedStack.getMaxStackSize()) {
+            craftableFromGrid = 0; // dont use grid
+            lowestCountOnGrid = 0;
+        }
 
+        copiedStack.setCount((copiedStack.getCount() * lowestCount) + craftableFromGrid);
 
 
         // occurrence * lowest stack count to remove * must be after we confirmed the lowest stack count
@@ -337,7 +351,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(moveItemStackTo(copiedStack, 0, 36, false)) {
 
 
-            for(int i = 0; i < lowestCount; i++) {
+            for(int i = 0; i < lowestCountOnGrid; i++) {
                 for(ItemStack stack : craftSlots.getItems()) {
                     stack.shrink(1);
 
