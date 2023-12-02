@@ -325,10 +325,22 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         int newCraftedAmount = copiedStack.getCount() * lowestCount;
 
-        System.out.println("new crafted amount: " + newCraftedAmount);
+
         if(newCraftedAmount == copiedStack.getMaxStackSize()) {
             craftableFromGrid = 0; // dont use grid
             lowestCountOnGrid = 0;
+        }
+        else {
+            // we see how many we need from the crafting grid to make it 64
+
+            int newCraftingStackNeeded = (copiedStack.getMaxStackSize() - newCraftedAmount) / copiedStack.getCount();
+
+            if(newCraftingStackNeeded < lowestCountOnGrid) {
+
+                lowestCountOnGrid = newCraftingStackNeeded;
+                craftableFromGrid = copiedStack.getCount() * lowestCountOnGrid;
+            }
+
         }
 
         copiedStack.setCount((copiedStack.getCount() * lowestCount) + craftableFromGrid);
