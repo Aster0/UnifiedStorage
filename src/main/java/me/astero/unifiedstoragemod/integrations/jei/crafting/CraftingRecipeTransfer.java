@@ -5,6 +5,8 @@ import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
 import mezz.jei.api.recipe.transfer.IRecipeTransferHandler;
+import mezz.jei.api.recipe.transfer.IRecipeTransferHandlerHelper;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
@@ -21,10 +23,13 @@ public class CraftingRecipeTransfer<C extends StorageControllerMenu, R> implemen
 
 
 
-    public Class<C> menuClass;
+    private Class<C> menuClass;
 
-    public CraftingRecipeTransfer(Class<C> menuClass) {
+    private IRecipeTransferHandlerHelper helper;
+
+    public CraftingRecipeTransfer(Class<C> menuClass, IRecipeTransferHandlerHelper helper) {
         this.menuClass = menuClass;
+        this.helper = helper;
 
 
     }
@@ -46,7 +51,12 @@ public class CraftingRecipeTransfer<C extends StorageControllerMenu, R> implemen
     }
 
     @Override
-    public @Nullable IRecipeTransferError transferRecipe(C container, R recipe, IRecipeSlotsView recipeSlots, Player player, boolean maxTransfer, boolean doTransfer) {
+    public @Nullable IRecipeTransferError transferRecipe(C container,
+                                                         R recipe, IRecipeSlotsView recipeSlots,
+                                                         Player player, boolean maxTransfer, boolean doTransfer) {
+
+
+
 
         if(doTransfer)
             container.onRecipeTransfer(recipeSlots);

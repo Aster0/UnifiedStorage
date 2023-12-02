@@ -300,7 +300,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                         modifiedValue, quickMove));
 
                 menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
-                System.out.println("interact");
+
 
 
 

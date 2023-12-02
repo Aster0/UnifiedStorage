@@ -23,7 +23,8 @@ public class JEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
 
-        registration.addRecipeTransferHandler(new CraftingRecipeTransfer<>(StorageControllerMenu.class),
+        registration.addRecipeTransferHandler(new CraftingRecipeTransfer<>(StorageControllerMenu.class,
+                        registration.getTransferHelper()),
                 RecipeTypes.CRAFTING);
     }
 }

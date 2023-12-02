@@ -19,16 +19,18 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
 
-    private ItemStack itemStack;
+    private ItemStack itemStack, itemStackToStore;
     private int slot;
     private boolean populateCraftingSlot;
 
 
-    public GetCraftingRecipesEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot) {
+    public GetCraftingRecipesEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot, ItemStack itemStackToStore) {
 
         this.itemStack = itemStack;
         this.slot = slot;
         this.populateCraftingSlot = populateCraftingSlot;
+        this.itemStackToStore = itemStackToStore;
+
 
     }
 
@@ -38,6 +40,8 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
         this.itemStack = buffer.readItem();
         this.slot = buffer.readInt();
         this.populateCraftingSlot = buffer.readBoolean();
+        this.itemStackToStore = buffer.readItem();
+
 
 
     }
@@ -48,6 +52,8 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
         buffer.writeItemStack(this.itemStack, false);
         buffer.writeInt(this.slot);
         buffer.writeBoolean(this.populateCraftingSlot);
+        buffer.writeItemStack(this.itemStackToStore, false);
+
 
     }
 
@@ -76,15 +82,23 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
                     if(packet.populateCraftingSlot) {
+                        // try to store first whatever is in the crafting slot
+                        if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
+                                packet.itemStackToStore.getCount(), packet.slot)) {
 
-                        System.out.println("removing::: " + packet.itemStack);
+                            return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
+                        }
+
+
+
+                        System.out.println(packet.itemStack + " ITEM STACK!");
                         // check if enough
                         if(menu.canRemoveItemFromInventory(packet.itemStack, true, true, 1)) {
                             menu.populateCraftSlots(packet.itemStack, packet.slot);
                         }
 
 
-                        return;
+                        return; // because SlotsChanged will trigger the recipe change
                     }
 
 
