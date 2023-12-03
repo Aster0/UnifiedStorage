@@ -316,17 +316,22 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         int craftedAmount = copiedStack.getCount() * lowestCount;
 
 
+        System.out.println(lowestCount + " LOWEST");
+
         if(craftedAmount > itemStack.getMaxStackSize()) {
 
-            int divideBy = (int) Math.ceil((double) craftedAmount / itemStack.getMaxStackSize());
+            double divideBy = (double) craftedAmount / itemStack.getMaxStackSize();
 
-            lowestCount = (int) Math.ceil((double) lowestCount / divideBy); // new lowest amount to hit 64
+            lowestCount = (int) (lowestCount / divideBy); // new lowest amount to hit nearest 64
+
+            System.out.println(lowestCount + " LOWEST NEW DIVIDE BY:" + divideBy);
 
         }
 
 
         int newCraftedAmount = copiedStack.getCount() * lowestCount;
 
+        System.out.println(newCraftedAmount + " NEW AMOUNT");
 
         if(newCraftedAmount == copiedStack.getMaxStackSize()) {
             craftableFromGrid = 0; // dont use grid
@@ -981,11 +986,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
             }
-
-
-
-
-
 
 
         }
