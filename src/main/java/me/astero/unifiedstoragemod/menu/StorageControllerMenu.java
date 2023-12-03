@@ -238,13 +238,21 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-                for (ItemStack stack : craftSlots.getItems()) {
+                if(!getPlayerInventory().player.level().isClientSide)
+                    for (ItemStack stack : craftSlots.getItems()) {
 
 
-                    if(!canRemoveItemFromInventory(stack, true, false, 1)) {
-                        stack.shrink(1);
+                        boolean canRemove = canRemoveItemFromInventory(stack, true, false, 1);
+
+                        if(!stack.equals(ItemStack.EMPTY, false)) {
+
+                            if(!canRemove) {
+
+                                stack.shrink(1);
+                            }
+                        }
+
                     }
-                }
 
 
 
@@ -316,7 +324,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         int craftedAmount = copiedStack.getCount() * lowestCount;
 
 
-        System.out.println(lowestCount + " LOWEST");
+
 
         if(craftedAmount > itemStack.getMaxStackSize()) {
 
@@ -324,14 +332,13 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             lowestCount = (int) (lowestCount / divideBy); // new lowest amount to hit nearest 64
 
-            System.out.println(lowestCount + " LOWEST NEW DIVIDE BY:" + divideBy);
+
 
         }
 
 
         int newCraftedAmount = copiedStack.getCount() * lowestCount;
 
-        System.out.println(newCraftedAmount + " NEW AMOUNT");
 
         if(newCraftedAmount == copiedStack.getMaxStackSize()) {
             craftableFromGrid = 0; // dont use grid
@@ -712,8 +719,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             // update visual was here last time
 
-
-            //updateStorageContents(itemStack, -value);
+            updateStorageContents(itemStack, -value);
 
 
 
@@ -877,6 +883,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
         return valueTakenOut;
 
 
@@ -981,7 +988,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             // remove item from the crafting grid first before transferring
             if(currentItemStack.isPresent()) {
 
-                //populateCraftSlots(currentItemStack.get().copy(), i -1); // client
+
                 findRecipe(currentItemStack.get().copy(), i - 1, craftingGridItem.copy()); // server
 
 
@@ -1043,30 +1050,45 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             PRIORITY = TAKE FROM STORAGE FIRST THEN TAKE FROM PLAYER'S INVENTORY!
          */
 
+
+
         if(index != -1 && itemIdentifier.getCount() >= value) {
 
             if(remove) {
-                updateAllStorages(itemStack, value, true, true, 0);
+
+                int value1 = updateAllStorages(itemStack, value, true, true, 0);
+
+                if(value1 >= value) {
+
+                    if(!pInventory.player.level().isClientSide()) {
+                        itemIdentifier.setCount(itemIdentifier.getCount() - value);
 
 
+                        ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
+                                storageControllerEntity.getBlockPos(),
+                                value, itemStack, 0, false, true), (ServerPlayer) pInventory.player);
 
 
+                    }
 
-                if(!pInventory.player.level().isClientSide()) {
-                    itemIdentifier.setCount(itemIdentifier.getCount() - value);
+                    return true;
 
-                    ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
-                            storageControllerEntity.getBlockPos(),
-                            value, itemStack, 0, false, true), (ServerPlayer) pInventory.player);
                 }
+
+
+
+
+
+
             }
 
-            return true;
+            return false;
         }
-        else if(getPlayerInventory().findSlotMatchingItem(itemStack) != -1) { // check player's inventory
+        else if(getPlayerInventory().findSlotMatchingItem(itemStack) != -1 && removeFromPlayer) { // check player's inventory
 
 
-            if(remove && removeFromPlayer) {
+
+            if(remove) {
                 getPlayerInventory().getItem(getPlayerInventory().findSlotMatchingItem(itemStack)).shrink(1);
             }
 
