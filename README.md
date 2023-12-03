@@ -49,6 +49,23 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 <br>
 :thinking:
 
+<br>
+<br>
+<br>
+
+**Mod Compatibility**
+<br>
+This section explains which mod is tested for compatibility/developed with its API.
+- [Just Enough Items (JEI)](https://www.curseforge.com/minecraft/mc-mods/jei) - Recipe transfer & GUI compatibility
+
+<br>
+
+**Modpack Usage**
+
+Yes, you may. You don't need to ask for permission, you can include it in your modpacks.
+
+<br>
+
 
 ## Platforms
 You can find my mods here:
