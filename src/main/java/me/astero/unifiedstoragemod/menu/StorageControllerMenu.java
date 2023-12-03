@@ -758,10 +758,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                             remainingStack = chestInventory.insertItem(i, remainingStack, false);
 
+
                         }
 
                     }
                 }
+
 
 
 
@@ -851,7 +853,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             updateInsertVisual(storageControllerEntity, itemStack,
                    remainingStack.getCount(), quickMove, slotIndex, false);
-
 
 
 
@@ -1005,12 +1006,18 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         int remaining = updateAllStorages(itemStack, value, false, true, -1);
 
 
+        itemStack.setCount(remaining);
+
+
+
+        populateCraftSlots(itemStack, slot);
+
         if(remaining > 0) { // means we can't put all into the storage
             // so we move to the player's inventory
             if(moveItemStackTo(itemStack, 0, 36, false)) {
                 populateCraftSlots(ItemStack.EMPTY, slot);
 
-                System.out.println("move to inv ");
+
 
                 return true;
             }
@@ -1018,12 +1025,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         }
 
-        ItemStack stack = itemStack.copy();
-        stack.setCount(remaining);
 
-        System.out.println(stack + " REMAINING");
-
-        populateCraftSlots(stack, slot);
 
 
         return remaining == 0;
@@ -1047,7 +1049,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 updateAllStorages(itemStack, value, true, true, 0);
 
 
-                System.out.println("REMOVING FROM STORAGE");
+
 
 
                 if(!pInventory.player.level().isClientSide()) {
@@ -1063,7 +1065,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
         else if(getPlayerInventory().findSlotMatchingItem(itemStack) != -1) { // check player's inventory
 
-            System.out.println("REMOVING FROM PLAYER INV");
+
             if(remove && removeFromPlayer) {
                 getPlayerInventory().getItem(getPlayerInventory().findSlotMatchingItem(itemStack)).shrink(1);
             }

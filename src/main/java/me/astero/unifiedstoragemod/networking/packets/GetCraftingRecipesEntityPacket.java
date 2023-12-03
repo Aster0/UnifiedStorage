@@ -91,7 +91,6 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
 
-                        System.out.println(packet.itemStack + " ITEM STACK!");
                         // check if enough
                         if(menu.canRemoveItemFromInventory(packet.itemStack, true, true, 1)) {
                             menu.populateCraftSlots(packet.itemStack, packet.slot);
