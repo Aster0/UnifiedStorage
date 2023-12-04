@@ -21,15 +21,17 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
     private ItemStack itemStack, itemStackToStore;
     private int slot;
-    private boolean populateCraftingSlot;
+    private boolean populateCraftingSlot, moveToPlayer;
 
 
-    public GetCraftingRecipesEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot, ItemStack itemStackToStore) {
+    public GetCraftingRecipesEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot, ItemStack itemStackToStore, boolean moveToPlayer) {
 
         this.itemStack = itemStack;
         this.slot = slot;
         this.populateCraftingSlot = populateCraftingSlot;
         this.itemStackToStore = itemStackToStore;
+        this.moveToPlayer = moveToPlayer;
+
 
 
     }
@@ -41,6 +43,7 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
         this.slot = buffer.readInt();
         this.populateCraftingSlot = buffer.readBoolean();
         this.itemStackToStore = buffer.readItem();
+        this.moveToPlayer = buffer.readBoolean();
 
 
 
@@ -53,6 +56,7 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
         buffer.writeInt(this.slot);
         buffer.writeBoolean(this.populateCraftingSlot);
         buffer.writeItemStack(this.itemStackToStore, false);
+        buffer.writeBoolean(this.moveToPlayer);
 
 
     }
@@ -82,13 +86,19 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
                     if(packet.populateCraftingSlot) {
+
                         // try to store first whatever is in the crafting slot
                         if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
-                                packet.itemStackToStore.getCount(), packet.slot)) {
+                                packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
 
                             return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
                         }
 
+
+
+                        if(packet.itemStack.equals(ItemStack.EMPTY, false)) {
+                            return;
+                        }
 
 
                         // check if enough

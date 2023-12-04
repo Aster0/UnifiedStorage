@@ -2,18 +2,28 @@ package me.astero.unifiedstoragemod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
-import me.astero.unifiedstoragemod.items.data.UpgradeModule;
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWheel;
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomSearchField;
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
+import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.items.UpgradeCardItem;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
+import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
+import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.components.ImageButton;
+import net.minecraft.client.gui.components.Tooltip;
+import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
@@ -45,7 +55,8 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-
+    public static final WidgetSprites STORE_BUTTON_SPRITES = new WidgetSprites(new ResourceLocation("widget/cross_button"),
+            new ResourceLocation("widget/cross_button_highlighted"));
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
 
@@ -53,7 +64,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     public StorageControllerScreen(StorageControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
 
-        this.imageWidth = 256;
+        this.imageWidth = 233;
         this.imageHeight = 235;
 
 
@@ -70,9 +81,44 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         this.inventoryLabelY = 142; // shifting the inventory label
 
+        addRenderableButtons();
+
 
     }
 
+    private void addRenderableButtons() {
+
+        ImageButton storeItemsButton = new StoreItemButton<>(this.leftPos + 93,
+                this.topPos + 84, 7, 7, STORE_BUTTON_SPRITES, Component
+                .translatable("container.unifiedstorage.crafting_clear_tooltip"), this);
+
+
+        this.addRenderableWidget(storeItemsButton);
+    }
+
+    public void clearCraftingGrid() {
+
+        if(!menu.getStorageControllerEntity().isCraftingEnabled())
+            return;
+
+        for(int i = 0; i < menu.craftSlots.getContainerSize(); i++) {
+
+            ItemStack stack = menu.craftSlots.getItem(i);
+
+            if(!stack.equals(ItemStack.EMPTY, false)) {
+
+                ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(ItemStack.EMPTY, i,
+                        true, stack, false));
+
+
+
+
+            }
+
+        }
+
+
+    }
 
 
     private void registerSearchField() {
@@ -264,6 +310,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
+
                 if(v.getActualItem().equals(ItemStack.EMPTY))
                     return;
 
@@ -301,7 +348,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-
                 ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
                         modifiedValue, quickMove));
 
@@ -336,10 +382,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         }
         else if(slot instanceof NetworkSlot) {
 
-
-
-            if(clickType != ClickType.QUICK_MOVE)
-                super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
+            super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
 
             return;
         }
@@ -377,8 +420,26 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
+
             ItemStack itemToPutIn = slot.getItem();
             int modifiedValue = itemToPutIn.getCount();
+
+            if(itemToPutIn.getItem() instanceof UpgradeCardItem) {
+
+                int upgradeSlots = menu.getStorageControllerEntity().getUpgradeInventory().getSlots();
+
+                for(int i = 0; i < upgradeSlots; i++) {
+
+                    ItemStack stack = menu.getStorageControllerEntity().getUpgradeInventory().getStackInSlot(i);
+
+                    if(stack.equals(ItemStack.EMPTY, false)) {
+                        super.slotClicked(slot, slotIndex, btn, clickType);
+                        return; // we dont want to put into the storage if we can SHIFT CLICK upgrades into the slots.
+                    }
+
+                }
+            }
+
 
 
             ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,

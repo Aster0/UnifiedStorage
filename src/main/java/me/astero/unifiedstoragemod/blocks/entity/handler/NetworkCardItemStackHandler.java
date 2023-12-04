@@ -21,6 +21,7 @@ public class NetworkCardItemStackHandler<T extends BaseBlockEntity> extends Item
         super.onContentsChanged(slot);
 
 
+        System.out.println("Changed");
 
         blockEntity.setChanged();
 

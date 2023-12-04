@@ -1,16 +1,20 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import com.mojang.blaze3d.systems.RenderSystem;
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.BaseUpgradeSlot;
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
+import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.inventory.Slot;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
@@ -92,9 +96,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
         RenderSystem.enableBlend(); // Enable alpha blending
         RenderSystem.defaultBlendFunc(); // Set the default blend function
 
-        guiGraphics.blit(UPGRADE_START, leftPos + x + slotType.getOffsetX(), nextYForIcon,
-                slotType.getIconHeight(), slotType.getIconWidth(),
-                16, 16);
+        renderIcon(guiGraphics, leftPos, nextYForIcon);
 
         int nextY = topPos + y;
 
@@ -109,9 +111,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
             nextYForIcon +=20;
 
 
-            guiGraphics.blit(UPGRADE_START, leftPos + x + slotType.getOffsetX(), nextYForIcon,
-                    slotType.getIconHeight(), slotType.getIconWidth(),
-                    16, 16); // shadow
+            renderIcon(guiGraphics, leftPos, nextYForIcon);
 
 
 
@@ -124,6 +124,18 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
 
 
 
+    }
+
+    private void renderIcon(GuiGraphics guiGraphics, int leftPos, int nextYForIcon) {
+
+        if(slotType.getCustomItemStack() == null)
+            guiGraphics.blit(UPGRADE_START, leftPos + x + slotType.getOffsetX(), nextYForIcon,
+                    slotType.getIconHeight(), slotType.getIconWidth(),
+                    16, 16); // shadow
+        else
+            guiGraphics.renderFakeItem(new ItemStack(ItemRegistry.SHADOW_UPGRADE_CARD.get()),
+                    leftPos + x + slotType.getOffsetX(),
+                    nextYForIcon + slotType.getOffsetY());
     }
 
     @Override

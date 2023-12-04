@@ -1,6 +1,6 @@
 package me.astero.unifiedstoragemod.menu;
 
-import me.astero.unifiedstoragemod.client.screen.widgets.ICustomWidgetComponent;
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;

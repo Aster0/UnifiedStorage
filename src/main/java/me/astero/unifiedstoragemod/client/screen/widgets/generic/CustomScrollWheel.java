@@ -1,5 +1,6 @@
-package me.astero.unifiedstoragemod.client.screen.widgets;
+package me.astero.unifiedstoragemod.client.screen.widgets.generic;
 
+import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;

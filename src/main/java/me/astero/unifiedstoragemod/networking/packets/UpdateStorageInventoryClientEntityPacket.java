@@ -80,7 +80,6 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
             if (context.isClientSide()) {
 
 
-
                 BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(packet.blockPos);
 
                 if(blockEntity instanceof StorageControllerEntity d) {
@@ -88,6 +87,7 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
                     AbstractContainerMenu abstractMenu = Minecraft.getInstance().player.containerMenu;
 
                     if(abstractMenu instanceof StorageControllerMenu menu) {
+
 
 
 

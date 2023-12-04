@@ -4,10 +4,9 @@ import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.StorageNetworkCardItem;
+import me.astero.unifiedstoragemod.items.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
-import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
-import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
-import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
+import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
@@ -406,7 +405,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
 
@@ -427,12 +425,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
                     if(currentIndex == VISIBLE_CONTENT_HEIGHT - 1)
                         finishedAdding = true;
                 }
 
                 else {
-
 
                     int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
 
@@ -457,7 +455,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
             }
         }
-
 
 
 
@@ -558,11 +555,35 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         Slot fromSlot = getSlot(index);
         ItemStack fromStack = fromSlot.getItem();
 
+        System.out.println(index);
 
 
-        if(fromStack.getItem() instanceof StorageNetworkCardItem) {
+        if(fromStack.getItem() instanceof StorageNetworkCardItem || fromStack.getItem() instanceof UpgradeCardItem) {
 
-            moveItemStackTo(fromStack, 63, 64, false);
+
+            if(!(fromSlot instanceof UpgradeSlot)) {
+                moveItemStackTo(fromStack, 63, 66, false);
+
+            }
+            else {
+                moveItemStackTo(fromStack, 0, 36, false); // move to inventory
+            }
+
+            getStorageControllerEntity().setChanged();
+
+
+        }
+        else if(fromStack.getItem() instanceof UpgradeCardItem) {
+
+            if(!(fromSlot instanceof UpgradeSlot)) {
+                moveItemStackTo(fromStack, 64, 66, false);
+
+                System.out.println("yeaaa");
+            }
+            else {
+                moveItemStackTo(fromStack, 0, 36, false); // move to inventory
+            }
+
         }
         else if(fromSlot.container instanceof TransientCraftingContainer || fromSlot instanceof VisualItemSlot) {
             moveItemStackTo(fromStack, 0, 36, false); // move to inventory
@@ -608,13 +629,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void findRecipe(ItemStack itemStack, int slot, ItemStack itemStackToStore) {
 
-        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(itemStack, slot, true, itemStackToStore));
+        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(itemStack, slot, true, itemStackToStore, true));
     }
 
     public void findRecipe() {
 
         ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(ItemStack.EMPTY, 0,
-                false, ItemStack.EMPTY));
+                false, ItemStack.EMPTY, false));
+
+
     }
 
     public void changeCraftingResultSlot(ItemStack itemStack) {
@@ -637,6 +660,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             ItemIdentifier itemIdentifier = storageControllerEntity.mergedStorageContents.get(
                     index);
+
 
 
 
@@ -867,7 +891,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-
             ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
                     storageControllerEntity.getBlockPos(),
                     remainingStack.getCount(), itemStack, slotIndex, quickMove, false), (ServerPlayer) pInventory.player);
@@ -904,21 +927,14 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void updateInsertVisual(StorageControllerEntity d, ItemStack itemStack, int value, boolean quickMove,
                                    int slotIndex, boolean take) {
 
-
-
         int index = d.mergedStorageContents
                 .indexOf(new ItemIdentifier(itemStack, 1));
-
-
-
 
 
         if(index != -1) {
 
             ItemIdentifier itemIdentifier = d.mergedStorageContents.get(
                     index);
-
-
 
 
 
@@ -932,6 +948,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 return;
             }
+
 
             int itemCountLeft = itemIdentifier.getCount()
                     + itemStack.getCount() - value;
@@ -951,13 +968,17 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         if(itemCountLeft != 0) {
 
+
             ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack,
                     itemCountLeft);
+
             d.mergedStorageContents.add(itemIdentifier);
+
 
             checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
 
             regenerateCurrentPage();
+
 
 
 
@@ -973,7 +994,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
            return;
 
         if(quickMove) {
+
             if(itemCountLeft != 0) {
+
 
                 int finalValue = itemStack.getCount() - value;
                 pInventory.removeItem(slotIndex, finalValue);
@@ -1017,21 +1040,23 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
 
-    public boolean canInsertItemIntoInventory(ItemStack itemStack, int value, int slot) {
+    public boolean canInsertItemIntoInventory(ItemStack itemStack, int value, int slot, boolean moveToPlayer) {
+
+
 
         // we try to put into the storage first
         int remaining = updateAllStorages(itemStack, value, false, true, -1);
 
 
-        itemStack.setCount(remaining);
+        ItemStack copiedStack = itemStack.copy();
+        copiedStack.setCount(remaining);
+
+        populateCraftSlots(copiedStack, slot);
 
 
-
-        populateCraftSlots(itemStack, slot);
-
-        if(remaining > 0) { // means we can't put all into the storage
+        if(remaining > 0 && moveToPlayer) { // means we can't put all into the storage
             // so we move to the player's inventory
-            if(moveItemStackTo(itemStack, 0, 36, false)) {
+            if(moveItemStackTo(copiedStack, 0, 36, false)) {
                 populateCraftSlots(ItemStack.EMPTY, slot);
 
 
@@ -1048,6 +1073,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return remaining == 0;
     }
     public boolean canRemoveItemFromInventory(ItemStack itemStack, boolean remove, boolean removeFromPlayer, int value) {
+
 
         ItemIdentifier temporaryIdentifier = new ItemIdentifier(itemStack, 1);
 
@@ -1067,6 +1093,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             if(remove) {
 
                 int value1 = updateAllStorages(itemStack, value, true, true, 0);
+
 
                 if(value1 >= value) {
 

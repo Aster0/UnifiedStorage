@@ -75,6 +75,7 @@ public class ItemIdentifier {
     public boolean equals(Object o){
 
         if(o instanceof ItemIdentifier itemIdentifier) {
+
             return ItemStack.isSameItemSameTags(itemIdentifier.getItemStack(), itemStack);
 
         }

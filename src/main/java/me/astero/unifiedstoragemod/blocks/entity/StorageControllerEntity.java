@@ -142,9 +142,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public ItemIdentifier getMergedStorageContents(int index) {
 
         ItemIdentifier itemIdentifier;
+
+
         try {
             itemIdentifier =  mergedStorageContents.get(index);
-
 
 
 
@@ -153,7 +154,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             itemIdentifier = new ItemIdentifier(ItemStack.EMPTY, 1);
 
         }
-
 
         return itemIdentifier;
     }
@@ -318,6 +318,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
                 }
                 else {
+
                     mergedStorageContents.add(itemIdentifier);
 
                 }

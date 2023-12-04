@@ -1,4 +1,4 @@
-package me.astero.unifiedstoragemod.client.screen.widgets;
+package me.astero.unifiedstoragemod.client.screen.widgets.generic;
 
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.gui.Font;

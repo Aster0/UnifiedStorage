@@ -25,10 +25,7 @@ public class UpgradeCardItemStackHandler<T extends BaseBlockEntity> extends Item
 
 
         if(blockEntity instanceof StorageControllerEntity controller) {
-            System.out.println("changed " + controller.isCraftingEnabled());
 
-
-            System.out.println("set");
             controller.setCraftingEnabled(controller.isUpgradeModuleInserted(UpgradeModule.CRAFTING));
 
 

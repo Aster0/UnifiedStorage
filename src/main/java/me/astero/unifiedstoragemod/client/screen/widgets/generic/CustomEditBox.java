@@ -1,4 +1,4 @@
-package me.astero.unifiedstoragemod.client.screen.widgets;
+package me.astero.unifiedstoragemod.client.screen.widgets.generic;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.astero.unifiedstoragemod.utils.ModUtils;

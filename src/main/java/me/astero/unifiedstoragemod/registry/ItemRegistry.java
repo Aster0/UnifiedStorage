@@ -36,6 +36,14 @@ public class ItemRegistry {
             ObjectRegistry.registerObject("crafting_upgrade_card", new ItemData<Item>(
                     () -> new CraftingUpgradeCardItem(new Item.Properties())), true);
 
+    public static RegistryObject<Item> BLANK_UPGRADE_CARD =
+            ObjectRegistry.registerObject("blank_upgrade_card", new ItemData<Item>(
+                    () -> new CraftingUpgradeCardItem(new Item.Properties())), true);
+
+    public static RegistryObject<Item> SHADOW_UPGRADE_CARD =
+            ObjectRegistry.registerObject("shadow_upgrade_card", new ItemData<Item>(
+                    () -> new Item(new Item.Properties())), false);
+
 
 //    private static RegistryObject<Item> WIRELESS_STORAGE =
 //            ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(
