@@ -2,6 +2,7 @@ package me.astero.unifiedstoragemod.client.screen;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
+import me.astero.unifiedstoragemod.items.data.UpgradeModule;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
@@ -26,6 +27,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -135,6 +137,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         if(customScrollWheel != null)
             customScrollWheel.tick(guiGraphics, 0,0);
+
+
+
+        renderCraftingGridSlot(guiGraphics);
 
 
         renderCustomSlot(guiGraphics);
@@ -340,12 +346,19 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         else if(slot instanceof VisualItemSlot || slot.container instanceof TransientCraftingContainer) {
 
 
+            if(slot.container instanceof TransientCraftingContainer) {
+                if(!menu.getStorageControllerEntity().isCraftingEnabled())
+                    return;
+            }
 
 
             super.slotClicked(slot, slotIndex, btn, clickType);
             return;
         }
         else if(slot instanceof ResultSlot resultSlot) {
+
+            if(!menu.getStorageControllerEntity().isCraftingEnabled()) // dont allow crafting
+                return;
 
             ItemStack resultStack = resultSlot.getItem();
 
@@ -401,9 +414,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     private void renderCustomSlot(GuiGraphics guiGraphics) {
 
 
+
+
         int startingIndex = (0 * StorageControllerMenu.VISIBLE_CONTENT_HEIGHT)
                 + StorageControllerMenu.STARTING_SLOT_INDEX;
-
 
 
         // 36 (first slot) - 62 (last slot)
@@ -452,6 +466,33 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         }
     }
 
+    private void renderCraftingGridSlot(GuiGraphics guiGraphics) {
+
+
+        if(menu.getStorageControllerEntity().isCraftingEnabled())
+            return;
+
+        for(int i = menu.getCraftSlotIndexStart(); i < menu.getCraftSlotIndexStart() + 9; i++) {
+
+            Slot slot = menu.getSlot(i);
+
+
+            if(slot.container instanceof TransientCraftingContainer) {
+                renderDisabledSlot(guiGraphics, slot.x, slot.y);
+            }
+        }
+
+    }
+
+    private void renderDisabledSlot(GuiGraphics guiGraphics, int slotX, int slotY) {
+
+        int actualSlotX = leftPos + slotX;
+        int actualSlotY = topPos + slotY;
+
+        guiGraphics.fill(actualSlotX, actualSlotY, 16 + actualSlotX, 16 + actualSlotY,
+                0xFF686868);
+    }
+
     public void renderCustomSlot(GuiGraphics guiGraphics, Slot slot, Slot slotIndex) {
 
 
@@ -464,8 +505,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
             if(menu.getStorageControllerEntity().isDisabled()) {
-                guiGraphics.fill(actualSlotX, actualSlotY, 16 + actualSlotX, 16 + actualSlotY,
-                        0xFF686868);
+                renderDisabledSlot(guiGraphics, slotIndex.x, slotIndex.y);
 
                 return;
             }
@@ -534,31 +574,50 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
+        if(this.hoveredSlot != null) {
+            if(this.hoveredSlot instanceof CustomGUISlot customGUISlot) { // on our custom inventory
 
-        if(this.hoveredSlot instanceof CustomGUISlot customGUISlot) { // on our custom inventory
+                ItemStack item = customGUISlot.getActualItem();
 
-            ItemStack item = customGUISlot.getActualItem();
-
-            if(!item.equals(ItemStack.EMPTY, false)) {
+                if(!item.equals(ItemStack.EMPTY, false)) {
 
 
-                List<Component> textComponents = item.getTooltipLines(Minecraft.getInstance().player,
-                        TooltipFlag.NORMAL);
+                    List<Component> textComponents = item.getTooltipLines(Minecraft.getInstance().player,
+                            TooltipFlag.NORMAL);
 
-                textComponents.addAll(customGUISlot.getItemLocations());
-                guiGraphics.renderTooltip(this.font, textComponents, Optional.empty(), item, x, y);
+                    textComponents.addAll(customGUISlot.getItemLocations());
+                    guiGraphics.renderTooltip(this.font, textComponents, Optional.empty(), item, x, y);
+
+                }
+
 
             }
+            else if(this.hoveredSlot.container instanceof TransientCraftingContainer) {
+
+                if(!menu.getStorageControllerEntity().isCraftingEnabled()) {
+
+                    List<Component> components = new ArrayList<>();
+                    components.addAll(ModUtils.breakComponentLine(Component.translatable("lore."
+                            + ModUtils.MODID + ".disabled_crafting")));
+
+                    guiGraphics.renderTooltip(this.font, components, Optional.empty(), x, y);
+                }
+            }
+
+            ICustomWidgetComponent.renderToolTipAll(menu.getWidgets(), guiGraphics, this.font, x, y, this.hoveredSlot);
 
 
+
+            if(!(this.hoveredSlot instanceof VisualItemSlot)
+                    && (!(this.hoveredSlot.container instanceof TransientCraftingContainer)
+                    || menu.getStorageControllerEntity().isCraftingEnabled()))
+                // so it always present the visual item slot's custom tooltip.
+                super.renderTooltip(guiGraphics, x, y);
         }
 
 
-        ICustomWidgetComponent.renderToolTipAll(menu.getWidgets(), guiGraphics, this.font, x, y, this.hoveredSlot);
 
 
 
-        if(!(this.hoveredSlot instanceof VisualItemSlot)) // so it always present the visual item slot's custom tooltip.
-            super.renderTooltip(guiGraphics, x, y);
     }
 }

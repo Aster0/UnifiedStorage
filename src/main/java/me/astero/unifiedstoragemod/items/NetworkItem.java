@@ -2,10 +2,7 @@ package me.astero.unifiedstoragemod.items;
 
 
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
-import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
-import me.astero.unifiedstoragemod.items.data.NetworkBlockType;
-import me.astero.unifiedstoragemod.items.data.SavedStorageData;
-import me.astero.unifiedstoragemod.items.data.UpgradeTier;
+import me.astero.unifiedstoragemod.items.data.*;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -32,17 +29,16 @@ public abstract class NetworkItem extends BaseItem {
 
 
     private String linkedBlock;
-    private MutableComponent shiftText;
 
     private NetworkBlockType networkBlockType;
 
     private int maxLinkedLimit;
-    public NetworkItem(Properties properties, String linkedBlock, MutableComponent shiftText, int maxLinkedLimit, NetworkBlockType networkBlockType) {
-        super(properties);
+    public NetworkItem(Properties properties, String linkedBlock, MutableComponent shiftText,
+                       int maxLinkedLimit, NetworkBlockType networkBlockType, UpgradeType upgradeType) {
+        super(properties, upgradeType, shiftText);
 
 
         this.linkedBlock = linkedBlock;
-        this.shiftText = shiftText;
         this.maxLinkedLimit = maxLinkedLimit;
         this.networkBlockType = networkBlockType;
     }
@@ -260,14 +256,6 @@ public abstract class NetworkItem extends BaseItem {
                         breakComponentLine(
                                 Component.literal(lore.replace("%amount%", String.valueOf(amountOfStorages))
                                         .replace("%block%", linkedBlock))));
-
-    }
-
-    public List<Component> addShiftText(ItemStack itemStack) {
-
-
-        return ModUtils.
-                breakComponentLine(shiftText);
 
     }
 

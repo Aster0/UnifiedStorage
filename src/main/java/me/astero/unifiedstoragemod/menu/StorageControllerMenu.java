@@ -3,7 +3,7 @@ package me.astero.unifiedstoragemod.menu;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.items.NetworkCardItem;
+import me.astero.unifiedstoragemod.items.StorageNetworkCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
 import me.astero.unifiedstoragemod.menu.data.StorageSearchData;
@@ -49,6 +49,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
     private final ResultContainer resultSlots = new ResultContainer();
 
+    private int craftSlotIndexStart = 0;
+
+
     public StorageControllerMenu(int containerId, Inventory pInventory, FriendlyByteBuf friendlyByteBuf) {
 
         this(containerId, pInventory, pInventory
@@ -83,6 +86,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+    }
+
+    public int getCraftSlotIndexStart() {
+        return craftSlotIndexStart;
     }
 
 
@@ -488,6 +495,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 // 37, 85
 
+                if(craftSlotIndexStart == 0)
+                    craftSlotIndexStart = this.slots.size();
+
                 addSlot(new Slot(this.craftSlots, column + (row * 3),
                         37 + (column * 18), 85 + (row * 18)));
 
@@ -526,7 +536,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         networkSlotGUI.create(this);
 
         UpgradeSlotGUI<StorageControllerMenu> upgradeSlotGUI = new UpgradeSlotGUI<>(3,  210, 40,
-                210, 40, null, SlotType.UPGRADE);
+                210, 40, storageControllerEntity.getUpgradeInventory(), SlotType.UPGRADE);
 
         upgradeSlotGUI.create(this);
 
@@ -550,7 +560,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-        if(fromStack.getItem() instanceof NetworkCardItem) {
+        if(fromStack.getItem() instanceof StorageNetworkCardItem) {
 
             moveItemStackTo(fromStack, 63, 64, false);
         }

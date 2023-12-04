@@ -55,7 +55,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
         for(int i = 0; i < numberOfSlots; i++) {
 
             Slot slot = new UpgradeSlot(itemStackHandler,
-                    0, this.rawX + 8, nextY);
+                    i, this.rawX + 8, nextY);
 
             if(slotType == SlotType.NETWORK) {
                 slot = new NetworkSlot(itemStackHandler,

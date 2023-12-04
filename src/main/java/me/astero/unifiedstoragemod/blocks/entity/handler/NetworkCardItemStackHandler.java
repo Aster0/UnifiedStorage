@@ -35,8 +35,6 @@ public class NetworkCardItemStackHandler<T extends BaseBlockEntity> extends Item
 
 
 
-
-
         blockEntity.setDisabled(false);
 
         blockEntity.updateNetworkCardItems(this.getStackInSlot(slot), blockEntity.getLevel().getPlayerByUUID(

@@ -4,10 +4,14 @@
   "lore.unifiedstorage.default" : "\n§7Press §fSHIFT §7to learn more.",
   "item.unifiedstorage.grid_wrench" : "Grid Wrench",
   "item.unifiedstorage.network_card" : "Storage Network Card",
+  "item.unifiedstorage.crafting_upgrade_card" : "Crafting Upgrade Card",
   "item.unifiedstorage.storage_wings" : "Storage Wings",
   "lore.unifiedstorage.network_card" : "\n§7\"This item links storages and\n§7or terminal blocks together\"\n\n§4*Don't link a double chest twice!",
   "lore.unifiedstorage.storage_wings" : "\n§7\"This item allows you to fly\n§7based on how many items you\n§7have in your Storage Controller.\"",
   "lore.unifiedstorage.network_card_storages" : "\n§a[%amount%]§c %block% have been linked.",
+  "lore.unifiedstorage.crafting_upgrade" : "\n§7\"This upgrade allows you to unlock the crafting grid\"",
+  "lore.unifiedstorage.network_card_item" : "§8Network Card Item",
+  "lore.unifiedstorage.upgrade_card_item" : "§Upgrade Card Item",
   "lore.unifiedstorage.storage_controller" : "\n§7\"Use a network card to link\n§7various storages together to\n§7see it as one unified storage\"",
   "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a §c[Grid Controller] §fbefore continuing.",
   "language.unifiedstorage.linked_storage" : "§aSuccessfully linked this storage.",
@@ -21,10 +25,12 @@
   "container.unifiedstorage.crafting_terminal" : "Crafting Terminal",
   "container.unifiedstorage.networkSlotDescription" : "§7Network card links different\n§7storage blocks together.",
   "container.unifiedstorage.upgradeSlotTitle" : "Insert Upgrade Card",
+  "lore.unifiedstorage.disabled_crafting" : "§fCrafting Disabled\n§7Insert a Crafting Upgrade\n§7to unlock this slot.",
   "container.unifiedstorage.upgradeSlotDescription" : "§7Upgrading provides a way to \n§7enhance the controller's capabilities.",
   "container.unifiedstorage.visualItemSlotTitle" : "Insert an Item",
   "container.unifiedstorage.itemTooltip" : "§e%amount% in %block%",
   "container.unifiedstorage.visualItemSlotDescription" : "§7Providing an item gives a visual for\n§7this controller block like an item frame.\n\n§7§o* Putting more of the same\n§7§o  items changes the visual.\n§7§o  (Only for Blocks)",
-  "creative.unifiedstorage.tabName" : "Unified Storage"
+  "creative.unifiedstorage.tabName" : "Unified Storage",
+  "jei.unifiedstorage.crafting_not_enabled" : "Crafting not upgraded"
 
 }

@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.integrations.jei.crafting;
 
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.utils.ModUtils;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import mezz.jei.api.recipe.RecipeType;
 import mezz.jei.api.recipe.transfer.IRecipeTransferError;
@@ -56,6 +57,10 @@ public class CraftingRecipeTransfer<C extends StorageControllerMenu, R> implemen
                                                          Player player, boolean maxTransfer, boolean doTransfer) {
 
 
+        if(!container.getStorageControllerEntity().isCraftingEnabled()) {
+            return helper.createUserErrorWithTooltip(Component.translatable(
+                    "jei." + ModUtils.MODID + ".crafting_not_enabled"));
+        }
 
 
         if(doTransfer)

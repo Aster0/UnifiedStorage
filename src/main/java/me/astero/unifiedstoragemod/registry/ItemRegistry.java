@@ -1,9 +1,10 @@
 package me.astero.unifiedstoragemod.registry;
 
 import me.astero.unifiedstoragemod.data.ItemData;
+import me.astero.unifiedstoragemod.items.CraftingUpgradeCardItem;
 import me.astero.unifiedstoragemod.items.GridWrenchItem;
 
-import me.astero.unifiedstoragemod.items.NetworkCardItem;
+import me.astero.unifiedstoragemod.items.StorageNetworkCardItem;
 import me.astero.unifiedstoragemod.items.StorageWingsItem;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.Item;
@@ -29,7 +30,11 @@ public class ItemRegistry {
 
     public static RegistryObject<Item> NETWORK_CARD =
             ObjectRegistry.registerObject("network_card", new ItemData<Item>(
-                    () -> new NetworkCardItem(new Item.Properties().stacksTo(1))), true);
+                    () -> new StorageNetworkCardItem(new Item.Properties().stacksTo(1))), true);
+
+    public static RegistryObject<Item> CRAFTING_UPGRADE_CARD =
+            ObjectRegistry.registerObject("crafting_upgrade_card", new ItemData<Item>(
+                    () -> new CraftingUpgradeCardItem(new Item.Properties())), true);
 
 
 //    private static RegistryObject<Item> WIRELESS_STORAGE =

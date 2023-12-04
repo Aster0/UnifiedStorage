@@ -4,6 +4,7 @@ import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.items.data.NetworkBlockType;
+import me.astero.unifiedstoragemod.items.data.UpgradeType;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
@@ -24,7 +25,7 @@ public class StorageWingsItem extends NetworkItem {
     public StorageWingsItem(Properties properties) {
         super(properties, "Storage Controller",
                 Component.translatable("lore.unifiedstorage.storage_wings"), 1,
-                NetworkBlockType.CONTROLLER);
+                NetworkBlockType.CONTROLLER, UpgradeType.NONE);
     }
 
 
