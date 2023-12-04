@@ -23,7 +23,7 @@ public class StorageWingsItem extends NetworkItem {
 
     public StorageWingsItem(Properties properties) {
         super(properties, "Storage Controller",
-                Component.translatable("lore.unifiedstorage.network_card"), 1,
+                Component.translatable("lore.unifiedstorage.storage_wings"), 1,
                 NetworkBlockType.CONTROLLER);
     }
 

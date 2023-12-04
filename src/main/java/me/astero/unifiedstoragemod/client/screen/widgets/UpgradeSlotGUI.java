@@ -92,7 +92,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
         RenderSystem.enableBlend(); // Enable alpha blending
         RenderSystem.defaultBlendFunc(); // Set the default blend function
 
-        guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,
+        guiGraphics.blit(UPGRADE_START, leftPos + x + slotType.getOffsetX(), nextYForIcon,
                 slotType.getIconHeight(), slotType.getIconWidth(),
                 16, 16);
 
@@ -109,7 +109,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
             nextYForIcon +=20;
 
 
-            guiGraphics.blit(UPGRADE_START, leftPos + x + 10, nextYForIcon,
+            guiGraphics.blit(UPGRADE_START, leftPos + x + slotType.getOffsetX(), nextYForIcon,
                     slotType.getIconHeight(), slotType.getIconWidth(),
                     16, 16); // shadow
 

@@ -157,7 +157,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         super.render(guiGraphics, mouseX, mouseY, partialTicks);
         guiGraphics.drawString
-                (this.font, "Crafting Terminal",
+                (this.font, Component.translatable("container.unifiedstorage.crafting_terminal"),
                         leftPos + this.inventoryLabelX, topPos + 74,
                         4210752, false);
 
