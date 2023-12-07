@@ -5,24 +5,20 @@ import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
-import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.items.UpgradeCardItem;
+import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
-import me.astero.unifiedstoragemod.menu.data.CustomGUISlot;
+import me.astero.unifiedstoragemod.menu.data.ItemVisualSlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
-import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
-import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ImageButton;
-import net.minecraft.client.gui.components.Tooltip;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
@@ -167,7 +163,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         ICustomWidgetComponent.tickAll(menu.getWidgets(), guiGraphics, leftPos, topPos);
 
-
         if(savedPages != menu.getTotalPages()) {
 
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
@@ -285,7 +280,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-            if(slot instanceof CustomGUISlot ) {
+            if(slot instanceof ItemVisualSlot) {
                 return;
             }
 
@@ -304,7 +299,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         MouseAction action = btn == 0 ? MouseAction.LEFT_CLICK : MouseAction.RIGHT_CLICK;
 
-        if(slot instanceof CustomGUISlot v) {
+        if(slot instanceof ItemVisualSlot v) {
 
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
 
@@ -491,7 +486,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
                 Slot slot = this.menu.slots.get(i);
 
-                if(slot instanceof CustomGUISlot customGUISlot) { // just to confirm
+                if(slot instanceof ItemVisualSlot itemVisualSlot) { // just to confirm
 
                     Slot slotIndex = this.menu.slots.get((i -
                             (0 * StorageControllerMenu.VISIBLE_CONTENT_HEIGHT))); // 0 represents scroll page
@@ -558,7 +553,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-        if(slot instanceof CustomGUISlot customGUISlot) {
+        if(slot instanceof ItemVisualSlot itemVisualSlot) {
 
             int actualSlotX = leftPos + slotIndex.x;
             int actualSlotY = topPos + slotIndex.y;
@@ -573,7 +568,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-            if(customGUISlot.getActualItem().equals(ItemStack.EMPTY , false)) return;
+            if(itemVisualSlot.getActualItem().equals(ItemStack.EMPTY , false)) return;
 
 
 
@@ -583,7 +578,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             PoseStack poseStack = guiGraphics.pose();
             poseStack.pushPose();
 
-            ItemStack displayStack = customGUISlot.getActualItem();
+            ItemStack displayStack = itemVisualSlot.getActualItem();
 
 
 
@@ -596,7 +591,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             poseStack.translate(0, 0, 300); // 300 just to be safe.
 
 
-            String text = ModUtils.getUnit(customGUISlot.getActualItemCount());
+            String text = ModUtils.getUnit(itemVisualSlot.getActualItemCount());
             float textScale = 0.5f; // Adjust the scale factor as needed
             float scaledX = (actualSlotX) / textScale;
             float scaledY = (actualSlotY) / textScale;
@@ -636,9 +631,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
         if(this.hoveredSlot != null) {
-            if(this.hoveredSlot instanceof CustomGUISlot customGUISlot) { // on our custom inventory
+            if(this.hoveredSlot instanceof ItemVisualSlot itemVisualSlot) { // on our custom inventory
 
-                ItemStack item = customGUISlot.getActualItem();
+                ItemStack item = itemVisualSlot.getActualItem();
 
                 if(!item.equals(ItemStack.EMPTY, false)) {
 
@@ -646,7 +641,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                     List<Component> textComponents = item.getTooltipLines(Minecraft.getInstance().player,
                             TooltipFlag.NORMAL);
 
-                    textComponents.addAll(customGUISlot.getItemLocations());
+                    textComponents.addAll(itemVisualSlot.getItemLocations());
                     guiGraphics.renderTooltip(this.font, textComponents, Optional.empty(), item, x, y);
 
                 }

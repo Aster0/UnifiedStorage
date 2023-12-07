@@ -3,8 +3,8 @@ package me.astero.unifiedstoragemod.menu;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.items.StorageNetworkCardItem;
-import me.astero.unifiedstoragemod.items.UpgradeCardItem;
+import me.astero.unifiedstoragemod.items.StorageNetworkCard;
+import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
@@ -418,7 +418,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                 if(page == 1 && !finishedAdding) {
-                    addSlot( new CustomGUISlot(itemIdentifier,
+                    addSlot( new ItemVisualSlot(itemIdentifier,
                             8 + (column * 18), 18 + (row * 18), currentIndex));
 
 
@@ -445,9 +445,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                                     storageSearchData.getSearchedStorageList(), storageSearchData.isSearching());
 
 
-                    if(slots.get(slotIndex) instanceof CustomGUISlot) {
+                    if(slots.get(slotIndex) instanceof ItemVisualSlot) {
 
-                        slots.set(slotIndex, new CustomGUISlot(itemIdentifier,
+                        slots.set(slotIndex, new ItemVisualSlot(itemIdentifier,
                                 8 + (column * 18), 18 + (row * 18), slotToFetch));
 
 
@@ -555,14 +555,13 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         Slot fromSlot = getSlot(index);
         ItemStack fromStack = fromSlot.getItem();
 
-        System.out.println(index);
 
 
-        if(fromStack.getItem() instanceof StorageNetworkCardItem || fromStack.getItem() instanceof UpgradeCardItem) {
+        if(fromStack.getItem() instanceof StorageNetworkCard || fromStack.getItem() instanceof UpgradeCardItem) {
 
 
             if(!(fromSlot instanceof UpgradeSlot)) {
-                moveItemStackTo(fromStack, 63, 66, false);
+                moveItemStackTo(fromStack, 63, 67, false);
 
             }
             else {
@@ -578,7 +577,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             if(!(fromSlot instanceof UpgradeSlot)) {
                 moveItemStackTo(fromStack, 64, 66, false);
 
-                System.out.println("yeaaa");
             }
             else {
                 moveItemStackTo(fromStack, 0, 36, false); // move to inventory

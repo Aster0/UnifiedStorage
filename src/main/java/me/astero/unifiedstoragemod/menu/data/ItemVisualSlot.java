@@ -12,14 +12,14 @@ import net.minecraft.world.item.ItemStack;
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomGUISlot extends Slot {
+public class ItemVisualSlot extends Slot {
 
     private static final Container EMPTY_INVENTORY = new SimpleContainer(0);
 
     private int slotIndex;
 
     private ItemIdentifier itemIdentifier;
-    public CustomGUISlot(ItemIdentifier itemIdentifier, int xPos, int yPos, int slotIndex) {
+    public ItemVisualSlot(ItemIdentifier itemIdentifier, int xPos, int yPos, int slotIndex) {
         super(EMPTY_INVENTORY, 0, xPos, yPos);
 
         this.slotIndex = slotIndex;

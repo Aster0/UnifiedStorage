@@ -3,6 +3,9 @@ package me.astero.unifiedstoragemod.renderer;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Axis;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
@@ -15,10 +18,14 @@ import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import org.joml.Quaternionf;
 
 public class StorageControllerRenderer implements BlockEntityRenderer<StorageControllerEntity> {
 
     private BlockEntityRendererProvider.Context context;
+
+
+    private float posY = 1.29F;
 
     public StorageControllerRenderer(BlockEntityRendererProvider.Context context) {
         this.context = context;
@@ -40,12 +47,12 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
         ItemStack renderItem = storageControllerEntity.getVisualItemInventory().getStackInSlot(0);
 
 
-
         if(!renderItem.equals(ItemStack.EMPTY, false)) {
 
             ItemRenderer itemRenderer = context.getItemRenderer();
 
             boolean item = !(renderItem.getItem() instanceof BlockItem);
+
 
 
 
@@ -60,7 +67,8 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
                 if(count < 2) {
 
 
-                    renderBlock1(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity);
+                    renderBlock1(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity, partialTicks);
+
                 }
                 else if(count < 3) {
                     renderBlock2(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity);
@@ -69,20 +77,22 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
                     renderBlock3(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity);
                 }
 
-                return;
 
+
+            }
+            else {
+                renderItem(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity);
             }
 
 
 
-            renderItem(itemRenderer, renderItem, poseStack, buffer, storageControllerEntity);
 
         }
 
 
 
-
     }
+
 
     private void renderItem(ItemRenderer itemRenderer, ItemStack renderItem, PoseStack poseStack,
                              MultiBufferSource buffer, StorageControllerEntity storageControllerEntity) {
@@ -117,22 +127,49 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
 
 
     private void renderBlock1(ItemRenderer itemRenderer, ItemStack renderItem, PoseStack poseStack,
-                              MultiBufferSource buffer, StorageControllerEntity storageControllerEntity) {
+                              MultiBufferSource buffer, StorageControllerEntity storageControllerEntity, float partialTicks) {
 
         poseStack.pushPose();
+
+
+        // Get the original block's direction
+        Direction blockDirection = storageControllerEntity.getBlockState().getValue(BlockStateProperties.HORIZONTAL_FACING);
+
+        // Determine the rotation angle based on the block's direction
+        float rotationAngle = switch (blockDirection) {
+            case NORTH -> 0.0f;
+            case SOUTH -> 180.0f;
+            case WEST -> 90.0f;
+            case EAST -> -90.0f;
+            default -> 0.0f;
+
+        };
+
 
         float scale = 0.5f;
 
         poseStack.scale(scale, scale, scale);
 
-        poseStack.translate(0.5 / scale, 1.05 / scale, 0.5 / scale);
 
+        // Adjust the multiplier to control the speed of the hover effect
+        float timeMultiplier = 0.1f;
+
+        // Calculate the vertical offset based on time
+        float yOffset = (float) Math.sin((storageControllerEntity.getLevel().getGameTime() + partialTicks) * timeMultiplier) * 0.1f;
+
+        poseStack.translate(0.5 / scale, (posY + yOffset) / scale, 0.5 / scale);
+
+        poseStack.mulPose(Axis.YP.rotationDegrees(rotationAngle));
 
         itemRenderer.renderStatic(renderItem, ItemDisplayContext.FIXED,
                 LightTexture.FULL_SKY,
                 OverlayTexture.NO_OVERLAY, poseStack, buffer, storageControllerEntity.getLevel(), 1);
 
+
         poseStack.popPose();
+
+
+
 
 
 

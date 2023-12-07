@@ -1,6 +1,6 @@
 package me.astero.unifiedstoragemod.menu.data;
 
-import me.astero.unifiedstoragemod.items.UpgradeCardItem;
+import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -17,5 +17,10 @@ public class UpgradeSlot extends SlotItemHandler {
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
         return stack.getItem() instanceof UpgradeCardItem;
+    }
+
+    @Override
+    public int getMaxStackSize() {
+        return 1;
     }
 }
