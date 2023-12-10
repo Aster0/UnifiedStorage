@@ -1,6 +1,6 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;

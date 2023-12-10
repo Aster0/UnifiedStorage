@@ -25,4 +25,5 @@ public abstract class BaseBlockEntity extends BlockEntity {
 
     public abstract void updateNetworkCardItems(ItemStack itemStack, Player player);
     public abstract void actionWhenNetworkTakenOut(Player player);
+
 }

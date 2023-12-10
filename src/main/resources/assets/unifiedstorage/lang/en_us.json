@@ -7,6 +7,7 @@
   "item.unifiedstorage.network_card" : "Storage Network Card",
   "item.unifiedstorage.crafting_upgrade_card" : "Crafting Upgrade Card",
   "item.unifiedstorage.storage_wings" : "Storage Wings",
+  "item.unifiedstorage.wireless_controller" : "Wireless Storage Controller",
   "lore.unifiedstorage.network_card" : "\n§7\"This item links storages and\n§7or terminal blocks together\"\n\n§4*Don't link a double chest twice!",
   "lore.unifiedstorage.storage_wings" : "\n§7\"This item allows you to fly\n§7based on how many items you\n§7have in your Storage Controller.\"",
   "lore.unifiedstorage.network_card_storages" : "\n§a[%amount%]§c %block% have been linked.",

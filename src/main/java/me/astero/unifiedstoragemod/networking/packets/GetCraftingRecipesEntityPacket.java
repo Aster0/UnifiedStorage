@@ -1,6 +1,6 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
@@ -10,7 +10,6 @@ import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-import java.util.Arrays;
 import java.util.Optional;
 
 public class GetCraftingRecipesEntityPacket implements EntityPacket {

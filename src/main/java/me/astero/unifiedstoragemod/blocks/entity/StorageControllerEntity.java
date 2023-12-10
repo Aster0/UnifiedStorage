@@ -6,7 +6,8 @@ import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.StorageNetworkCard;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.items.data.UpgradeModule;
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerBlockMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntityPacket;
@@ -406,6 +407,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         this.optionalVisualItem.invalidate();
         this.optionalUpgradeItem.invalidate();
         this.optionalCraftingInventory.invalidate();
+
     }
 
     @Nullable
@@ -550,10 +552,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
 
     }
-    @Nullable
-    @Override
-    public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
 
+    public StorageControllerMenu buildMenu(int pControllerId, Inventory pInventory, Player player) {
 
         IItemHandler iItemHandler = getNetworkInventory();
 
@@ -573,16 +573,17 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
 
 
-
-
-        StorageControllerMenu storageControllerMenu = new
-                StorageControllerMenu(pControllerId, pInventory, this);
-
-
-        this.menu = storageControllerMenu;
-
+        StorageControllerBlockMenu storageControllerMenu = new
+                StorageControllerBlockMenu(pControllerId, pInventory, this);
 
         return storageControllerMenu;
+    }
+
+    @Nullable
+    @Override
+    public AbstractContainerMenu createMenu(int pControllerId, Inventory pInventory, Player player) {
+
+        return buildMenu(pControllerId, pInventory, player);
     }
 
 

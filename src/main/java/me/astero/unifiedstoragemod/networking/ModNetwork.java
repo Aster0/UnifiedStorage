@@ -71,7 +71,6 @@ public class ModNetwork {
 
 
 
-
     }
 
     public static void sendToClient(Object message, ServerPlayer player) {

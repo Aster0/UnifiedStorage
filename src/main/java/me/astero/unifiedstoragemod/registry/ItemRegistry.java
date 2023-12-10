@@ -1,11 +1,8 @@
 package me.astero.unifiedstoragemod.registry;
 
 import me.astero.unifiedstoragemod.data.ItemData;
-import me.astero.unifiedstoragemod.items.CraftingUpgradeCard;
-import me.astero.unifiedstoragemod.items.GridWrenchItem;
+import me.astero.unifiedstoragemod.items.*;
 
-import me.astero.unifiedstoragemod.items.StorageNetworkCard;
-import me.astero.unifiedstoragemod.items.StorageWings;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -45,9 +42,9 @@ public class ItemRegistry {
                     () -> new Item(new Item.Properties())), false);
 
 
-//    private static RegistryObject<Item> WIRELESS_STORAGE =
-//            ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(
-//                    () -> new WirelessStorage(new Item.Properties())), true);
+    public static RegistryObject<Item> WIRELESS_STORAGE =
+            ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(
+                    () -> new WirelessStorage(new Item.Properties())), true);
 
 
 

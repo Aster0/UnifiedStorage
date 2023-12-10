@@ -2,7 +2,9 @@ package me.astero.unifiedstoragemod.integrations.jei;
 
 
 import me.astero.unifiedstoragemod.integrations.jei.crafting.CraftingRecipeTransfer;
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerBlockMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerItemMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
@@ -23,7 +25,7 @@ public class JEIPlugin implements IModPlugin {
     @Override
     public void registerRecipeTransferHandlers(IRecipeTransferRegistration registration) {
 
-        registration.addRecipeTransferHandler(new CraftingRecipeTransfer<>(StorageControllerMenu.class,
+        registration.addRecipeTransferHandler(new CraftingRecipeTransfer<>(StorageControllerBlockMenu.class,
                         registration.getTransferHelper()),
                 RecipeTypes.CRAFTING);
     }

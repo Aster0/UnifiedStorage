@@ -1,4 +1,4 @@
-package me.astero.unifiedstoragemod.client.screen;
+package me.astero.unifiedstoragemod.client.screen.storage;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
@@ -6,7 +6,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWhe
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ItemVisualSlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
 import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;

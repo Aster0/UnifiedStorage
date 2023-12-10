@@ -1,6 +1,6 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
-import me.astero.unifiedstoragemod.client.screen.StorageControllerScreen;
+import me.astero.unifiedstoragemod.client.screen.storage.StorageControllerScreen;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;

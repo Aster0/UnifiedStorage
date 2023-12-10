@@ -32,12 +32,12 @@ public abstract class NetworkItem extends BaseItem {
     private NetworkBlockType networkBlockType;
 
     private int maxLinkedLimit;
-    public NetworkItem(Properties properties, String linkedBlock, MutableComponent shiftText,
+    public NetworkItem(Properties properties, MutableComponent shiftText,
                        int maxLinkedLimit, NetworkBlockType networkBlockType, UpgradeType upgradeType) {
         super(properties, upgradeType, shiftText);
 
 
-        this.linkedBlock = linkedBlock;
+        this.linkedBlock = networkBlockType.getBlockName();
         this.maxLinkedLimit = maxLinkedLimit;
         this.networkBlockType = networkBlockType;
     }
@@ -296,17 +296,25 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
-                    onNetworkBlockInteract();
+                    onNetworkBlockInteract((StorageControllerEntity) hitBlockEntity);
 
                     addStorageData(ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()),
                             itemStack, player);
 
 
 
+                    return InteractionResultHolder.success(itemStack);
 
                 }
 
+
             }
+
+            loadNbt(itemStack);
+            
+            if(onItemUse(this.storageLocations, player, itemStack) == null)
+                return super.use(level, player, interactionHand);
+
 
         }
 
@@ -318,5 +326,8 @@ public abstract class NetworkItem extends BaseItem {
     }
 
 
-    public abstract void onNetworkBlockInteract();
+    public abstract void onNetworkBlockInteract(StorageControllerEntity storageControllerEntity);
+
+    public abstract InteractionResultHolder<ItemStack> onItemUse(List<SavedStorageData> savedStorageData, Player player,
+                                                                 ItemStack itemStack);
 }

@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.menu;
 
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.inventory.MenuType;
 import net.minecraft.world.inventory.Slot;
@@ -22,4 +23,8 @@ public abstract class Menu extends AbstractContainerMenu {
     }
 
     public abstract void addCustomSlot(Slot slot);
+
+
+
+
 }

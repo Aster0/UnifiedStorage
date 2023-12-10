@@ -17,7 +17,7 @@ public class StorageWingsModel<T extends LivingEntity> extends AgeableListModel<
     private final ModelPart leftWing;
     public StorageWingsModel(ModelPart part) {
 
-        System.out.println(part + " TESTTTTT");
+
 
         this.leftWing = part.getChild("left_wing");
         this.rightWing = part.getChild("right_wing");

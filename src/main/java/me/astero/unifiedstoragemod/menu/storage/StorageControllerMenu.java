@@ -1,4 +1,4 @@
-package me.astero.unifiedstoragemod.menu;
+package me.astero.unifiedstoragemod.menu.storage;
 
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
@@ -6,17 +6,20 @@ import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.StorageNetworkCard;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
+import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
+import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
@@ -51,19 +54,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     private int craftSlotIndexStart = 0;
 
 
-    public StorageControllerMenu(int containerId, Inventory pInventory, FriendlyByteBuf friendlyByteBuf) {
-
-        this(containerId, pInventory, pInventory
-                .player.level().getBlockEntity(friendlyByteBuf.readBlockPos()));
-
-
-
-
-
-    }
-
-    public StorageControllerMenu(int containerId, Inventory pInventory, BlockEntity blockEntity) {
-        super(MenuRegistry.GRID_CONTROLLER_MENU.get(), containerId);
+    public StorageControllerMenu(MenuType<?> type, int containerId, Inventory pInventory, BlockEntity blockEntity) {
+        super(type, containerId);
 
 
         if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
@@ -603,7 +595,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     @Override
     public boolean stillValid(Player player) {
-        return stillValid(this.containerLevelAccess, player, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
+
+        return player.getItemInHand(InteractionHand.MAIN_HAND).getItem().equals(ItemRegistry.WIRELESS_STORAGE.get())
+                || stillValid(this.containerLevelAccess, player, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
     }
 
     @Override
@@ -1170,6 +1164,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
     }
+
 
 
 

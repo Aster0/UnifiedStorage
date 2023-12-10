@@ -1,7 +1,7 @@
 package me.astero.unifiedstoragemod.client.screen.widgets;
 
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWheel;
-import me.astero.unifiedstoragemod.menu.StorageControllerMenu;
+import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 
 public class StorageGUIScrollWheel extends CustomScrollWheel {
 
