@@ -1,4 +1,4 @@
-package me.astero.unifiedstoragemod.items;
+package me.astero.unifiedstoragemod.items.upgrades;
 
 
 import me.astero.unifiedstoragemod.items.data.UpgradeType;
@@ -7,12 +7,12 @@ import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.network.chat.Component;
 
 
-public class CraftingUpgradeCard extends UpgradeCardItem {
+public class WirelessUpgradeCard extends UpgradeCardItem {
 
 
-    public CraftingUpgradeCard(Properties properties) {
+    public WirelessUpgradeCard(Properties properties) {
         super(properties, UpgradeType.UPGRADE, Component.translatable("lore."
-                + ModUtils.MODID + ".crafting_upgrade"));
+                + ModUtils.MODID + ".wireless_upgrade"));
 
 
     }

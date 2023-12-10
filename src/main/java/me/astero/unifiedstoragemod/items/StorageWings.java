@@ -15,6 +15,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Equipable;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.List;
 
@@ -29,7 +30,7 @@ public class StorageWings extends NetworkItem implements Equipable {
 
 
     @Override
-    public void onNetworkBlockInteract(StorageControllerEntity storageControllerEntity) {
+    public void onNetworkBlockInteract(BlockEntity blockEntity) {
 
 
     }

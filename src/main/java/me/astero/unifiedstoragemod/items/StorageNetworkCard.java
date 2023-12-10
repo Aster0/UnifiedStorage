@@ -10,6 +10,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.level.block.entity.BlockEntity;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class StorageNetworkCard extends NetworkItem {
 
 
     @Override
-    public void onNetworkBlockInteract(StorageControllerEntity storageControllerEntity) {
+    public void onNetworkBlockInteract(BlockEntity blockEntity) {
 
     }
 

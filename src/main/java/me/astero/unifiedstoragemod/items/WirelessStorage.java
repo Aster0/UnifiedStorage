@@ -1,10 +1,7 @@
 package me.astero.unifiedstoragemod.items;
 
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
-import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
-import me.astero.unifiedstoragemod.items.data.NetworkBlockType;
-import me.astero.unifiedstoragemod.items.data.SavedStorageData;
-import me.astero.unifiedstoragemod.items.data.UpgradeType;
+import me.astero.unifiedstoragemod.items.data.*;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerItemMenu;
 import me.astero.unifiedstoragemod.utils.ModUtils;
@@ -38,14 +35,14 @@ public class WirelessStorage extends NetworkItem implements MenuProvider{
 
     public WirelessStorage(Properties properties) {
         super(properties,
-                Component.translatable("lore.unifiedstorage.storage_wings"), 1,
+                Component.translatable("lore.unifiedstorage.wireless_storage"), 1,
                 NetworkBlockType.CONTROLLER, UpgradeType.NONE);
     }
 
 
 
     @Override
-    public void onNetworkBlockInteract(StorageControllerEntity storageControllerEntity) {
+    public void onNetworkBlockInteract(BlockEntity blockEntity) {
 
     }
 
@@ -53,19 +50,27 @@ public class WirelessStorage extends NetworkItem implements MenuProvider{
     public InteractionResultHolder<ItemStack> onItemUse(List<SavedStorageData> savedStorageData, Player player, ItemStack itemStack) {
 
 
-        if(savedStorageData.get(0) != null) {
+        if(savedStorageData.size() > 0) {
 
-            System.out.println("TEST");
             BlockEntity blockEntity = player.level()
                     .getBlockEntity(savedStorageData.get(0).getCustomBlockPosData().getBlockPos());
 
             if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
 
+                System.out.println(storageControllerEntity.isUpgradeModuleInserted(UpgradeModule.WIRELESS) + " WIRELESS");
+                if(!storageControllerEntity.isUpgradeModuleInserted(UpgradeModule.WIRELESS)) {
+                    sendClientMessage(player, "language." + ModUtils.MODID +
+                            ".no_wireless_upgrade");
+
+                    return null;
+                }
+
                 if(player instanceof ServerPlayer serverPlayer) {
 
-                    serverPlayer.openMenu(new SimpleMenuProvider((c, inv, player1) ->
-                            storageControllerEntity.buildMenu(c, inv, player1),
-                            Component.literal("A")), (packet)
+                    serverPlayer.openMenu(new SimpleMenuProvider((pContainerId, pInventory, player1) ->
+                            storageControllerEntity.buildMenu(pContainerId, pInventory, player1),
+                            Component.translatable("container." + ModUtils.MODID +
+                                    ".storage_controller_menu_title_wireless")), (packet)
                             -> packet.writeBlockPos(blockEntity.getBlockPos()));
 
 
@@ -77,7 +82,11 @@ public class WirelessStorage extends NetworkItem implements MenuProvider{
         }
 
 
-        return null;
+        sendClientMessage(player, "language." + ModUtils.MODID +
+                ".wireless_storage_not_linked");
+
+
+        return null; // fail
     }
 
     @Override

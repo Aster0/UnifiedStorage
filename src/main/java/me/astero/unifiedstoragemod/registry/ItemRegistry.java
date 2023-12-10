@@ -3,6 +3,8 @@ package me.astero.unifiedstoragemod.registry;
 import me.astero.unifiedstoragemod.data.ItemData;
 import me.astero.unifiedstoragemod.items.*;
 
+import me.astero.unifiedstoragemod.items.upgrades.CraftingUpgradeCard;
+import me.astero.unifiedstoragemod.items.upgrades.WirelessUpgradeCard;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -37,14 +39,25 @@ public class ItemRegistry {
             ObjectRegistry.registerObject("blank_upgrade_card", new ItemData<Item>(
                     () -> new CraftingUpgradeCard(new Item.Properties())), true);
 
-    public static RegistryObject<Item> SHADOW_UPGRADE_CARD =
-            ObjectRegistry.registerObject("shadow_upgrade_card", new ItemData<Item>(
-                    () -> new Item(new Item.Properties())), false);
-
+    public static RegistryObject<Item> WIRELESS_UPGRADE_CARD =
+            ObjectRegistry.registerObject("wireless_upgrade_card", new ItemData<Item>(
+                    () -> new WirelessUpgradeCard(new Item.Properties())), true);
 
     public static RegistryObject<Item> WIRELESS_STORAGE =
             ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(
                     () -> new WirelessStorage(new Item.Properties())), true);
+
+
+
+
+
+
+
+
+
+    public static RegistryObject<Item> SHADOW_UPGRADE_CARD =
+            ObjectRegistry.registerObject("shadow_upgrade_card", new ItemData<Item>(
+                    () -> new Item(new Item.Properties())), false);
 
 
 

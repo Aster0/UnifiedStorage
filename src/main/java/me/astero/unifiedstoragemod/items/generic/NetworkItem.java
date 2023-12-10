@@ -206,7 +206,7 @@ public abstract class NetworkItem extends BaseItem {
 
     }
 
-    private void sendClientMessage(Player player, String message) {
+    protected void sendClientMessage(Player player, String message) {
         if(player != null)
             player.displayClientMessage(Component.translatable(message), true);
     }
@@ -296,7 +296,7 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
-                    onNetworkBlockInteract((StorageControllerEntity) hitBlockEntity);
+                    onNetworkBlockInteract(hitBlockEntity);
 
                     addStorageData(ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()),
                             itemStack, player);
@@ -311,7 +311,7 @@ public abstract class NetworkItem extends BaseItem {
             }
 
             loadNbt(itemStack);
-            
+
             if(onItemUse(this.storageLocations, player, itemStack) == null)
                 return super.use(level, player, interactionHand);
 
@@ -326,7 +326,7 @@ public abstract class NetworkItem extends BaseItem {
     }
 
 
-    public abstract void onNetworkBlockInteract(StorageControllerEntity storageControllerEntity);
+    public abstract void onNetworkBlockInteract(BlockEntity blockEntity);
 
     public abstract InteractionResultHolder<ItemStack> onItemUse(List<SavedStorageData> savedStorageData, Player player,
                                                                  ItemStack itemStack);

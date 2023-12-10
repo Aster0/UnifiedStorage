@@ -43,6 +43,7 @@ public abstract class BaseItem extends Item {
         String upgradeTypeLore = "";
         Component upgradeTypeComponent = null;
 
+        System.out.println(upgradeType);
         if(this.upgradeType == UpgradeType.UPGRADE) {
             upgradeTypeComponent = Component.translatable("lore.unifiedstorage.upgrade_card_item");
         }
@@ -50,8 +51,13 @@ public abstract class BaseItem extends Item {
             upgradeTypeComponent = Component.translatable("lore.unifiedstorage.network_card_item");
         }
 
-        if(upgradeTypeComponent != null)
-            components.add(Component.translatable("lore.unifiedstorage.network_card_item"));
+        if(upgradeTypeComponent == null) {
+            upgradeTypeComponent = Component.literal("");
+        }
+
+
+        components.add(upgradeTypeComponent);
+
 
 
         if(Screen.hasShiftDown()) {

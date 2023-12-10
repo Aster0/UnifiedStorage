@@ -1,4 +1,4 @@
-package me.astero.unifiedstoragemod.items;
+package me.astero.unifiedstoragemod.items.upgrades;
 
 
 import me.astero.unifiedstoragemod.items.data.UpgradeType;

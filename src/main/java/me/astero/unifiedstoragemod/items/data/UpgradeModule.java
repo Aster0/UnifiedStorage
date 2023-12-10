@@ -6,6 +6,7 @@ import net.minecraft.world.item.Item;
 public enum UpgradeModule {
 
     CRAFTING(ItemRegistry.CRAFTING_UPGRADE_CARD.get()),
+    WIRELESS(ItemRegistry.WIRELESS_UPGRADE_CARD.get()),
     POWER(null);
 
 
