@@ -28,6 +28,7 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - Decorate each Storage Controller with your own blocks/items.
 - Ability to link with any storage blocks (even furnaces)
 - Crafting Grid (saves when you exit the GUI)
+- Wireless - You can use your storage anywhere with a wireless controller!
 
 |                             |                             |
 | ----------------------------------- | ----------------------------------- |
