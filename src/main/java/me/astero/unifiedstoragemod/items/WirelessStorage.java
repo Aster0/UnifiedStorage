@@ -57,7 +57,7 @@ public class WirelessStorage extends NetworkItem implements MenuProvider{
 
             if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
 
-                System.out.println(storageControllerEntity.isUpgradeModuleInserted(UpgradeModule.WIRELESS) + " WIRELESS");
+
                 if(!storageControllerEntity.isUpgradeModuleInserted(UpgradeModule.WIRELESS)) {
                     sendClientMessage(player, "language." + ModUtils.MODID +
                             ".no_wireless_upgrade");

@@ -43,7 +43,7 @@ public abstract class BaseItem extends Item {
         String upgradeTypeLore = "";
         Component upgradeTypeComponent = null;
 
-        System.out.println(upgradeType);
+
         if(this.upgradeType == UpgradeType.UPGRADE) {
             upgradeTypeComponent = Component.translatable("lore.unifiedstorage.upgrade_card_item");
         }

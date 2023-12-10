@@ -49,6 +49,7 @@ public class StorageWingsLayer<T extends LivingEntity, M extends EntityModel<T>>
         storageWingsModel = new StorageWingsModel(entityModels.bakeLayer(CustomModelLayer.WINGS));
 
 
+
     }
 
 

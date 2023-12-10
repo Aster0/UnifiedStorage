@@ -1,0 +1,29 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "IIL",
+    "RCI",
+    "EII"
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:iron_ingot"
+    },
+    "R": {
+      "item": "minecraft:redstone_block"
+    },
+    "L": {
+      "item": "minecraft:lapis_block"
+    },
+    "E": {
+      "item": "minecraft:emerald_block"
+    },
+    "C": {
+      "item": "unifiedstorage:wireless_upgrade_card"
+    }
+  },
+  "result": {
+    "item": "unifiedstorage:wireless_storage",
+    "count": 1
+  }
+}
