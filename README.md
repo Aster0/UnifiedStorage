@@ -44,14 +44,37 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - Fluid Storage
 - In-game book guide
 
+<br>
 
-<img src="https://github.com/Aster0/UnifiedStorage/assets/40921567/eb85460f-c881-4206-85bb-a45725068eb2" height="250">
-<br>
-:thinking:
+<details>
+<summary>Visual Item Structures/Animations</summary>
+  
+The amount of items you put into the visual item slot will affect the representation of the final rendered structure on the Storage Controller.
+
+
+Floating Block (1 block count)
+
+<img src="https://i.gyazo.com/bfbb8ec4adf9054cc5d318cd6c051f71.gif" height="200" >
+
+ 
+
+Item Representation (1 item count)
+
+<img src="https://i.gyazo.com/82ce82b1a072db17a60fc0a1b114b61f.png" height="200" >
+
+
+Door structure (2 block count)
+
+<img src="https://github.com/Aster0/UnifiedStorage/assets/40921567/eb85460f-c881-4206-85bb-a45725068eb2" height="200" >
+
+3 Block Representation (3 block count)
+
+<img src="https://i.gyazo.com/1844167ce0b74bcb4ad6dc4bcb273929.png" height="200" >
+
+</details>
 
 <br>
-<br>
-<br>
+
 
 **Mod Compatibility**
 <br>
