@@ -51,12 +51,12 @@ public abstract class BaseItem extends Item {
             upgradeTypeComponent = Component.translatable("lore.unifiedstorage.network_card_item");
         }
 
-        if(upgradeTypeComponent == null) {
-            upgradeTypeComponent = Component.literal("");
+        if(upgradeTypeComponent != null) {
+            components.add(upgradeTypeComponent);
         }
 
 
-        components.add(upgradeTypeComponent);
+
 
 
 

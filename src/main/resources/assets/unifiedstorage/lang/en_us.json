@@ -9,6 +9,8 @@
   "item.unifiedstorage.storage_wings" : "Storage Wings",
   "item.unifiedstorage.wireless_upgrade_card" : "§aWireless Upgrade Card",
   "item.unifiedstorage.wireless_storage" : "§aWireless Storage Controller",
+  "item.unifiedstorage.cloning_network_card" : "Cloning Network Card",
+  "lore.unifiedstorage.cloning_network_card" : "\n§7\"This item allows you to clone\n§7the viewing data of a §eStorage Controller\n§7to use it in another controller.\"",
   "lore.unifiedstorage.wireless_storage" : "\n§7\"This item allows you to access\n§7your §eStorage Controller §7anywhere.\"",
   "lore.unifiedstorage.network_card" : "\n§7\"This item links storages and\n§7or terminal blocks together\"\n\n§4*Don't link a double chest twice!",
   "lore.unifiedstorage.storage_wings" : "\n§7\"This item allows you to fly\n§7based on how many items you\n§7have in your Storage Controller.\"",

@@ -45,9 +45,11 @@ public class ItemRegistry {
 
     public static RegistryObject<Item> WIRELESS_STORAGE =
             ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(
-                    () -> new WirelessStorage(new Item.Properties())), true);
+                    () -> new WirelessStorage(new Item.Properties().stacksTo(1))), true);
 
-
+    public static RegistryObject<Item> CLONING_NETWORK_CARD =
+            ObjectRegistry.registerObject("cloning_network_card", new ItemData<Item>(
+                    () -> new CloningNetworkCard(new Item.Properties().stacksTo(1))), true);
 
 
 
