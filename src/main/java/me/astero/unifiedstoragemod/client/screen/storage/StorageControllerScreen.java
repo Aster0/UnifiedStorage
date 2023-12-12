@@ -404,11 +404,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             }
 
-            if(clickType == ClickType.QUICK_MOVE) {
-                menu.moveToInventory(slotInStack);
-            }
-
-
 
             super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
 

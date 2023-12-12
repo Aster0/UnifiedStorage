@@ -551,11 +551,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
         if(fromStack.getItem() instanceof NetworkItem || fromStack.getItem() instanceof UpgradeCardItem) {
 
+            System.out.println(fromSlot + " SLOTdsadas");
 
-
-            if(!(fromSlot instanceof UpgradeSlot)) {
+            if(!(fromSlot instanceof UpgradeSlot) && !(fromSlot instanceof NetworkSlot)) {
                 if(fromStack.getItem() instanceof NetworkItem) {
 
                     System.out.println(player.level().isClientSide);
