@@ -480,7 +480,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
             storageNetworkCard.loadNbt(itemStack);
-            System.out.println("updating " + player);
+
 
             editedChestLocations = new ArrayList<>(storageNetworkCard.getStorageLocations());
 
