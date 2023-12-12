@@ -3,6 +3,7 @@ package me.astero.unifiedstoragemod.networking.packets;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
+import me.astero.unifiedstoragemod.networking.ClientPacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
@@ -17,8 +18,8 @@ import java.util.Map;
 
 public class MergedStorageLocationEntityPacket implements EntityPacket {
 
-    List<ItemIdentifier> data;
-    BlockPos blockPos;
+    public List<ItemIdentifier> data;
+    public BlockPos blockPos;
 
 
     public MergedStorageLocationEntityPacket(List<ItemIdentifier> data, BlockPos blockPos) {
@@ -90,41 +91,9 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
 
 
 
-    public static void handle(MergedStorageLocationEntityPacket packet, CustomPayloadEvent.Context context) {
+    public boolean handle(CustomPayloadEvent.Context context) {
 
 
-        context.enqueueWork(() -> {
-
-
-
-            if (context.isClientSide()) {
-
-
-
-                BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(packet.blockPos);
-
-                if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
-                    storageControllerEntity.setMergedStorageContents(packet.data);
-
-
-
-
-
-                    Player player = Minecraft.getInstance().player;
-
-                    if(player.containerMenu instanceof StorageControllerMenu menu) {
-
-
-                        menu.createBlockEntityInventory();
-                    }
-                }
-
-
-
-            }
-
-        });
-
-        context.setPacketHandled(true);
+        return ClientPacketHandler.handleMergeStorageLocation(this);
     }
 }

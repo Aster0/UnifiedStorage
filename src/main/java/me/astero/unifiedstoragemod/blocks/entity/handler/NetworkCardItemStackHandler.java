@@ -23,24 +23,6 @@ public class NetworkCardItemStackHandler<T extends BaseBlockEntity> extends Item
 
         blockEntity.setChanged();
 
-        ItemStack slotInStack = this.getStackInSlot(slot);
-
-        if(slotInStack.equals(ItemStack.EMPTY,false)) {
-            blockEntity.actionWhenNetworkTakenOut(blockEntity.getLevel().getPlayerByUUID(
-                    Minecraft.getInstance().player.getUUID()));
-            blockEntity.setDisabled(true);
-            return;
-        }
-
-
-
-        blockEntity.setDisabled(false);
-
-        blockEntity.updateNetworkCardItems(this.getStackInSlot(slot), blockEntity.getLevel().getPlayerByUUID(
-                Minecraft.getInstance().player.getUUID()
-        ));
-
-
 
 
     }

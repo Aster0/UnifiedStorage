@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
+import me.astero.unifiedstoragemod.networking.ClientPacketHandler;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.world.entity.player.Player;
@@ -12,7 +13,7 @@ public class SendCraftingResultEntityPacket implements EntityPacket {
 
 
 
-    private ItemStack itemStack;
+    public ItemStack itemStack;
 
 
 
@@ -43,38 +44,9 @@ public class SendCraftingResultEntityPacket implements EntityPacket {
 
 
 
-    public static void handle(SendCraftingResultEntityPacket packet, CustomPayloadEvent.Context context) {
+    public boolean handle(CustomPayloadEvent.Context context) {
 
 
-        context.enqueueWork(() -> {
-
-
-
-
-            if (context.isClientSide()) {
-
-
-                Player player = Minecraft.getInstance().player;
-
-
-                if(player.containerMenu instanceof StorageControllerMenu menu) {
-
-
-                    menu.changeCraftingResultSlot(packet.itemStack);
-
-
-
-
-
-                }
-
-
-
-
-            }
-
-        });
-
-        context.setPacketHandled(true);
+        return ClientPacketHandler.sendCraftingResult(this);
     }
 }

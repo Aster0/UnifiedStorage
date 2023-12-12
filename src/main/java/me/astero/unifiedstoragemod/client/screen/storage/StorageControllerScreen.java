@@ -5,6 +5,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
+import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ItemVisualSlot;
@@ -14,6 +15,7 @@ import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.NetworkCardInsertedEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
@@ -285,6 +287,19 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             }
 
             if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
+
+                if(slot instanceof NetworkSlot) {
+                    System.out.println(slot);
+
+                    if(menu.getCarried().getItem() instanceof NetworkItem) {
+                        menu.getStorageControllerEntity().setDisabled(false);
+
+                        ModNetwork.sendToServer(new
+                                NetworkCardInsertedEntityPacket(menu.getStorageControllerEntity().getBlockPos()));
+                    }
+
+
+                }
                 super.slotClicked(slot, slotIndex, btn, clickType);
             }
 
@@ -376,6 +391,20 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         }
         else if(slot instanceof NetworkSlot) {
+
+            ItemStack slotInStack = slot.getItem();
+            System.out.println(slotInStack);
+
+            if(!slotInStack.equals(ItemStack.EMPTY,false)) {
+                menu.getStorageControllerEntity().actionWhenNetworkTakenOut(
+                        menu.getStorageControllerEntity().getLevel().getPlayerByUUID(
+                        Minecraft.getInstance().player.getUUID()));
+
+                menu.getStorageControllerEntity().setDisabled(true);
+
+            }
+
+
 
             super.slotClicked(slot, slotIndex, btn, clickType); // gives the clicking GUI mechanics
 

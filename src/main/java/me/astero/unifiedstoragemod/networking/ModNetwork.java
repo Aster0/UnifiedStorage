@@ -27,7 +27,7 @@ public class ModNetwork {
         INSTANCE.messageBuilder(MergedStorageLocationEntityPacket.class, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(MergedStorageLocationEntityPacket::encode)
                 .decoder(MergedStorageLocationEntityPacket::new)
-                .consumerMainThread(MergedStorageLocationEntityPacket::handle)
+                .consumerNetworkThread(MergedStorageLocationEntityPacket::handle)
                 .add();
 
 
@@ -59,13 +59,19 @@ public class ModNetwork {
         INSTANCE.messageBuilder(SendCraftingResultEntityPacket.class, NetworkDirection.PLAY_TO_CLIENT)
                 .encoder(SendCraftingResultEntityPacket::encode)
                 .decoder(SendCraftingResultEntityPacket::new)
-                .consumerMainThread(SendCraftingResultEntityPacket::handle)
+                .consumerNetworkThread(SendCraftingResultEntityPacket::handle)
                 .add();
 
         INSTANCE.messageBuilder(CraftItemEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
                 .encoder(CraftItemEntityPacket::encode)
                 .decoder(CraftItemEntityPacket::new)
                 .consumerMainThread(CraftItemEntityPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(NetworkCardInsertedEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(NetworkCardInsertedEntityPacket::encode)
+                .decoder(NetworkCardInsertedEntityPacket::new)
+                .consumerMainThread(NetworkCardInsertedEntityPacket::handle)
                 .add();
 
 

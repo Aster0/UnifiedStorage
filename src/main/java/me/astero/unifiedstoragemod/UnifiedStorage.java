@@ -68,8 +68,8 @@ public class UnifiedStorage {
 
 
 
-
-    private void commonSetup(final FMLCommonSetupEvent event) {
+    @SubscribeEvent
+    public void commonSetup(final FMLCommonSetupEvent event) {
 //        // Some common setup code
 //        LOGGER.info("HELLO FROM COMMON SETUP");
 //        LOGGER.info("DIRT BLOCK >> {}", ForgeRegistries.BLOCKS.getKey(Blocks.DIRT));
@@ -79,7 +79,10 @@ public class UnifiedStorage {
 //
 //        LOGGER.info(Config.magicNumberIntroduction + Config.magicNumber);
 
-        Config.items.forEach((item) -> LOGGER.info("ITEM >> {}", item.toString()));
+
+        event.enqueueWork(() -> {
+           ModNetwork.register();
+        });
     }
 
 //    // Add the example block item to the building blocks tab
@@ -105,7 +108,6 @@ public class UnifiedStorage {
 
                 MenuScreens.register(MenuRegistry.STORAGE_CONTROLLER_MENU.get(), StorageControllerScreen::new);
                 MenuScreens.register(MenuRegistry.STORAGE_CONTROLLER_ITEM_MENU.get(), StorageControllerScreen::new);
-                ModNetwork.register();
             });
         }
     }
