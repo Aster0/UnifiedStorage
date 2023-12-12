@@ -470,6 +470,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         if(itemStack.getItem() instanceof StorageNetworkCard storageNetworkCard) {
 
+
             if(level.isClientSide())
                 return;
 
@@ -479,7 +480,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
             storageNetworkCard.loadNbt(itemStack);
-
+            System.out.println("updating " + player);
 
             editedChestLocations = new ArrayList<>(storageNetworkCard.getStorageLocations());
 
@@ -508,7 +509,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     }
     private void updateMergedStorageClient(Player player) {
         if(player instanceof ServerPlayer serverPlayer) {
-
 
             ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
                     this.getBlockPos()), serverPlayer);

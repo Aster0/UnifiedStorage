@@ -289,7 +289,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
 
                 if(slot instanceof NetworkSlot) {
-                    System.out.println(slot);
+
 
                     if(menu.getCarried().getItem() instanceof NetworkItem) {
                         menu.getStorageControllerEntity().setDisabled(false);
@@ -393,7 +393,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         else if(slot instanceof NetworkSlot) {
 
             ItemStack slotInStack = slot.getItem();
-            System.out.println(slotInStack);
+
 
             if(!slotInStack.equals(ItemStack.EMPTY,false)) {
                 menu.getStorageControllerEntity().actionWhenNetworkTakenOut(
@@ -402,6 +402,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
                 menu.getStorageControllerEntity().setDisabled(true);
 
+            }
+
+            if(clickType == ClickType.QUICK_MOVE) {
+                menu.moveToInventory(slotInStack);
             }
 
 

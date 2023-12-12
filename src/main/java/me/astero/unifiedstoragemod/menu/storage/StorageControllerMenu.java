@@ -4,6 +4,7 @@ import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.StorageNetworkCard;
+import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.menu.Menu;
@@ -11,6 +12,7 @@ import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.NetworkCardInsertedEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
@@ -549,11 +551,35 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-        if(fromStack.getItem() instanceof StorageNetworkCard || fromStack.getItem() instanceof UpgradeCardItem) {
+        if(fromStack.getItem() instanceof NetworkItem || fromStack.getItem() instanceof UpgradeCardItem) {
+
 
 
             if(!(fromSlot instanceof UpgradeSlot)) {
+                if(fromStack.getItem() instanceof NetworkItem) {
+
+                    System.out.println(player.level().isClientSide);
+
+
+
+
+
+                    if(player.level().isClientSide) {
+                        getStorageControllerEntity().setDisabled(false);
+                    }
+                    else {
+                        getStorageControllerEntity().updateNetworkCardItems(fromStack,
+                                getStorageControllerEntity().getLevel().getPlayerByUUID(
+                                        player.getUUID()
+                                ));
+                    }
+
+
+                }
+
                 moveItemStackTo(fromStack, 63, 67, false);
+
+
 
             }
             else {
@@ -562,17 +588,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             getStorageControllerEntity().setChanged();
 
-
-        }
-        else if(fromStack.getItem() instanceof UpgradeCardItem) {
-
-            if(!(fromSlot instanceof UpgradeSlot)) {
-                moveItemStackTo(fromStack, 64, 66, false);
-
-            }
-            else {
-                moveItemStackTo(fromStack, 0, 36, false); // move to inventory
-            }
 
         }
         else if(fromSlot.container instanceof TransientCraftingContainer || fromSlot instanceof VisualItemSlot) {
@@ -1064,6 +1079,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         return remaining == 0;
     }
+
+    public void moveToInventory(ItemStack itemStack) {
+        moveItemStackTo(itemStack, 0, 36, false);
+    }
+
     public boolean canRemoveItemFromInventory(ItemStack itemStack, boolean remove, boolean removeFromPlayer, int value) {
 
 
