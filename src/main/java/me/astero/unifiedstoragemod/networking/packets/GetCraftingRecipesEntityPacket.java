@@ -2,6 +2,7 @@ package me.astero.unifiedstoragemod.networking.packets;
 
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
+import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
@@ -110,22 +111,10 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
                     }
 
 
-                    Optional<RecipeHolder<CraftingRecipe>> optional =
-                            player.level().getServer().getRecipeManager()
-                                    .getRecipeFor(RecipeType.CRAFTING, menu.craftSlots, player.level());
 
 
-                    changeCraftingResult(ItemStack.EMPTY, menu, player);
+                    menu.updateRecipeResult(player);
 
-                    RecipeHolder<CraftingRecipe> recipeHolder = optional.get();
-                    CraftingRecipe craftingRecipe = recipeHolder.value();
-                    ItemStack result = craftingRecipe.assemble(menu.craftSlots, player.level().registryAccess());
-
-
-
-
-
-                    changeCraftingResult(result, menu, player);
 
 
 
@@ -141,9 +130,5 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
         context.setPacketHandled(true);
     }
 
-    private static void changeCraftingResult(ItemStack stack, StorageControllerMenu menu, ServerPlayer player) {
-        ModNetwork.sendToClient(new SendCraftingResultEntityPacket(stack), player);
 
-        menu.changeCraftingResultSlot(stack); // server side
-    }
 }

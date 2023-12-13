@@ -13,6 +13,7 @@ import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.NetworkCardInsertedEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.SendCraftingResultEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
@@ -26,6 +27,9 @@ import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.CraftingRecipe;
+import net.minecraft.world.item.crafting.RecipeHolder;
+import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
@@ -211,6 +215,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void onItemCrafted(ItemStack itemStack, boolean quickMove) {
 
+
         if(itemStack == null || itemStack.equals(ItemStack.EMPTY, false)) {
             return;
         }
@@ -238,7 +243,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-                if(!getPlayerInventory().player.level().isClientSide)
+                if(!getPlayerInventory().player.level().isClientSide)  {
                     for (ItemStack stack : craftSlots.getItems()) {
 
 
@@ -253,6 +258,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                         }
 
                     }
+                    slotsChanged(craftSlots);
+                }
+
+
 
 
 
@@ -624,16 +633,57 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-
         if(container instanceof TransientCraftingContainer) {
 
-            findRecipe();
+
+
+
+            if(!getPlayerInventory().player.level().isClientSide) {
+
+                updateRecipeResult(getPlayerInventory().player);
+
+
+            }
+
+
+
             getStorageControllerEntity().setChanged();
+
+
+
         }
 
 
 
 
+    }
+
+    public void updateRecipeResult(Player player) {
+
+        if(!(player instanceof ServerPlayer)) {
+            return;
+        }
+
+        Optional<RecipeHolder<CraftingRecipe>> optional =
+                player.level().getServer().getRecipeManager()
+                        .getRecipeFor(RecipeType.CRAFTING, craftSlots, player.level());
+
+        changeCraftingResult(ItemStack.EMPTY, (ServerPlayer) player);
+
+        if(optional.isPresent()) {
+            RecipeHolder<CraftingRecipe> recipeHolder = optional.get();
+            CraftingRecipe craftingRecipe = recipeHolder.value();
+            ItemStack result = craftingRecipe.assemble(craftSlots, player.level().registryAccess());
+
+
+            changeCraftingResult(result,  (ServerPlayer) player);
+        }
+    }
+
+    private void changeCraftingResult(ItemStack stack, ServerPlayer player) {
+        ModNetwork.sendToClient(new SendCraftingResultEntityPacket(stack), player);
+
+        changeCraftingResultSlot(stack); // server side
     }
 
     public void findRecipe(ItemStack itemStack, int slot, ItemStack itemStackToStore) {
