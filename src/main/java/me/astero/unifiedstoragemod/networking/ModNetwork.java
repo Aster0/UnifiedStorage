@@ -49,10 +49,10 @@ public class ModNetwork {
                 .consumerMainThread(UpdateStorageDisabledEntityPacket::handle)
                 .add();
 
-        INSTANCE.messageBuilder(GetCraftingRecipesEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
-                .encoder(GetCraftingRecipesEntityPacket::encode)
-                .decoder(GetCraftingRecipesEntityPacket::new)
-                .consumerMainThread(GetCraftingRecipesEntityPacket::handle)
+        INSTANCE.messageBuilder(UpdateCraftingSlotsEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(UpdateCraftingSlotsEntityPacket::encode)
+                .decoder(UpdateCraftingSlotsEntityPacket::new)
+                .consumerMainThread(UpdateCraftingSlotsEntityPacket::handle)
                 .add();
 
 

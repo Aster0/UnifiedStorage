@@ -1,19 +1,12 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
-import me.astero.unifiedstoragemod.networking.ModNetwork;
-import net.minecraft.client.Minecraft;
 import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.crafting.CraftingRecipe;
-import net.minecraft.world.item.crafting.RecipeHolder;
-import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-import java.util.Optional;
-
-public class GetCraftingRecipesEntityPacket implements EntityPacket {
+public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
 
 
 
@@ -24,7 +17,7 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
     private boolean populateCraftingSlot, moveToPlayer;
 
 
-    public GetCraftingRecipesEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot, ItemStack itemStackToStore, boolean moveToPlayer) {
+    public UpdateCraftingSlotsEntityPacket(ItemStack itemStack, int slot, boolean populateCraftingSlot, ItemStack itemStackToStore, boolean moveToPlayer) {
 
         this.itemStack = itemStack;
         this.slot = slot;
@@ -36,7 +29,7 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
     }
 
-    public GetCraftingRecipesEntityPacket(FriendlyByteBuf buffer) {
+    public UpdateCraftingSlotsEntityPacket(FriendlyByteBuf buffer) {
 
         // Decode your packet data here
         this.itemStack = buffer.readItem();
@@ -67,7 +60,7 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
 
 
 
-    public static void handle(GetCraftingRecipesEntityPacket packet, CustomPayloadEvent.Context context) {
+    public static void handle(UpdateCraftingSlotsEntityPacket packet, CustomPayloadEvent.Context context) {
 
 
         context.enqueueWork(() -> {
@@ -107,13 +100,13 @@ public class GetCraftingRecipesEntityPacket implements EntityPacket {
                         }
 
 
-                        return; // because SlotsChanged will trigger the recipe change
+                        // SlotsChanged will trigger the recipe change
                     }
 
 
 
 
-                    menu.updateRecipeResult(player);
+
 
 
 

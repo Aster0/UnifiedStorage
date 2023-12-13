@@ -3,7 +3,6 @@ package me.astero.unifiedstoragemod.menu.storage;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.items.StorageNetworkCard;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
@@ -11,15 +10,12 @@ import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.NetworkCardInsertedEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateCraftingSlotsEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.SendCraftingResultEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
-import me.astero.unifiedstoragemod.registry.MenuRegistry;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
-import net.minecraft.network.FriendlyByteBuf;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
@@ -688,16 +684,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void findRecipe(ItemStack itemStack, int slot, ItemStack itemStackToStore) {
 
-        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(itemStack, slot, true, itemStackToStore, true));
+        ModNetwork.sendToServer(new UpdateCraftingSlotsEntityPacket(itemStack, slot, true, itemStackToStore, true));
     }
 
-    public void findRecipe() {
-
-        ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(ItemStack.EMPTY, 0,
-                false, ItemStack.EMPTY, false));
-
-
-    }
 
     public void changeCraftingResultSlot(ItemStack itemStack) {
         if(itemStack != null)

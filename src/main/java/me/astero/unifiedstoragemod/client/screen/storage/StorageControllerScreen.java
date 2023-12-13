@@ -14,7 +14,7 @@ import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.GetCraftingRecipesEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.UpdateCraftingSlotsEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.NetworkCardInsertedEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
 import me.astero.unifiedstoragemod.utils.ModUtils;
@@ -105,7 +105,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             if(!stack.equals(ItemStack.EMPTY, false)) {
 
-                ModNetwork.sendToServer(new GetCraftingRecipesEntityPacket(ItemStack.EMPTY, i,
+                ModNetwork.sendToServer(new UpdateCraftingSlotsEntityPacket(ItemStack.EMPTY, i,
                         true, stack, false));
 
 
