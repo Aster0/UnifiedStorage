@@ -15,6 +15,21 @@ public class ModUtils {
     public static final String MODID = "unifiedstorage";
 
 
+    public static String capitalizeName(String name) {
+
+        // e.g., shulker_box becomes Shulker Box
+        String revisedName = "";
+        for(String str : name.split("_")) {
+
+            String current = str.substring(0, 1).toUpperCase()
+                    + str.substring(1);
+
+            revisedName += current + " ";
+        }
+
+        return revisedName.substring(0, revisedName.length() - 1);
+
+    }
     public static CustomBlockPosData convertStringToBlockData(String[] value) {
         try {
             int x = Integer.parseInt(value[0].substring(2));

@@ -46,7 +46,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-    private final int MAX_UPGRADES = 3;
+    public static final int MAX_UPGRADES = 3;
     private int maxChests = 100;
     private static final Component MENU_TITLE = Component.translatable("container."
             + ModUtils.MODID + ".storage_controller_menu_title");
@@ -325,16 +325,9 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                 }
 
                 // mark down where we found these items
-                String blockName = "";
 
-                // e.g., shulker_box
-                for(String str : blockEntity.getBlockState().getBlock().asItem().toString().split("_")) {
 
-                    String revisedName = str.substring(0, 1).toUpperCase()
-                            + str.substring(1);
-
-                    blockName += revisedName + " ";
-                }
+                String blockName = ModUtils.capitalizeName(blockEntity.getBlockState().getBlock().asItem().toString());
 
 
 

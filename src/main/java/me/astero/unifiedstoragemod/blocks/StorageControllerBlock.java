@@ -38,6 +38,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
+    private final String BULLET_POINT = " - ";
 
 
 
@@ -77,10 +78,52 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
         CompoundTag tag = stack.getTag();
 
         if(tag != null) {
+
+            CompoundTag modTag = tag.getCompound("BlockEntityTag").getCompound(ModUtils.MODID);
+
+            String storageItems = modTag.getString("storage_items");
+
+            String[] items = storageItems.split(";");
             components.add(Component.literal(""));
-            components.add(Component.literal(stack.getTag().isEmpty() ? "" : "§c§oConfigured"));
+
+            components.add(Component.literal(tag.isEmpty() ?
+                    "" : "§c§oConfigured"));
+
+
+            for(int i = 0; i < items.length; i++) {
+
+                String item = items[i];
+
+                if(item.startsWith("NET")) {
+                    addLore(components, item, "§eInserted Network: ");
+                }
+                else if(item.startsWith("VISUAL")) {
+                    addLore(components, item, "§eInserted Visual Item: ");
+                }
+                else {
+                    if(i == 2) { // start of upgrade
+                        components.add(Component.literal("§eInserted Upgrades: "));
+                    }
+
+                    components.add(Component.literal(BULLET_POINT + item));
+
+                }
+
+
+            }
+
+
         }
 
+    }
+
+    private List<Component> addLore(List<Component> components, String item, String header) {
+
+        components.add(Component.literal(header));
+        components.add(Component.literal(BULLET_POINT + item.split("::")[1]));
+        components.add(Component.literal(""));
+
+        return components;
     }
 
     @Override
@@ -118,18 +161,45 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                 ItemStackHandler visualItem = new ItemStackHandler(1);
                 visualItem.deserializeNBT(tag.getCompound("visual_item"));
 
+                ItemStackHandler upgradeItems = new ItemStackHandler(StorageControllerEntity.MAX_UPGRADES);
+                upgradeItems.deserializeNBT(tag.getCompound("upgrade_inventory"));
+
+
+                String storedItems = getStorageContents(new String[]{"NET", "VISUAL"}, networkCard, visualItem);
+
+                boolean hasUpgrades = false;
+
+                for(int i = 0; i < StorageControllerEntity.MAX_UPGRADES; i++) {
+
+                    if(!upgradeItems.getStackInSlot(i).equals(ItemStack.EMPTY, false)) {
+                        hasUpgrades = true;
+
+                        storedItems += ModUtils.capitalizeName(upgradeItems.getStackInSlot(i).getHoverName().getString()) + ";";
+                    }
+                }
+
+                if(storedItems.length() > 1) {
+                    storedItems = storedItems.substring(0, storedItems.length() - 1);
+                    tag.putString("storage_items", storedItems);
+
+                    System.out.println(storedItems);
+                }
+
 
                 if(networkCard.getStackInSlot(0).equals(ItemStack.EMPTY, false) &&
                         visualItem.getStackInSlot(0).equals(ItemStack.EMPTY, false)) {
 
-                    stack = stackBeforeNbt;
+                    if(!hasUpgrades)
+                        stack = stackBeforeNbt;
                 }
+
+
+
+
 
             }
 
 
-
-            // temporary - TODO: to fix later when we include upgrade slots
 
 
             popResource(level, pos, stack);
@@ -140,6 +210,28 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
         return super.onDestroyedByPlayer(state, level, pos, player, willHarvest, fluid);
+    }
+
+
+    private String getStorageContents(String[] names, ItemStackHandler ...inventory) {
+        String storedItems = "";
+
+
+        for(int i = 0; i < inventory.length; i++) {
+
+            ItemStackHandler itemStackHandler = inventory[i];
+
+            if(!itemStackHandler.getStackInSlot(0).equals(ItemStack.EMPTY, false)) {
+
+                storedItems += names[i] + "::"
+                        + ModUtils.capitalizeName(itemStackHandler.getStackInSlot(0).getHoverName().getString())
+                        + (names[i].equals("VISUAL") ? " x" + itemStackHandler.getStackInSlot(0).getCount() : "")
+                        + ";";
+            }
+        }
+
+        return storedItems;
+
     }
 
 

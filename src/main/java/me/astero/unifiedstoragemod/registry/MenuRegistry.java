@@ -19,12 +19,6 @@ public class MenuRegistry {
             "storage_controller_menu", () -> IForgeMenuType.create(StorageControllerBlockMenu::new));
 
     public static final RegistryObject<MenuType<StorageControllerMenu>> STORAGE_CONTROLLER_ITEM_MENU = MENUS.register(
-            "storage_controller_item_menu", () -> {
+            "storage_controller_item_menu", () -> IForgeMenuType.create(StorageControllerItemMenu::new));
 
-
-                return IForgeMenuType.create((c, dd, p) -> {
-
-                    return new StorageControllerItemMenu(c, dd, p);
-                });
-            });
 }
