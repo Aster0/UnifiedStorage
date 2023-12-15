@@ -87,18 +87,25 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
             components.add(Component.literal(""));
 
             components.add(Component.literal(tag.isEmpty() ?
-                    "" : "§c§oConfigured"));
+                    "" : Component.translatable("lore." +
+                    ModUtils.MODID + ".dropped_storage_controller_header2").getString()));
 
 
             for(int i = 0; i < items.length; i++) {
 
                 String item = items[i];
 
+
+
                 if(item.startsWith("NET")) {
-                    addLore(components, item, "§eInserted Network: ");
+                    addLore(components, item, Component.translatable("lore." + ModUtils.MODID
+                            + ".dropped_storage_controller_header").getString()
+                            .replace("%header%", "§eInserted Network: "));
                 }
                 else if(item.startsWith("VISUAL")) {
-                    addLore(components, item, "§eInserted Visual Item: ");
+                    addLore(components, item, Component.translatable("lore." + ModUtils.MODID
+                                    + ".dropped_storage_controller_header").getString()
+                            .replace("%header%", "§eInserted Visual Item: "));
                 }
                 else {
                     if(i == 2) { // start of upgrade

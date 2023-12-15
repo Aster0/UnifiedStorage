@@ -159,6 +159,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     @Override
     protected void renderBg(@NotNull GuiGraphics guiGraphics, float partialTicks, int mouseX, int mouseY) {
         //renderTransparentBackground(guiGraphics);
+
+
+        new ItemLogsGUI().tick(guiGraphics, leftPos, topPos);
+
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
 
@@ -192,6 +196,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
+
     }
 
 
@@ -215,11 +220,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         if(searchField != null)
             searchField.render(guiGraphics, mouseX, mouseY, partialTicks);
-
-
-
-
-
 
 
 

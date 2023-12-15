@@ -46,6 +46,7 @@ public abstract class CustomEditBox extends EditBox {
         guiGraphics.blit(TEXT_FIELD, getX()- 5, getY() - 2,   122, 3,
                 this.width + 15, this.height);
 
+
         if(!text.equals(getValue())) { // char type doesn't work. gives the previous text before char :( makeshift right here.
 
             text = getValue();

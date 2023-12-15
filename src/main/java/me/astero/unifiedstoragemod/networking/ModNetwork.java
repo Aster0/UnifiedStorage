@@ -87,5 +87,9 @@ public class ModNetwork {
         INSTANCE.send(message, PacketDistributor.SERVER.noArg());
     }
 
+    public static void sendToAllClient(Object message) {
+        INSTANCE.send(message, PacketDistributor.ALL.noArg());
+    }
+
 
 }

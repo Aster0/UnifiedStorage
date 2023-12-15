@@ -20,6 +20,8 @@
   "lore.unifiedstorage.blank_upgrade" : "\n§7\"Used to craft upgrade cards\"",
   "lore.unifiedstorage.network_card_item" : "§8Network Card Item",
   "lore.unifiedstorage.upgrade_card_item" : "§8Upgrade Card Item",
+  "lore.unifiedstorage.dropped_storage_controller_header" : "§e%header%",
+  "lore.unifiedstorage.dropped_storage_controller_header2" : "§7When Placed:",
   "lore.unifiedstorage.storage_controller" : "\n§7\"Use a network card to link\n§7various storages together to\n§7see it as one unified storage\"",
   "language.unifiedstorage.no_grid_for_chest_selection" : "Please select a §c[Grid Controller] §fbefore continuing.",
   "language.unifiedstorage.linked_storage" : "§aSuccessfully linked this storage.",
