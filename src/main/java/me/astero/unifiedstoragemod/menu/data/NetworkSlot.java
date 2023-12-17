@@ -1,5 +1,7 @@
 package me.astero.unifiedstoragemod.menu.data;
 
+import me.astero.unifiedstoragemod.items.data.UpgradeType;
+import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.items.IItemHandler;
@@ -15,6 +17,11 @@ public class NetworkSlot extends SlotItemHandler {
 
     @Override
     public boolean mayPlace(@NotNull ItemStack stack) {
-        return stack.getItem().equals(ItemRegistry.NETWORK_CARD.get());
+
+        if(stack.getItem() instanceof NetworkItem networkItem) {
+            return networkItem.getUpgradeType() == UpgradeType.NETWORK;
+        }
+
+        return false;
     }
 }

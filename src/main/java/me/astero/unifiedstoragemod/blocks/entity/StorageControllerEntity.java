@@ -6,6 +6,8 @@ import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.StorageNetworkCard;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.items.data.UpgradeModule;
+import me.astero.unifiedstoragemod.items.data.UpgradeType;
+import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerBlockMenu;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
@@ -461,8 +463,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-        if(itemStack.getItem() instanceof StorageNetworkCard storageNetworkCard) {
+        if(itemStack.getItem() instanceof NetworkItem networkItem) {
 
+            if(networkItem.getUpgradeType() != UpgradeType.NETWORK)
+                return;
 
             if(level.isClientSide())
                 return;
@@ -472,14 +476,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-            storageNetworkCard.loadNbt(itemStack);
+            networkItem.loadNbt(itemStack);
 
 
-            editedChestLocations = new ArrayList<>(storageNetworkCard.getStorageLocations());
+            editedChestLocations = new ArrayList<>(networkItem.getStorageLocations());
 
 
 
-            updateStorageContents(player, storageNetworkCard, itemStack);
+            updateStorageContents(player, networkItem, itemStack);
 
 
 
@@ -510,7 +514,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
     }
 
-    private void updateStorageContents(Player player, StorageNetworkCard storageNetworkCard, ItemStack itemStack) {
+    private void updateStorageContents(Player player, NetworkItem networkItem, ItemStack itemStack) {
 
 
         if(editedChestLocations == null)
@@ -530,8 +534,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         for(SavedStorageData customBlockPosData : queueToRemoveChest) {
 
 
-            storageNetworkCard.getStorageLocations().remove(customBlockPosData);
-            storageNetworkCard.saveNbt(itemStack);
+            networkItem.getStorageLocations().remove(customBlockPosData);
+            networkItem.saveNbt(itemStack);
 
 
             chestLocations.remove("x=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getX() + ", y=" +

@@ -4,6 +4,7 @@ public enum NetworkBlockType {
 
 
     CONTROLLER("Storage Controller"),
+    STORAGE_CLONE("Storages"),
     STORAGE("Storages");
 
 

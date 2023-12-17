@@ -27,6 +27,10 @@ public abstract class BaseItem extends Item {
         this.shiftText = shiftText;
     }
 
+    public UpgradeType getUpgradeType() {
+        return upgradeType;
+    }
+
     public List<Component> addShiftText() {
 
 

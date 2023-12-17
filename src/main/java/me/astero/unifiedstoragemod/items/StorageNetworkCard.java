@@ -27,8 +27,9 @@ public class StorageNetworkCard extends NetworkItem {
 
 
     @Override
-    public void onNetworkBlockInteract(BlockEntity blockEntity) {
+    public boolean onNetworkBlockInteract(BlockEntity blockEntity, ItemStack itemStack, Player player) {
 
+        return false;
     }
 
     @Override

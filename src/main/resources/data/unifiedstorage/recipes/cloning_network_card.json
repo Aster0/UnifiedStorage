@@ -1,0 +1,20 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "pattern": [
+    "RRR",
+    "RIR",
+    "RRR"
+  ],
+  "key": {
+    "I": {
+      "item": "unifiedstorage:network_card"
+    },
+    "R": {
+      "item": "minecraft:redstone"
+    }
+  },
+  "result": {
+    "item": "unifiedstorage:cloning_network_card",
+    "count": 1
+  }
+}

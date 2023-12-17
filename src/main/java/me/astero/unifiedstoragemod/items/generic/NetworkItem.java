@@ -9,10 +9,12 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.item.context.UseOnContext;
 import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -111,6 +113,7 @@ public abstract class NetworkItem extends BaseItem {
             String rawPos = nbt.getString("storage" + i);
 
 
+
             if(rawPos.length() > 0) {
 
                 rawPos = ModUtils.serializeBlockPosNbt(rawPos);
@@ -123,8 +126,11 @@ public abstract class NetworkItem extends BaseItem {
 
                 saveToStorage(savedStorageData, null);
 
+
                 continue;
             }
+
+
 
             return;
 
@@ -239,9 +245,15 @@ public abstract class NetworkItem extends BaseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
 
-
-
         loadNbt(stack);
+
+        if(networkBlockType == NetworkBlockType.STORAGE_CLONE) { // dont show the lore yet
+            if(storageLocations.size() == 0) {
+                return;
+            }
+        }
+
+
 
 
         String lore = Component.translatable("lore." + ModUtils.MODID + ".network_card_storages").getString();
@@ -258,6 +270,7 @@ public abstract class NetworkItem extends BaseItem {
 
     }
 
+
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand interactionHand) {
 
@@ -270,11 +283,6 @@ public abstract class NetworkItem extends BaseItem {
 
             ItemStack itemStack = player.getItemInHand(interactionHand);
             BlockHitResult blockHitResult = getPlayerPOVHitResult(level, player, ClipContext.Fluid.SOURCE_ONLY);
-
-
-
-
-
 
             BlockEntity hitBlockEntity = level.getBlockEntity(blockHitResult.getBlockPos());
 
@@ -296,7 +304,11 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
-                    onNetworkBlockInteract(hitBlockEntity);
+                    if(onNetworkBlockInteract(hitBlockEntity, itemStack, player)) {
+
+                        return InteractionResultHolder.success(itemStack);
+                    }
+
 
                     addStorageData(ModUtils.serializeBlockPosNbt(hitBlockEntity.getBlockPos().toString()),
                             itemStack, player);
@@ -326,7 +338,7 @@ public abstract class NetworkItem extends BaseItem {
     }
 
 
-    public abstract void onNetworkBlockInteract(BlockEntity blockEntity);
+    public abstract boolean onNetworkBlockInteract(BlockEntity blockEntity, ItemStack itemStack, Player player);
 
     public abstract InteractionResultHolder<ItemStack> onItemUse(List<SavedStorageData> savedStorageData, Player player,
                                                                  ItemStack itemStack);

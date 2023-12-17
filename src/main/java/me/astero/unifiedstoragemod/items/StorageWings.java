@@ -30,8 +30,9 @@ public class StorageWings extends NetworkItem implements Equipable {
 
 
     @Override
-    public void onNetworkBlockInteract(BlockEntity blockEntity) {
+    public boolean onNetworkBlockInteract(BlockEntity blockEntity, ItemStack itemStack, Player player) {
 
+        return false;
 
     }
 

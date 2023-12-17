@@ -5,6 +5,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
+import me.astero.unifiedstoragemod.items.data.UpgradeType;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
@@ -161,7 +162,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         //renderTransparentBackground(guiGraphics);
 
 
-        new ItemLogsGUI().tick(guiGraphics, leftPos, topPos);
+        //new ItemLogsGUI().tick(guiGraphics, leftPos, topPos);
 
         guiGraphics.blit(TEXTURE, this.leftPos, this.topPos, 0, 0,
                 this.imageWidth, this.imageHeight);
@@ -291,7 +292,11 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 if(slot instanceof NetworkSlot) {
 
 
-                    if(menu.getCarried().getItem() instanceof NetworkItem) {
+                    if(menu.getCarried().getItem() instanceof NetworkItem networkItem) {
+
+                        if(!(networkItem.getUpgradeType() == UpgradeType.NETWORK))
+                            return;
+
                         menu.getStorageControllerEntity().setDisabled(false);
 
                         ModNetwork.sendToServer(new
@@ -395,12 +400,37 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             ItemStack slotInStack = slot.getItem();
 
 
-            if(!slotInStack.equals(ItemStack.EMPTY,false)) {
-                menu.getStorageControllerEntity().actionWhenNetworkTakenOut(
-                        menu.getStorageControllerEntity().getLevel().getPlayerByUUID(
-                        Minecraft.getInstance().player.getUUID()));
+            if(!(menu.getCarried().getItem() instanceof NetworkItem) &&
+                    !menu.getCarried().equals(ItemStack.EMPTY, false)) {
 
-                menu.getStorageControllerEntity().setDisabled(true);
+                return;
+
+            }
+
+            if(!slotInStack.equals(ItemStack.EMPTY,false)) {
+
+                if(clickType != ClickType.CLONE) {
+
+
+                    if(menu.getCarried().getItem() instanceof NetworkItem networkItem) { // if we are swapping, we should update the storage
+                        if(networkItem.getUpgradeType() == UpgradeType.NETWORK) {
+                            ModNetwork.sendToServer(new
+                                    NetworkCardInsertedEntityPacket(menu.getStorageControllerEntity().getBlockPos()));
+                        }
+                        System.out.println("yes");
+                    } // if hand is empty, just taking out the card.
+                    else {
+                        menu.getStorageControllerEntity().actionWhenNetworkTakenOut(
+                                menu.getStorageControllerEntity().getLevel().getPlayerByUUID(
+                                        Minecraft.getInstance().player.getUUID()));
+
+
+                        menu.getStorageControllerEntity().setDisabled(true);
+                    }
+
+
+                }
+
 
             }
 
