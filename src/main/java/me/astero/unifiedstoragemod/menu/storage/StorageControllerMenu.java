@@ -10,9 +10,7 @@ import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
-import me.astero.unifiedstoragemod.networking.packets.UpdateCraftingSlotsEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.SendCraftingResultEntityPacket;
-import me.astero.unifiedstoragemod.networking.packets.UpdateStorageInventoryClientEntityPacket;
+import me.astero.unifiedstoragemod.networking.packets.*;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
@@ -50,7 +48,27 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     private final ContainerLevelAccess containerLevelAccess;
 
     private Inventory pInventory;
-    public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3);
+    public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3) {
+        @Override
+        public void setChanged() {
+            super.setChanged();
+
+
+
+            if(!getPlayerInventory().player.level().isClientSide) {
+
+                ModNetwork.sendToAllClient(new UpdateAllCraftingSlotsClientEntityPacket(this.getItems(),
+                        getStorageControllerEntity().getBlockPos(), getPlayerInventory().player.getUUID()));
+
+                for(int i = 0; i < craftSlots.getItems().size(); i++) {
+
+                    getStorageControllerEntity().getCraftingInventory().setStackInSlot(i,
+                            craftSlots.getItem(i));
+                }
+            }
+
+        }
+    };
     private final ResultContainer resultSlots = new ResultContainer();
 
     private int craftSlotIndexStart = 0;
@@ -86,20 +104,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
 
-    @Override
-    public void removed(Player player) {
-        super.removed(player);
-
-        for(int i = 0; i < craftSlots.getItems().size(); i++) {
-
-            getStorageControllerEntity().getCraftingInventory().setStackInSlot(i,
-                    craftSlots.getItem(i));
-        }
 
 
-
-
-    }
 
     public Inventory getPlayerInventory() {
         return pInventory;
@@ -212,6 +218,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void onItemCrafted(ItemStack itemStack, boolean quickMove) {
 
 
+        if(!updateRecipeResult(getPlayerInventory().player).equals(itemStack, false)) { // make sure that the crafting slots corresponds with the result
+            return;
+        }
+
         if(itemStack == null || itemStack.equals(ItemStack.EMPTY, false)) {
             return;
         }
@@ -254,8 +264,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                         }
 
                     }
+
                     slotsChanged(craftSlots);
+
                 }
+
+                craftSlots.setChanged();
 
 
 
@@ -388,6 +402,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
             }
 
+            craftSlots.setChanged();
+            slotsChanged(craftSlots);
 
         }
 
@@ -643,6 +659,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
             getStorageControllerEntity().setChanged();
 
 
@@ -654,11 +671,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     }
 
-    public void updateRecipeResult(Player player) {
+    public ItemStack updateRecipeResult(Player player) {
 
         if(!(player instanceof ServerPlayer)) {
-            return;
+            return ItemStack.EMPTY;
         }
+        ItemStack itemResult = ItemStack.EMPTY;
 
         Optional<RecipeHolder<CraftingRecipe>> optional =
                 player.level().getServer().getRecipeManager()
@@ -671,9 +689,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             CraftingRecipe craftingRecipe = recipeHolder.value();
             ItemStack result = craftingRecipe.assemble(craftSlots, player.level().registryAccess());
 
-
+            itemResult = result;
             changeCraftingResult(result,  (ServerPlayer) player);
         }
+
+        return itemResult;
     }
 
     private void changeCraftingResult(ItemStack stack, ServerPlayer player) {
@@ -1069,7 +1089,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             // remove item from the crafting grid first before transferring
             if(currentItemStack.isPresent()) {
 
-
                 findRecipe(currentItemStack.get().copy(), i - 1, craftingGridItem.copy()); // server
 
 
@@ -1084,7 +1103,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         this.craftSlots.setItem(slot, itemStack);
 
-
+        craftSlots.setChanged();
     }
 
 

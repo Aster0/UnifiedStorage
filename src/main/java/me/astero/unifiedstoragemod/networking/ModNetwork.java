@@ -74,6 +74,17 @@ public class ModNetwork {
                 .consumerMainThread(NetworkCardInsertedEntityPacket::handle)
                 .add();
 
+        INSTANCE.messageBuilder(UpdateAllCraftingSlotsServerEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(UpdateAllCraftingSlotsServerEntityPacket::encode)
+                .decoder(UpdateAllCraftingSlotsServerEntityPacket::new)
+                .consumerMainThread(UpdateAllCraftingSlotsServerEntityPacket::handle)
+                .add();
+
+        INSTANCE.messageBuilder(UpdateAllCraftingSlotsClientEntityPacket.class, NetworkDirection.PLAY_TO_CLIENT)
+                .encoder(UpdateAllCraftingSlotsClientEntityPacket::encode)
+                .decoder(UpdateAllCraftingSlotsClientEntityPacket::new)
+                .consumerNetworkThread(UpdateAllCraftingSlotsClientEntityPacket::handle)
+                .add();
 
 
 

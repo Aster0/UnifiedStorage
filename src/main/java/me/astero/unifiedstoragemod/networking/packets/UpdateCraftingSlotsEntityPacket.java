@@ -84,6 +84,7 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
                         if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
                                 packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
 
+                            menu.craftSlots.setChanged();
                             return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
                         }
 
@@ -101,14 +102,9 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
 
 
                         // SlotsChanged will trigger the recipe change
+
+
                     }
-
-
-
-
-
-
-
 
 
                 }

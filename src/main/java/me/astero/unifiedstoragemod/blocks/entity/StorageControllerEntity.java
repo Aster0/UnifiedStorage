@@ -213,41 +213,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         editedChestLocations.add(new SavedStorageData(customBlockPosData));
     }
 
-    private void loadEditedChests(CompoundTag nbt) {
 
-        editedChestLocations.clear();
-
-        for(int i = 0; i < maxChests; i++) {
-
-
-
-            String rawPos = nbt.getString("chest" + i);
-
-
-
-
-            if(rawPos != null && rawPos.length() > 0) {
-                String[] pos = rawPos.split(", ");
-
-                if(chestLocations.contains(rawPos)) continue;
-
-                addChests(rawPos);
-
-
-
-                //loadStorageContents(customBlockPosData);
-
-
-            }
-
-
-
-
-        }
-
-
-
-    }
 
 
     @Override
