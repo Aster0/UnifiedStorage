@@ -29,6 +29,9 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - Ability to link with any storage blocks (even furnaces)
 - Crafting Grid (saves when you exit the GUI)
 - Wireless - You can use your storage anywhere with a wireless controller!
+- Intensive Search - You can use & combine prefixes to search for specific items (e.g., @modname storage or @modname #ores or just #ores)
+
+![image](https://i.imgur.com/FnMAnDp.png)
 
 |                             |                             |
 | ----------------------------------- | ----------------------------------- |
