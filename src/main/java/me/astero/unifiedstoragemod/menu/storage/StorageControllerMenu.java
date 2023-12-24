@@ -192,10 +192,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     return;
 
 
-                System.out.println("Searching for " + itemIdentifier.getItemStack());
-                itemIdentifier.getItemStack().getTags().forEach(tag -> {
-                    System.out.println(tag + " ");
-                });
 
                 Optional<TagKey<Item>> tagKey = itemIdentifier.getItemStack().getTags().filter(itemTagKey ->
                         itemTagKey.location().toString().toLowerCase()

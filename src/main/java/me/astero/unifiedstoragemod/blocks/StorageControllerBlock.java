@@ -189,7 +189,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                     storedItems = storedItems.substring(0, storedItems.length() - 1);
                     tag.putString("storage_items", storedItems);
 
-                    System.out.println(storedItems);
                 }
 
 

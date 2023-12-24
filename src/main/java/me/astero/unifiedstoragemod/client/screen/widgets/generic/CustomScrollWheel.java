@@ -198,7 +198,6 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
     @Override
     public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
-        System.out.println(currentPage);
 
 
 

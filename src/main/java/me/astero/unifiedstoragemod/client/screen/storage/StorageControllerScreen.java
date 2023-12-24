@@ -63,9 +63,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
 
-    private static final ResourceLocation TEST =
-            new ResourceLocation("textures/block/warped_wart_block.png");
-
 
     public StorageControllerScreen(StorageControllerMenu menu, Inventory pInventory, Component title) {
         super(menu, pInventory, title);
@@ -433,7 +430,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                             ModNetwork.sendToServer(new
                                     NetworkCardInsertedEntityPacket(menu.getStorageControllerEntity().getBlockPos()));
                         }
-                        System.out.println("yes");
+
                     } // if hand is empty, just taking out the card.
                     else {
                         menu.getStorageControllerEntity().actionWhenNetworkTakenOut(

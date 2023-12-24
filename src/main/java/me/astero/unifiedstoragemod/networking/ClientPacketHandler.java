@@ -69,7 +69,6 @@ public class ClientPacketHandler {
             Player player = mc.player;
 
 
-            System.out.println(packet.playerUUID + " MY UUID " + player.getUUID());
             if(packet.playerUUID.equals(player.getUUID()))
                 return;
 
