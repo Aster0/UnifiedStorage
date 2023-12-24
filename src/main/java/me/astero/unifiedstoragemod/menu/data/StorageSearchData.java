@@ -15,6 +15,10 @@ public class StorageSearchData {
         return searchedStorageList;
     }
 
+    public void setSearchedStorageList(List<ItemIdentifier> searchedStorageList) {
+        this.searchedStorageList = searchedStorageList;
+    }
+
     public void setSearching(boolean searching) {
         isSearching = searching;
     }

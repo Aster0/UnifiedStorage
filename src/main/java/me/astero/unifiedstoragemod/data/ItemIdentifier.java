@@ -1,6 +1,7 @@
 package me.astero.unifiedstoragemod.data;
 
 import net.minecraft.world.item.ItemStack;
+import net.minecraftforge.fluids.FluidStack;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -12,6 +13,9 @@ public class ItemIdentifier {
 
     private Map<String, Integer> locations = new HashMap<>();
     private int count;
+
+    private boolean fluid;
+    private FluidStack fluidStack;
 
     public ItemIdentifier(ItemStack itemStack, int count, Map<String, Integer> locations) {
         this.itemStack = itemStack;
@@ -81,5 +85,23 @@ public class ItemIdentifier {
         }
 
         return false;
+    }
+
+
+    public boolean isFluid() {
+        return fluid;
+    }
+
+
+    public FluidStack getFluidStack() {
+        return fluidStack;
+    }
+
+    public void setFluidStack(FluidStack fluidStack) {
+
+        if(fluidStack != null)
+            fluid = true;
+
+        this.fluidStack = fluidStack;
     }
 }

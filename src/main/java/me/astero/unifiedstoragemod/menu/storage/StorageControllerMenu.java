@@ -3,6 +3,7 @@ package me.astero.unifiedstoragemod.menu.storage;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
+import me.astero.unifiedstoragemod.integrations.jei.JEIPlugin;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
@@ -13,14 +14,19 @@ import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.*;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
+import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
+import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -30,6 +36,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,8 +111,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
 
-
-
+    public StorageSearchData getStorageSearchData() {
+        return storageSearchData;
+    }
 
     public Inventory getPlayerInventory() {
         return pInventory;
@@ -131,6 +139,16 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return (int) Math.ceil(value);
     }
 
+    public int getTotalPages(List<ItemIdentifier> itemIdentifiers) {
+
+
+
+        double value = (double) itemIdentifiers.size() / VISIBLE_CONTENT_HEIGHT;
+
+
+        return (int) Math.ceil(value);
+    }
+
     public void onStorageSearch(String entry) {
 
 
@@ -138,18 +156,114 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         storageSearchData.setSearching(true);
+
+
+        String currentSearchString = entry.toLowerCase();
+
+        if(currentSearchString.startsWith("@")) { // search by modid
+
+            String[] splitSearch = currentSearchString.split(" ");
+
+            currentSearchString = "";
+
+            for(int i = 1; i < splitSearch.length; i++) { // ignore the @modid part
+
+                currentSearchString += splitSearch[i].toLowerCase() + " ";
+            }
+
+
+            currentSearchString = currentSearchString.trim();
+        }
+
         for(ItemIdentifier itemIdentifier : storageControllerEntity.mergedStorageContents) {
+
+
+
+
+
+
+
+
+            if(currentSearchString.startsWith("#")) {
+
+                String finalCurrentSearchString = currentSearchString;
+
+                if(finalCurrentSearchString.substring(1).length() == 0)
+                    return;
+
+
+                System.out.println("Searching for " + itemIdentifier.getItemStack());
+                itemIdentifier.getItemStack().getTags().forEach(tag -> {
+                    System.out.println(tag + " ");
+                });
+
+                Optional<TagKey<Item>> tagKey = itemIdentifier.getItemStack().getTags().filter(itemTagKey ->
+                        itemTagKey.location().toString().toLowerCase()
+                                .contains(finalCurrentSearchString.substring(1)))
+                        .findAny();
+
+
+
+                if(tagKey.isPresent()) {
+                    storageSearchData.getSearchedStorageList().add(itemIdentifier);
+                }
+
+
+                continue;
+
+            }
+
 
 
             String itemName = itemIdentifier.getItemStack().getDisplayName().getString().toLowerCase();
             // [Compass]
+            // TODO: search by lore
+
 
             if(itemName.substring(1, itemName.length() - 1)
-                    .contains(entry.toLowerCase())) {
+                    .contains(currentSearchString)) {
+
 
                 storageSearchData.getSearchedStorageList().add(itemIdentifier);
             }
+            else { // if we can't match the name, we try the lore.
+
+                for(Component component : itemIdentifier.getItemStack().getTooltipLines(null, TooltipFlag.NORMAL)) {
+                    if(component.getString().toLowerCase().contains(currentSearchString)) {
+                        storageSearchData.getSearchedStorageList().add(itemIdentifier);
+                    }
+                }
+            }
+
+
         }
+
+        if(entry.startsWith("@")) {
+
+
+            List<ItemIdentifier> editedSearchedList = new ArrayList<>();
+
+            for(ItemIdentifier itemIdentifier : storageSearchData.getSearchedStorageList()) {
+
+                try {
+                    String modId = itemIdentifier.getItemStack().getItem().getDescriptionId().split("\\.")[1];
+
+
+                    if(modId.toLowerCase().contains(entry.split(" ")[0].toLowerCase().substring(1))) {
+                        editedSearchedList.add(itemIdentifier);
+                    }
+                }
+                catch (ArrayIndexOutOfBoundsException e) {
+
+
+                }
+            }
+
+
+            storageSearchData.setSearchedStorageList(editedSearchedList);
+        }
+
+
 
         generateStartPage();
 

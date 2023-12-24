@@ -6,10 +6,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.inventory.Slot;
 
-public abstract class CustomEditBox extends EditBox {
+import java.util.List;
+import java.util.Optional;
+
+public abstract class CustomEditBox extends EditBox implements ICustomWidgetComponent {
 
     private static final ResourceLocation TEXT_FIELD =
             new ResourceLocation(ModUtils.MODID, "textures/gui/slots.png");
@@ -21,13 +26,16 @@ public abstract class CustomEditBox extends EditBox {
 
     private String text = "";
 
-    public CustomEditBox(Font font, int x, int y, int width, int height) {
+    private final List<Component> lore;
+
+    public CustomEditBox(Font font, int x, int y, int width, int height, List<Component> lore) {
         super(font, x, y, width, height, null);
 
         setBordered(false);
+        this.lore = lore;
+
 
     }
-
 
 
 
@@ -92,4 +100,42 @@ public abstract class CustomEditBox extends EditBox {
     }
 
     public abstract void onPlayerType(String text);
+
+    @Override
+    public void tick(GuiGraphics guiGraphics, int leftPos, int topPos) {
+
+    }
+
+    @Override
+    public void onMouseClick(double mouseX, double mouseY) {
+
+    }
+
+    @Override
+    public void onMouseDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
+
+    }
+
+    @Override
+    public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
+
+    }
+
+    @Override
+    public void onMouseRelease() {
+
+    }
+
+
+    @Override
+    public void renderCustomTooltip(GuiGraphics guiGraphics, Font font, int x, int y, Slot slot) {
+
+        if(x >= (double)this.getX() && x < (double)(this.getX() + this.width)
+                && y >= (double)this.getY()
+                && y < (double)(this.getY() + this.height)) {
+            guiGraphics.renderTooltip(font, lore, Optional.empty(), x, y + 10);
+        }
+
+
+    }
 }

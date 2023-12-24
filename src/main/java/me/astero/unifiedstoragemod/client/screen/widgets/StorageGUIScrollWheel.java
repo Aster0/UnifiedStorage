@@ -16,6 +16,9 @@ public class StorageGUIScrollWheel extends CustomScrollWheel {
     @Override
     public void onDragDown() {
 
+        if(currentPage >= super.getPages() || super.isDisabled())
+            return;
+
         super.currentPage = menu.nextPage();
 
 

@@ -1,14 +1,18 @@
 package me.astero.unifiedstoragemod.client.screen.widgets.generic;
 
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
+import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.inventory.Slot;
 import org.lwjgl.glfw.GLFW;
 
 public class CustomSearchField extends CustomEditBox {
 
     public CustomSearchField(Font font, int x, int y, int width, int height) {
-        super(font, x, y, width, height);
+        super(font, x, y, width, height, ModUtils.breakComponentLine(Component.translatable(
+                "container." + ModUtils.MODID + ".searchLore")));
 
         super.setHint(Component.translatable("container." + ModUtils.MODID + ".searchField"));
 
@@ -51,4 +55,6 @@ public class CustomSearchField extends CustomEditBox {
 
         super.setCanLoseFocus(p_94191_);
     }
+
+
 }

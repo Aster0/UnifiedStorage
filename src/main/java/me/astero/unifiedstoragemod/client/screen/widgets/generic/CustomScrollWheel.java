@@ -48,6 +48,25 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
     }
 
+    public void setPages(int pages) {
+
+        yPos = this.minY;
+        this.pages = pages;
+
+        if(pages > 1) {
+            disabled = false;
+        }
+
+    }
+
+    public int getPages() {
+        return pages;
+    }
+
+    public boolean isDisabled() {
+        return disabled;
+    }
+
     @Override
     public void tick(GuiGraphics guiGraphics, int leftPos, int topPos) {
 
@@ -55,10 +74,12 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
         //offsetY = (int) lerp(offsetY, targetedY, 0.5f);
 
 
-        if(pages == 1 || disabled) {
+
+        if(pages < 2 || disabled) {
 
             guiGraphics.blitSprite(DISABLED_SCROLLBAR_TEXTURE, this.x + offsetX, yPos,
                     12, 15);
+
 
             disabled = true;
 
@@ -121,12 +142,15 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
         // Calculate the steps per drag
         int stepsPerDrag = totalRange / pages;
+
         return stepsPerDrag;
     }
     @Override
     public void onMouseDrag(double mouseX, double mouseY, int button, double dragX, double dragY) {
 
-        if(isDragging) {
+
+
+        if(isDragging && !disabled) {
 
 
 
@@ -148,9 +172,6 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
                 if(yPos >= thresholdToHit - getTotalSteps() / 2) {
 
-
-                    if(currentPage > pages)
-                        return;
 
                     onDragDown();
                 }
@@ -177,6 +198,8 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
 
     @Override
     public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
+        System.out.println(currentPage);
+
 
 
         if(pages <= 1)

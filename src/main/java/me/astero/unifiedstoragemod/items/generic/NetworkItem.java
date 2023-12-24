@@ -220,13 +220,6 @@ public abstract class NetworkItem extends BaseItem {
     private void removeFromStorage(SavedStorageData savedStorageData, Player player) {
 
 
-//        System.out.println("Remove??? ");
-//        List<SavedStorageData> savedStorageDataList = storageLocations.get(getKey(itemStack));
-//
-//
-//        savedStorageDataList.removeIf((value) ->
-//                value.getCustomBlockPosData()
-//                        .equals(savedStorageData.getCustomBlockPosData()));
 
         storageLocations.remove(savedStorageData);
 

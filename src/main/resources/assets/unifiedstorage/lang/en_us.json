@@ -39,6 +39,7 @@
   "container.unifiedstorage.crafting_terminal" : "Crafting Terminal",
   "container.unifiedstorage.networkSlotDescription" : "§7Network card links different\n§7storage blocks together.",
   "container.unifiedstorage.upgradeSlotTitle" : "Insert Upgrade Card",
+  "container.unifiedstorage.searchLore" : "Search by Name & Lore\n§7Use @ to search by mod (@storage)\n§7Use # to search by tag (#planks)\n\n§eYou can combine prefixes (@mod (#)item)",
   "lore.unifiedstorage.disabled_crafting" : "§fCrafting Disabled\n§7Insert a §eCrafting Upgrade Card\n§7to unlock this slot.",
   "container.unifiedstorage.upgradeSlotDescription" : "§7Upgrading provides a way to \n§7enhance the controller's capabilities.",
   "container.unifiedstorage.visualItemSlotTitle" : "Insert an Item",

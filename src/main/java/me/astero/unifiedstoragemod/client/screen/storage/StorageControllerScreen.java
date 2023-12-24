@@ -25,15 +25,19 @@ import net.minecraft.client.gui.components.ImageButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.client.renderer.Rect2i;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.FastColor;
 import net.minecraft.world.entity.player.Inventory;
-import net.minecraft.world.inventory.ClickType;
-import net.minecraft.world.inventory.ResultSlot;
-import net.minecraft.world.inventory.Slot;
-import net.minecraft.world.inventory.TransientCraftingContainer;
+import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
+import net.minecraft.world.level.material.Fluids;
+import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
+import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -58,6 +62,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             new ResourceLocation("widget/cross_button_highlighted"));
     private static final ResourceLocation TEXTURE =
             new ResourceLocation(ModUtils.MODID, "textures/gui/grid_storage_crafting.png");
+
+    private static final ResourceLocation TEST =
+            new ResourceLocation("textures/block/warped_wart_block.png");
 
 
     public StorageControllerScreen(StorageControllerMenu menu, Inventory pInventory, Component title) {
@@ -129,8 +136,14 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 if(!text.isEmpty()) {
 
                     menu.onStorageSearch(text);
+
+                    customScrollWheel.setPages(menu.getTotalPages(menu.getStorageSearchData()
+                            .getSearchedStorageList()));
                     return;
                 }
+
+                customScrollWheel.setPages(menu.getTotalPages());
+
 
                 menu.onStorageSearchStop();
 
@@ -321,10 +334,13 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         if(slot instanceof ItemVisualSlot v) {
 
+
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
 
 
 
+                if(clickType == ClickType.SWAP) // this makes it so, the keys 1,2,3.. etc doesn't trigger taking out stuff from inventory.
+                    return;
 
                 if(v.getActualItem().equals(ItemStack.EMPTY))
                     return;
@@ -639,6 +655,18 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             ItemStack displayStack = itemVisualSlot.getActualItem();
 
 
+//            FluidStack fluidStack = new FluidStack(Fluids.LAVA, 1);
+//
+//
+//            IClientFluidTypeExtensions client = IClientFluidTypeExtensions.of(fluidStack.getFluid());
+//            TextureAtlasSprite sprite = Minecraft.getInstance().getModelManager()
+//                    .getAtlas(InventoryMenu.BLOCK_ATLAS).getSprite(client.getStillTexture());
+//
+//            guiGraphics.blit(0, 0, 0, 16, 16, sprite,
+//                    FastColor.ABGR32.red(client.getTintColor()) / 255F, FastColor.ABGR32.blue(client.getTintColor()) / 255F,
+//                    FastColor.ABGR32.green(client.getTintColor()) / 255F, 1);
+
+
 
             guiGraphics.renderItem(displayStack, actualSlotX, actualSlotY);
             guiGraphics.renderItemDecorations(minecraft.font, displayStack,
@@ -728,6 +756,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 // so it always present the visual item slot's custom tooltip.
                 super.renderTooltip(guiGraphics, x, y);
         }
+
+
+        this.searchField.renderCustomTooltip(guiGraphics, this.font, x, y, null);
 
 
 

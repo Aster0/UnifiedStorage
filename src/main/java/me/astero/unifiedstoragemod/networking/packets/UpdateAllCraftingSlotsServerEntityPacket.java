@@ -102,7 +102,7 @@ public class UpdateAllCraftingSlotsServerEntityPacket implements EntityPacket {
                         }
 
 
-                        System.out.println("chjanged");
+
                     }
 
                 }

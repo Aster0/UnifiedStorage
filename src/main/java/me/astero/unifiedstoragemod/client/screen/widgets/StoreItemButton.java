@@ -5,8 +5,9 @@ import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomButton;
 import net.minecraft.client.gui.components.WidgetSprites;
 import net.minecraft.client.gui.screens.inventory.AbstractContainerScreen;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.world.inventory.AbstractContainerMenu;
 
-public class StoreItemButton<T extends AbstractContainerScreen> extends CustomButton {
+public class StoreItemButton<T extends AbstractContainerScreen<? extends AbstractContainerMenu>> extends CustomButton {
 
 
     private T screen;

@@ -98,7 +98,6 @@ public class ClientPacketHandler {
                 }
 
                 if(needsUpdate) {
-                    System.out.println("players");
                     ModNetwork.sendToServer(new UpdateAllCraftingSlotsServerEntityPacket(packet.items, packet.blockPos));
                 }
 
