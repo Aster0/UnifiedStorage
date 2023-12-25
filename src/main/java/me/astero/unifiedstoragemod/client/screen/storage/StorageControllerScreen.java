@@ -287,6 +287,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             return;
         }
+        else if(slot instanceof ResultSlot) {
+            super.slotClicked(slot, slotIndex, btn, clickType); // just do normal things
+            return;
+        }
 
         if(menu.getStorageControllerEntity().isDisabled()) {
 
@@ -464,26 +468,27 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             super.slotClicked(slot, slotIndex, btn, clickType);
             return;
         }
-        else if(slot instanceof ResultSlot resultSlot) {
-
-            if(!menu.getStorageControllerEntity().isCraftingEnabled()) // dont allow crafting
-                return;
-
-            ItemStack resultStack = resultSlot.getItem();
-
-
-            boolean quickMove = clickType == ClickType.QUICK_MOVE;
-
-            menu.onItemCrafted(resultStack, quickMove);
-            ModNetwork.sendToServer(new CraftItemEntityPacket(resultStack, quickMove));
-
-
-
-            return;
-        }
+//        else if(slot instanceof ResultSlot resultSlot) {
+//
+//            super.slotClicked(slot, slotIndex, btn, clickType);
+//            return;
+//            if(!menu.getStorageControllerEntity().isCraftingEnabled()) // dont allow crafting
+//                return;
+//
+//            ItemStack resultStack = resultSlot.getItem();
+//
+//
+//            boolean quickMove = clickType == ClickType.QUICK_MOVE;
+//
+//            menu.onItemCrafted(resultStack, quickMove);
+//            ModNetwork.sendToServer(new CraftItemEntityPacket(resultStack, quickMove));
+//
+//
+//
+//            return;
+//        }
 
         if(clickType == ClickType.QUICK_MOVE) {
-
 
 
 

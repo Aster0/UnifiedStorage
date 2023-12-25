@@ -7,6 +7,7 @@ import me.astero.unifiedstoragemod.integrations.jei.JEIPlugin;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
+import me.astero.unifiedstoragemod.menu.CustomResultSlot;
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
@@ -325,6 +326,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return scrollPage;
     }
 
+
+
     public void onItemCrafted(ItemStack itemStack, boolean quickMove) {
 
 
@@ -354,12 +357,14 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 }
 
-                setCarried(copiedStack);
+                //setCarried(copiedStack);
 
 
 
 
                 if(!getPlayerInventory().player.level().isClientSide)  {
+
+                    int index = 0;
                     for (ItemStack stack : craftSlots.getItems()) {
 
 
@@ -367,11 +372,37 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                         if(!stack.equals(ItemStack.EMPTY, false)) {
 
+                            ItemStack remainingCraftingItem = ItemStack.EMPTY;
+
+                            if(!stack.getCraftingRemainingItem().equals(ItemStack.EMPTY)) {
+                                remainingCraftingItem = stack.getCraftingRemainingItem();
+                            }
+
                             if(!canRemove) {
 
+
+
                                 stack.shrink(1);
+
+                                if(stack.getCount() > 0) {
+                                    // move to inventory
+                                    moveToInventory(remainingCraftingItem);
+
+                                }
+                                else {
+                                    // put at crafting slot
+                                    this.craftSlots.setItem(index, remainingCraftingItem);
+                                    // e.g., water_bottle becomes empty_bottle
+
+                                }
                             }
+                            else { // if we can remove from inventory, we put the remaining item in the inventory
+                                moveToInventory(remainingCraftingItem);
+                            }
+
                         }
+
+                        index++;
 
                     }
 
@@ -495,6 +526,14 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     true, false, itemIdentifier.getCount() * lowestCount);
 
 
+
+            if(!itemIdentifier.getItemStack().getCraftingRemainingItem().equals(ItemStack.EMPTY)) {
+
+                ItemStack remainingItem = itemIdentifier.getItemStack().getCraftingRemainingItem().copy();
+
+                remainingItem.setCount(itemIdentifier.getCount() * lowestCount);
+                moveToInventory(remainingItem);
+            }
         }
 
 
@@ -503,12 +542,34 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         if(moveItemStackTo(copiedStack, 0, 36, false)) {
-
+            
 
             for(int i = 0; i < lowestCountOnGrid; i++) {
+
+                int index = 0;
                 for(ItemStack stack : craftSlots.getItems()) {
+
+                    ItemStack remainingItem = stack.getCraftingRemainingItem();
+
                     stack.shrink(1);
 
+
+
+                    if(!remainingItem.equals(ItemStack.EMPTY)) {
+                        if(stack.getCount() > 0) {
+                            // move to inventory
+                            moveToInventory(remainingItem);
+
+                        }
+                        else {
+                            // put at crafting slot
+                            this.craftSlots.setItem(index, remainingItem);
+                            // e.g., water_bottle becomes empty_bottle
+
+                        }
+                    }
+
+                    index++;
                 }
             }
 
@@ -608,8 +669,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     private void createCraftingSlots() {
 
-        this.addSlot(new ResultSlot(pInventory.player,
-                this.craftSlots, this.resultSlots, 0, 131, 103));
+        this.addSlot(new CustomResultSlot<>(pInventory.player,
+                this.craftSlots, this.resultSlots, 0, 131, 103, this));
 
 
         for(int row = 0; row < 3; row++) {
@@ -681,6 +742,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         ItemStack fromStack = fromSlot.getItem();
 
 
+        if(fromSlot instanceof CustomResultSlot resultSlot) {
+            resultSlot.onQuickStackCraft(fromStack);
+            return ItemStack.EMPTY;
+        }
+
 
 
         if(fromStack.getItem() instanceof NetworkItem || fromStack.getItem() instanceof UpgradeCardItem) {
@@ -737,7 +803,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-        return ItemStack.EMPTY;
+        return ItemStack.EMPTY; // basically return nothing because ours is custom implementation and
+        // we don't want the usual. as sometimes quick move means moving to the custom network inventory.
     }
 
 
@@ -747,6 +814,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return player.getItemInHand(InteractionHand.MAIN_HAND).getItem().equals(ItemRegistry.WIRELESS_STORAGE.get())
                 || stillValid(this.containerLevelAccess, player, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
     }
+
 
     @Override
     public void slotsChanged(Container container) {
@@ -1251,7 +1319,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
     public void moveToInventory(ItemStack itemStack) {
-        moveItemStackTo(itemStack, 0, 36, false);
+        if(!moveItemStackTo(itemStack, 0, 36, false)) {
+            getPlayerInventory().player.drop(itemStack, false);
+        }
     }
 
     public boolean canRemoveItemFromInventory(ItemStack itemStack, boolean remove, boolean removeFromPlayer, int value) {
