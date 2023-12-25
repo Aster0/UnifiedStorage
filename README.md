@@ -84,6 +84,7 @@ Door structure (2 block count)
 <br>
 This section explains which mod is tested for compatibility/developed with its API.
 - [Just Enough Items (JEI)](https://www.curseforge.com/minecraft/mc-mods/jei) - Recipe transfer & GUI compatibility
+- Any storage block mods
 
 <br>
 
