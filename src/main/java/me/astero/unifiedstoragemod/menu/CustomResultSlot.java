@@ -24,25 +24,39 @@ public class CustomResultSlot<T extends StorageControllerMenu> extends ResultSlo
     }
 
     @Override
-    public ItemStack remove(int index) {
+    public ItemStack remove(int count) {
 
-        return this.container.getItem(index); // override to not actually remove the item
+        return this.getItem(); // override to not actually remove the item
         // so we can make our own behavior interacting from the storage network.
     }
 
     @Override
     public void onTake(Player player, ItemStack result) {
 
-        this.checkTakeAchievements(result);
 
         if(!player.level().isClientSide) {
+
+
+            triggerAchievements(result, result.getCount());
             menu.onItemCrafted(result, false);
+
         }
 
     }
 
 
-    public void onQuickStackCraft(ItemStack result) {
-        menu.onItemCrafted(result, true);
+    public void onQuickStackCraft(Player player, ItemStack result) {
+
+        if(!player.level().isClientSide) {
+            int count = menu.onItemCrafted(result, true);
+            triggerAchievements(result, count);
+        }
+
+    }
+
+    private void triggerAchievements(ItemStack result, int count) {
+        this.onSwapCraft(count); // to trigger the removeCount > 0 to trigger achievements, idk what better way to do this.
+        // this makes pressing 1,2,3,4,5 to swap add twice to the scoreboard though. Not a big issue.
+        this.checkTakeAchievements(result);
     }
 }

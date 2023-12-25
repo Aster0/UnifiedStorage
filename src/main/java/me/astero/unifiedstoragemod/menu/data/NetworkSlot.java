@@ -24,4 +24,5 @@ public class NetworkSlot extends SlotItemHandler {
 
         return false;
     }
+
 }

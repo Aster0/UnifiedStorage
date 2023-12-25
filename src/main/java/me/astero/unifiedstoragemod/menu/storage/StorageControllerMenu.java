@@ -328,15 +328,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-    public void onItemCrafted(ItemStack itemStack, boolean quickMove) {
+    public int onItemCrafted(ItemStack itemStack, boolean quickMove) {
 
 
         if(!updateRecipeResult(getPlayerInventory().player).equals(itemStack, false)) { // make sure that the crafting slots corresponds with the result
-            return;
+            return 0;
         }
 
         if(itemStack == null || itemStack.equals(ItemStack.EMPTY, false)) {
-            return;
+            return 0;
         }
 
         ItemStack copiedStack = itemStack.copy();
@@ -384,17 +384,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                                 stack.shrink(1);
 
-                                if(stack.getCount() > 0) {
-                                    // move to inventory
-                                    moveToInventory(remainingCraftingItem);
+                                updateRemainingItem(stack, remainingCraftingItem, index);
 
-                                }
-                                else {
-                                    // put at crafting slot
-                                    this.craftSlots.setItem(index, remainingCraftingItem);
-                                    // e.g., water_bottle becomes empty_bottle
-
-                                }
                             }
                             else { // if we can remove from inventory, we put the remaining item in the inventory
                                 moveToInventory(remainingCraftingItem);
@@ -418,14 +409,14 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-                return;
+                return 0;
             }
 
 
         }
 
         if(getPlayerInventory().getFreeSlot() == -1)
-            return;
+            return 0;
 
 
         List<ItemIdentifier> itemOccurrence = new ArrayList<>();
@@ -526,7 +517,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     true, false, itemIdentifier.getCount() * lowestCount);
 
 
-
             if(!itemIdentifier.getItemStack().getCraftingRemainingItem().equals(ItemStack.EMPTY)) {
 
                 ItemStack remainingItem = itemIdentifier.getItemStack().getCraftingRemainingItem().copy();
@@ -540,9 +530,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+        int movedValue = copiedStack.getCount();
 
         if(moveItemStackTo(copiedStack, 0, 36, false)) {
-            
 
             for(int i = 0; i < lowestCountOnGrid; i++) {
 
@@ -556,17 +546,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                     if(!remainingItem.equals(ItemStack.EMPTY)) {
-                        if(stack.getCount() > 0) {
-                            // move to inventory
-                            moveToInventory(remainingItem);
-
-                        }
-                        else {
-                            // put at crafting slot
-                            this.craftSlots.setItem(index, remainingItem);
-                            // e.g., water_bottle becomes empty_bottle
-
-                        }
+                        updateRemainingItem(stack, remainingItem, index);
                     }
 
                     index++;
@@ -576,15 +556,28 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             craftSlots.setChanged();
             slotsChanged(craftSlots);
 
+
+
+            return movedValue;
+
         }
 
+        return 0;
 
+    }
 
+    private void updateRemainingItem(ItemStack stack, ItemStack remainingItem, int index) {
+        if(stack.getCount() > 0) {
+            // move to inventory
+            moveToInventory(remainingItem);
 
+        }
+        else {
+            // put at crafting slot
+            this.craftSlots.setItem(index, remainingItem);
+            // e.g., water_bottle becomes empty_bottle
 
-
-
-
+        }
     }
 
     public void generateSlots(int page) {
@@ -743,7 +736,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         if(fromSlot instanceof CustomResultSlot resultSlot) {
-            resultSlot.onQuickStackCraft(fromStack);
+            System.out.println(player.level().isClientSide);
+            resultSlot.onQuickStackCraft(player, fromStack);
             return ItemStack.EMPTY;
         }
 
