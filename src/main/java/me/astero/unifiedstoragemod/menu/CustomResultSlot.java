@@ -36,10 +36,8 @@ public class CustomResultSlot<T extends StorageControllerMenu> extends ResultSlo
 
         if(!player.level().isClientSide) {
 
-
             triggerAchievements(result, result.getCount());
             menu.onItemCrafted(result, false);
-
         }
 
     }
@@ -57,6 +55,12 @@ public class CustomResultSlot<T extends StorageControllerMenu> extends ResultSlo
     private void triggerAchievements(ItemStack result, int count) {
         this.onSwapCraft(count); // to trigger the removeCount > 0 to trigger achievements, idk what better way to do this.
         // this makes pressing 1,2,3,4,5 to swap add twice to the scoreboard though. Not a big issue.
-        this.checkTakeAchievements(result);
+
+        ItemStack resultCopy = result.copy(); // reflects correctly, so when I quick_move craft a stack,
+        // it'll show up correctly as 64 or so in the crafting event,
+
+        resultCopy.setCount(count);
+
+        this.checkTakeAchievements(resultCopy);
     }
 }

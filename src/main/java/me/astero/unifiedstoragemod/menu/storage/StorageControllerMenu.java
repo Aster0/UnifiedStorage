@@ -736,7 +736,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         if(fromSlot instanceof CustomResultSlot resultSlot) {
-            System.out.println(player.level().isClientSide);
             resultSlot.onQuickStackCraft(player, fromStack);
             return ItemStack.EMPTY;
         }
