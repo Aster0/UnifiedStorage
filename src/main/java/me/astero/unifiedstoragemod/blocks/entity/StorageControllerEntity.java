@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.blocks.entity;
 
+import me.astero.unifiedstoragemod.blocks.StorageControllerBlock;
 import me.astero.unifiedstoragemod.blocks.entity.handler.NetworkCardItemStackHandler;
 import me.astero.unifiedstoragemod.blocks.entity.handler.UpgradeCardItemStackHandler;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
@@ -73,20 +74,12 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
     private ItemStackHandler networkInventory =
-            new NetworkCardItemStackHandler<>(this) {
-
-                @Override
-                protected void onContentsChanged(int slot) {
-                    super.onContentsChanged(slot);
-                    setChanged();
-                }
-            };
+            new NetworkCardItemStackHandler<>(this);
 
     private ItemStackHandler visualItemInventory = new ItemStackHandler(1) {
         @Override
         protected void onContentsChanged(int slot) {
             super.onContentsChanged(slot);
-
             setChanged();
         }
     };
@@ -110,6 +103,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private final LazyOptional<ItemStackHandler> optionalCraftingInventory = LazyOptional.of(() -> this.craftingInventory);
     public StorageControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.STORAGE_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
+
+
 
     }
 
@@ -232,7 +227,9 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         //loadEditedChests(modNbt);
 
-
+        getLevel().setBlockAndUpdate(this.getBlockPos(),
+                this.getBlockState().setValue(StorageControllerBlock.STATUS,
+                        this.getNetworkInventory().getStackInSlot(0).getCount() == 1));
 
     }
 

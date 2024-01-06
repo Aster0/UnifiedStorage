@@ -9,6 +9,7 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
@@ -17,16 +18,22 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.AnvilBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.FurnaceBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.minecraft.world.level.block.state.properties.BooleanProperty;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
+import net.minecraft.world.level.block.state.properties.EnumProperty;
 import net.minecraft.world.level.material.FluidState;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -37,6 +44,9 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
+    public static final BooleanProperty
+            STATUS = BooleanProperty.create("status");
+
 
     private final String BULLET_POINT = " - ";
 
@@ -45,7 +55,9 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     public StorageControllerBlock(Properties properties) {
         super(properties);
 
-        this.defaultBlockState().setValue(FACING, Direction.NORTH);
+        registerDefaultState(this.defaultBlockState().setValue(STATUS, false));
+        registerDefaultState(this.defaultBlockState().setValue(FACING, Direction.NORTH));
+
 
 
     }
@@ -58,15 +70,9 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     }
 
 
-    @Override
-    public MapColor getMapColor(BlockState state, BlockGetter level, BlockPos pos, MapColor defaultColor) {
-        return MapColor.COLOR_BLACK;
-    }
-
     @Nullable
     @Override
     public BlockEntity newBlockEntity(BlockPos pos, BlockState state) {
-
         return BlockEntityRegistry.STORAGE_CONTROLLER_BLOCK_ENTITY.get().create(pos, state);
     }
 
@@ -199,10 +205,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                         stack = stackBeforeNbt;
                 }
 
-
-
-
-
             }
 
 
@@ -247,6 +249,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
         super.createBlockStateDefinition(builder);
 
         builder.add(FACING);
+        builder.add(STATUS);
 
 
     }
@@ -254,6 +257,8 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     @Nullable
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
+
+
         return defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
@@ -262,8 +267,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     public InteractionResult use(BlockState state, Level level,
                                  BlockPos pos, Player player,
                                  InteractionHand interactionHand, BlockHitResult blockHitResult) {
-
-
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
@@ -280,19 +283,15 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
         }
 
 
-
         return InteractionResult.SUCCESS;
     }
 
 
 
 
-    @Override
-    public void onPlace(BlockState state, Level level, BlockPos pos, BlockState state0, boolean bool) {
-        super.onPlace(state, level, pos, state0, bool);
-
-
-    }
 
 
 }
+
+
+
