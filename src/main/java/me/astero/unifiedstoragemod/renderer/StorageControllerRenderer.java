@@ -155,7 +155,7 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
         float timeMultiplier = 0.1f;
 
         // Calculate the vertical offset based on time
-        float yOffset = (float) Math.sin((storageControllerEntity.getLevel().getGameTime() + partialTicks) * timeMultiplier) * 0.1f;
+        float yOffset = (float) Math.sin((storageControllerEntity.getLevel().getGameTime() + partialTicks * 0.8) * timeMultiplier) * 0.1f;
 
         poseStack.translate(0.5 / scale, (posY + yOffset) / scale, 0.5 / scale);
 

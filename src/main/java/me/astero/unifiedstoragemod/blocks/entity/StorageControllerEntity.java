@@ -227,9 +227,9 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         //loadEditedChests(modNbt);
 
-        getLevel().setBlockAndUpdate(this.getBlockPos(),
-                this.getBlockState().setValue(StorageControllerBlock.STATUS,
-                        this.getNetworkInventory().getStackInSlot(0).getCount() == 1));
+
+        this.getBlockState().setValue(StorageControllerBlock.STATUS,
+                        this.getNetworkInventory().getStackInSlot(0).getCount() == 1);
 
     }
 

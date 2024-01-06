@@ -1,13 +1,4 @@
 {
-  "parent" : "unifiedstorage:block/storage_controller",
+  "parent" : "unifiedstorage:block/storage_controller_white"
 
-  "overrides": [
-    {
-      "__comment": "power >= .75",
-      "predicate": {
-        "examplemod:power": 0.75
-      },
-      "model": "examplemod:item/example_powered"
-    }
-  ]
 }

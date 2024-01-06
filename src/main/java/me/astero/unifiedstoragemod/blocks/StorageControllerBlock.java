@@ -243,7 +243,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     }
 
 
-
     @Override
     protected void createBlockStateDefinition(StateDefinition.Builder<Block, BlockState> builder) {
         super.createBlockStateDefinition(builder);
