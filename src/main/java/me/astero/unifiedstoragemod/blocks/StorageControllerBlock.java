@@ -13,6 +13,8 @@ import net.minecraft.util.StringRepresentable;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.DyeItem;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.context.BlockPlaceContext;
@@ -34,6 +36,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.Nullable;
 
@@ -46,6 +49,9 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
     public static final BooleanProperty
             STATUS = BooleanProperty.create("status");
+
+    public static final EnumProperty<DyeColor>
+            COLOR = EnumProperty.create("color", DyeColor.class);
 
 
     private final String BULLET_POINT = " - ";
@@ -249,6 +255,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
         builder.add(FACING);
         builder.add(STATUS);
+        builder.add(COLOR);
 
 
     }
@@ -269,10 +276,32 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
         BlockEntity blockEntity = level.getBlockEntity(pos);
 
+
+
+
+
         if(!level.isClientSide()) {
             if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
 
                 if(player instanceof ServerPlayer sPlayer) {
+
+                    if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof DyeItem dye) {
+
+
+                        BlockState blockState = blockEntity.getBlockState();
+                        if(!blockState.getValue(COLOR).equals(dye.getDyeColor())) { // only dye when it's not already that color.
+                            level.setBlockAndUpdate(blockEntity.getBlockPos(),
+                                    blockState.setValue(COLOR, dye.getDyeColor()));
+
+                            if(!player.isCreative())
+                                player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+
+                            return InteractionResult.SUCCESS;
+                        }
+
+                    }
+
+
                     sPlayer.openMenu(storageControllerEntity, pos);
                     return InteractionResult.SUCCESS;
                 }
