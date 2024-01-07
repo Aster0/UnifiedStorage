@@ -805,7 +805,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public boolean stillValid(Player player) {
 
         return player.getItemInHand(InteractionHand.MAIN_HAND).getItem().equals(ItemRegistry.WIRELESS_STORAGE.get())
-                || stillValid(this.containerLevelAccess, player, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
+                || stillValid(this.containerLevelAccess, player, storageControllerEntity.getBlockState().getBlock());
     }
 
 

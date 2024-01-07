@@ -5,12 +5,16 @@ import me.astero.unifiedstoragemod.blocks.DrawerBlock;
 import me.astero.unifiedstoragemod.blocks.StorageControllerBlock;
 import me.astero.unifiedstoragemod.data.BlockData;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class BlockRegistry  {
 
@@ -51,19 +55,31 @@ public class BlockRegistry  {
 
     public static final RegistryObject<Block> STORAGE_CONTROLLER_BLOCK = ObjectRegistry.registerObject
             ("storage_controller", new BlockData(() ->
-                    new StorageControllerBlock(BlockBehaviour.Properties.of()
-                            .mapColor(MapColor.STONE).lightLevel(value -> 10)
+                    new StorageControllerBlock(BlockBehaviour.Properties.of().lightLevel(value -> 10)
                             .strength(0.2f).requiresCorrectToolForDrops())), true);
 
 
 
 
+    public static final Map<String, RegistryObject<Block>> STORAGE_CONTROLLER_BLOCK_COLORED = registerStorageControllerColored();
 
+    public static Map<String, RegistryObject<Block>> registerStorageControllerColored() {
 
+        Map<String, RegistryObject<Block>> blocks = new HashMap<>();
 
+        for(DyeColor color : DyeColor.values()) {
 
+            String dyeName = color.name().toLowerCase();
 
+            blocks.put(dyeName, ObjectRegistry.registerObject
+                    ("storage_controller_" + dyeName, new BlockData(() ->
+                            new StorageControllerBlock(BlockBehaviour.Properties.of().lightLevel(value -> 10)
+                                    .strength(0.2f).requiresCorrectToolForDrops())), true));
 
+        }
+
+        return blocks;
+    }
 
 
 

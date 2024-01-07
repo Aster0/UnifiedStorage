@@ -36,7 +36,8 @@ public class ClientEvents {
 
         event.register((state, world, pos, tintIndex) -> {
 
-            System.out.println(state.getValue(StorageControllerBlock.COLOR) + " DYE");
+
+
 
             return tintIndex == 1 ? state.getValue(StorageControllerBlock.COLOR).getFireworkColor() : -1;
         }, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());

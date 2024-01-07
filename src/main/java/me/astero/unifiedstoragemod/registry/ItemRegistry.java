@@ -11,6 +11,8 @@ import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
 
+import java.util.Map;
+
 public class ItemRegistry {
 
 
@@ -51,15 +53,11 @@ public class ItemRegistry {
             ObjectRegistry.registerObject("cloning_network_card", new ItemData<Item>(
                     () -> new CloningNetworkCard(new Item.Properties().stacksTo(1))), true);
 
-
-
-
-
-
-
     public static RegistryObject<Item> SHADOW_UPGRADE_CARD =
             ObjectRegistry.registerObject("shadow_upgrade_card", new ItemData<Item>(
                     () -> new Item(new Item.Properties())), false);
+
+
 
 
 

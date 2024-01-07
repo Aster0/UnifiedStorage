@@ -2,6 +2,7 @@ package me.astero.unifiedstoragemod.blocks;
 
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
+import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -55,7 +56,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
     private final String BULLET_POINT = " - ";
-
+    
 
 
     public StorageControllerBlock(Properties properties) {
@@ -67,6 +68,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
     }
+
 
     @Override
     public List<Component> addShiftText(ItemStack itemStack) {
@@ -161,7 +163,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                     pos, null, null, ItemStack.EMPTY);
 
 
-            ItemStack stack = drops.get(0);
+            ItemStack stack = new ItemStack(BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
             ItemStack stackBeforeNbt = stack.copy();
 
 
@@ -281,9 +283,12 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
         if(!level.isClientSide()) {
+
+
             if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
 
                 if(player instanceof ServerPlayer sPlayer) {
+
 
                     if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof DyeItem dye) {
 
@@ -295,6 +300,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
                             if(!player.isCreative())
                                 player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+
 
                             return InteractionResult.SUCCESS;
                         }
