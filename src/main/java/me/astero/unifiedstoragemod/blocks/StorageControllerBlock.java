@@ -324,26 +324,25 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                                 BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(dyeColor);
 
 
-                        System.out.println(targetColoredBlock);
 
                         if(targetColoredBlock != null) {
 
-                            if(targetColoredBlock.get().equals(this.defaultBlockState().getBlock())) {
-                                System.out.println("already dyed");
-                                return InteractionResult.FAIL;
+                            if(!targetColoredBlock.get().equals(this.defaultBlockState().getBlock())) { // if it's not already dyed with the same color.
+
+                                BlockState oldState = blockEntity.getBlockState();
+                                BlockState newState = BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(
+                                                dyeColor).get().defaultBlockState().setValue(FACING, oldState.getValue(FACING))
+                                        .setValue(STATUS, oldState.getValue(STATUS));
+
+
+                                level.setBlockAndUpdate(pos, newState);
+
+
+
+                                return InteractionResult.SUCCESS;
                             }
 
-                            BlockState oldState = blockEntity.getBlockState();
-                            BlockState newState = BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(
-                                    dyeColor).get().defaultBlockState().setValue(FACING, oldState.getValue(FACING))
-                                    .setValue(STATUS, oldState.getValue(STATUS));
 
-
-                            level.setBlockAndUpdate(pos, newState);
-
-
-
-                            return InteractionResult.SUCCESS;
                         }
 
 
