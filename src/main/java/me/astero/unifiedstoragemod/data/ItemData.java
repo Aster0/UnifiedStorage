@@ -4,7 +4,7 @@ import net.minecraft.world.item.Item;
 
 import java.util.function.Supplier;
 
-public class ItemData<T extends Item> implements ObjectData {
+public class ItemData<T extends Item> implements ObjectData<T> {
 
 
     private Supplier<T> itemSupplier;
@@ -15,7 +15,7 @@ public class ItemData<T extends Item> implements ObjectData {
     }
 
     @Override
-    public Supplier get() {
+    public Supplier<T> get() {
         return itemSupplier;
     }
 }

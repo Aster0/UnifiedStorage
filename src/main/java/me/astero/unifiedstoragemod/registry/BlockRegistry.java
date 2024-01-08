@@ -49,14 +49,8 @@ public class BlockRegistry  {
 
 
     public static final RegistryObject<Block> DRAWER_BLOCK = ObjectRegistry.registerObject
-            ("drawer_block", new BlockData(() -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+            ("drawer_block", new BlockData<>(() -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
                     .strength(1f), 70)), true);
-
-
-    public static final RegistryObject<Block> STORAGE_CONTROLLER_BLOCK = ObjectRegistry.registerObject
-            ("storage_controller", new BlockData(() ->
-                    new StorageControllerBlock(BlockBehaviour.Properties.of().lightLevel(value -> 10)
-                            .strength(0.2f).requiresCorrectToolForDrops())), true);
 
 
 
@@ -72,7 +66,7 @@ public class BlockRegistry  {
             String dyeName = color.name().toLowerCase();
 
             blocks.put(dyeName, ObjectRegistry.registerObject
-                    ("storage_controller_" + dyeName, new BlockData(() ->
+                    ("storage_controller" + (dyeName.equals("white") ? "" : "_" + dyeName), new BlockData<>(() ->
                             new StorageControllerBlock(BlockBehaviour.Properties.of().lightLevel(value -> 10)
                                     .strength(0.2f).requiresCorrectToolForDrops())), true));
 

@@ -4,10 +4,14 @@ package me.astero.unifiedstoragemod.registry;
 import me.astero.unifiedstoragemod.blocks.entity.DrawerBlockEntity;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class BlockEntityRegistry extends ObjectRegistry {
 
@@ -20,9 +24,28 @@ public class BlockEntityRegistry extends ObjectRegistry {
                            .build(null));
 
    public static final RegistryObject<BlockEntityType<StorageControllerEntity>> STORAGE_CONTROLLER_BLOCK_ENTITY =
-           BLOCK_ENTITIES.register("storage_controller_block_entity", () ->
-                   BlockEntityType.Builder.of(StorageControllerEntity::new, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get())
-                           .build(null));
+           BLOCK_ENTITIES.register("storage_controller_block_entity", () -> {
+              
+
+              Block[] blocks = new Block[BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.size()];
+
+              int index = 0;
+
+              for(RegistryObject<Block> obj : BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.values()) {
+
+                  blocks[index] = obj.get();
+
+                  index++;
+              }
+
+
+               System.out.println(blocks + " LIST OF BLOCKS!");
+              
+              return BlockEntityType.Builder.of(StorageControllerEntity::new, blocks)
+                        .build(null); 
+           
+           
+           });
 
 
 

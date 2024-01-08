@@ -29,19 +29,19 @@ public class ClientEvents {
 //    }
 
 
-    @SubscribeEvent
-    public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
-
-        System.out.println("register");
-
-        event.register((state, world, pos, tintIndex) -> {
-
-
-
-
-            return tintIndex == 1 ? state.getValue(StorageControllerBlock.COLOR).getFireworkColor() : -1;
-        }, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
-    }
+//    @SubscribeEvent
+//    public static void registerBlockColors(final RegisterColorHandlersEvent.Block event) {
+//
+//        System.out.println("register");
+//
+//        event.register((state, world, pos, tintIndex) -> {
+//
+//
+//
+//
+//            return tintIndex == 1 ? state.getValue(StorageControllerBlock.COLOR).getFireworkColor() : -1;
+//        }, BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
+//    }
 
 
 }

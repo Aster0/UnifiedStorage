@@ -26,9 +26,6 @@ public class StorageControllerBlockMenu extends StorageControllerMenu {
         super(MENU_TYPE, containerId, pInventory, blockEntity);
 
 
-
-
-
     }
 
 }

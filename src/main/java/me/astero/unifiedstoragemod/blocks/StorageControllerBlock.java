@@ -39,6 +39,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.registries.RegistryObject;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -56,7 +57,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
     private final String BULLET_POINT = " - ";
-    
+
 
 
     public StorageControllerBlock(Properties properties) {
@@ -163,7 +164,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                     pos, null, null, ItemStack.EMPTY);
 
 
-            ItemStack stack = new ItemStack(BlockRegistry.STORAGE_CONTROLLER_BLOCK.get());
+            ItemStack stack = new ItemStack(state.getBlock());
             ItemStack stackBeforeNbt = stack.copy();
 
 
@@ -272,6 +273,17 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
     @Override
+    public void onRemove(BlockState oldState, Level level, BlockPos pos, BlockState newState, boolean isMoving) {
+
+        if(newState.getBlock() instanceof StorageControllerBlock) {
+
+            return; // don't remove the block entity at that position, so the new dyed controller will retain it.
+        }
+
+        super.onRemove(oldState, level, pos, newState, isMoving);
+    }
+
+    @Override
     public InteractionResult use(BlockState state, Level level,
                                  BlockPos pos, Player player,
                                  InteractionHand interactionHand, BlockHitResult blockHitResult) {
@@ -293,17 +305,47 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                     if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof DyeItem dye) {
 
 
-                        BlockState blockState = blockEntity.getBlockState();
-                        if(!blockState.getValue(COLOR).equals(dye.getDyeColor())) { // only dye when it's not already that color.
-                            level.setBlockAndUpdate(blockEntity.getBlockPos(),
-                                    blockState.setValue(COLOR, dye.getDyeColor()));
+//                        BlockState blockState = blockEntity.getBlockState();
+//                        if(!blockState.getValue(COLOR).equals(dye.getDyeColor())) { // only dye when it's not already that color.
+//                            level.setBlockAndUpdate(blockEntity.getBlockPos(),
+//                                    blockState.setValue(COLOR, dye.getDyeColor()));
+//
+//                            if(!player.isCreative())
+//                                player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+//
+//
+//                            return InteractionResult.SUCCESS;
+//                        }
 
-                            if(!player.isCreative())
-                                player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
+
+                        String dyeColor = dye.getDyeColor().toString();
+
+                        RegistryObject<Block> targetColoredBlock =
+                                BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(dyeColor);
+
+
+                        System.out.println(targetColoredBlock);
+
+                        if(targetColoredBlock != null) {
+
+                            if(targetColoredBlock.get().equals(this.defaultBlockState().getBlock())) {
+                                System.out.println("already dyed");
+                                return InteractionResult.FAIL;
+                            }
+
+                            BlockState oldState = blockEntity.getBlockState();
+                            BlockState newState = BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(
+                                    dyeColor).get().defaultBlockState().setValue(FACING, oldState.getValue(FACING))
+                                    .setValue(STATUS, oldState.getValue(STATUS));
+
+
+                            level.setBlockAndUpdate(pos, newState);
+
 
 
                             return InteractionResult.SUCCESS;
                         }
+
 
                     }
 

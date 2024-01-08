@@ -4,18 +4,18 @@ import net.minecraft.world.level.block.Block;
 
 import java.util.function.Supplier;
 
-public class BlockData implements ObjectData {
+public class BlockData<T extends Block> implements ObjectData<T> {
 
 
-    private Supplier<Block> itemSupplier;
+    private Supplier<T> itemSupplier;
 
-    public BlockData(Supplier<Block> itemSupplier) {
+    public BlockData(Supplier<T> itemSupplier) {
 
         this.itemSupplier = itemSupplier;
     }
 
     @Override
-    public Supplier get() {
+    public Supplier<T> get() {
         return itemSupplier;
     }
 }
