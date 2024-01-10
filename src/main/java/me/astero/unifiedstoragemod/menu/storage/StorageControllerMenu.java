@@ -35,6 +35,7 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
+import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -731,6 +732,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     @Override
     public ItemStack quickMoveStack(Player player, int index) {
+
         Slot fromSlot = getSlot(index);
         ItemStack fromStack = fromSlot.getItem();
 
@@ -742,16 +744,13 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+
         if(fromStack.getItem() instanceof NetworkItem || fromStack.getItem() instanceof UpgradeCardItem) {
 
 
 
             if(!(fromSlot instanceof UpgradeSlot) && !(fromSlot instanceof NetworkSlot)) {
                 if(fromStack.getItem() instanceof NetworkItem) {
-
-
-
-
 
 
 
@@ -766,15 +765,21 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     }
 
 
+
+
                 }
+
+
 
                 moveItemStackTo(fromStack, 63, 67, false);
 
 
-
             }
             else {
+
                 moveItemStackTo(fromStack, 0, 36, false); // move to inventory
+
+
             }
 
 

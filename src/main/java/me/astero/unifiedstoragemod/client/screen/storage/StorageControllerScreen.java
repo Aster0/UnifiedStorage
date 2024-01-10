@@ -8,6 +8,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetCo
 import me.astero.unifiedstoragemod.items.data.UpgradeType;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
+import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ItemVisualSlot;
 import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
@@ -292,6 +293,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             return;
         }
 
+
         if(menu.getStorageControllerEntity().isDisabled()) {
 
 
@@ -304,6 +306,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
 
                 if(slot instanceof NetworkSlot) {
+
 
 
                     if(menu.getCarried().getItem() instanceof NetworkItem networkItem) {
@@ -327,6 +330,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             return;
         }
+
 
 
         // 0 = place down? 1 = place one. clickType cant track this
@@ -390,6 +394,8 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             }
             else { // we want to put things into the storage
+
+
 
 
                 ItemStack itemToPutIn = menu.getCarried();
@@ -456,7 +462,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             return;
         }
-        else if(slot instanceof VisualItemSlot || slot.container instanceof TransientCraftingContainer) {
+        else if(slot instanceof VisualItemSlot || slot.container instanceof TransientCraftingContainer || slot instanceof UpgradeSlot) {
 
 
             if(slot.container instanceof TransientCraftingContainer) {
@@ -496,6 +502,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             int modifiedValue = itemToPutIn.getCount();
 
             if(itemToPutIn.getItem() instanceof UpgradeCardItem) {
+
 
                 int upgradeSlots = menu.getStorageControllerEntity().getUpgradeInventory().getSlots();
 

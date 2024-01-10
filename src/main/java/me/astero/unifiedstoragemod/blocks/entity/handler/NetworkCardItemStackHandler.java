@@ -23,21 +23,9 @@ public class NetworkCardItemStackHandler<T extends BaseBlockEntity> extends Item
         super.onContentsChanged(slot);
 
 
-
-        if(!blockEntity.getLevel().isClientSide) {
-            System.out.println("yea");
-            blockEntity.getLevel().setBlockAndUpdate(blockEntity.getBlockPos(),
-                    blockEntity.getBlockState().setValue(StorageControllerBlock.STATUS,
-                            this.getStackInSlot(slot).getItem() instanceof NetworkItem));
-
-        }
-
-
         blockEntity.setChanged();
 
 
-
-
-
     }
+
 }

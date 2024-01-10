@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.blocks.entity;
 
+import com.google.common.base.Suppliers;
 import me.astero.unifiedstoragemod.blocks.StorageControllerBlock;
 import me.astero.unifiedstoragemod.blocks.entity.handler.NetworkCardItemStackHandler;
 import me.astero.unifiedstoragemod.blocks.entity.handler.UpgradeCardItemStackHandler;
@@ -43,6 +44,7 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Supplier;
 
 public class StorageControllerEntity extends BaseBlockEntity implements MenuProvider {
 
@@ -95,6 +97,18 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
     };
 
+    @Override
+    public void setChanged() {
+        super.setChanged();
+
+        boolean isNetworkInSlot = this.getNetworkInventory().getStackInSlot(0).getCount() == 1;
+
+        if(level != null && this.getBlockState().getValue(StorageControllerBlock.STATUS) != isNetworkInSlot) {
+            level.setBlockAndUpdate(this.getBlockPos(), this.getBlockState().setValue(StorageControllerBlock.STATUS,
+                    this.getNetworkInventory().getStackInSlot(0).getCount() == 1));
+        }
+    }
+
     private final LazyOptional<ItemStackHandler> optional = LazyOptional.of(() -> this.networkInventory);
 
     private final LazyOptional<ItemStackHandler> optionalVisualItem = LazyOptional.of(() -> this.visualItemInventory);
@@ -103,8 +117,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private final LazyOptional<ItemStackHandler> optionalCraftingInventory = LazyOptional.of(() -> this.craftingInventory);
     public StorageControllerEntity(BlockPos pos, BlockState state) {
         super(BlockEntityRegistry.STORAGE_CONTROLLER_BLOCK_ENTITY.get(), pos, state);
-
-
 
     }
 
@@ -227,9 +239,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         //loadEditedChests(modNbt);
 
-
-        this.getBlockState().setValue(StorageControllerBlock.STATUS,
-                        this.getNetworkInventory().getStackInSlot(0).getCount() == 1);
 
     }
 
@@ -371,6 +380,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     @Nullable
     @Override
     public Packet<ClientGamePacketListener> getUpdatePacket() {
+
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
@@ -514,6 +524,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     }
 
     public StorageControllerMenu buildMenu(int pControllerId, Inventory pInventory, Player player) {
+
 
         IItemHandler iItemHandler = getNetworkInventory();
 

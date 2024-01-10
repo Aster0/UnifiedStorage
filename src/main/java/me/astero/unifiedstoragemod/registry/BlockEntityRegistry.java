@@ -39,7 +39,6 @@ public class BlockEntityRegistry extends ObjectRegistry {
               }
 
 
-               System.out.println(blocks + " LIST OF BLOCKS!");
               
               return BlockEntityType.Builder.of(StorageControllerEntity::new, blocks)
                         .build(null); 

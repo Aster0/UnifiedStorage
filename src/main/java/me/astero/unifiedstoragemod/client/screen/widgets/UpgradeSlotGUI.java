@@ -59,6 +59,11 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
         if(itemStackHandler == null)
             itemStackHandler = new ItemStackHandler(1);
 
+        if(slotType == SlotType.NETWORK) {
+            numberOfSlots = 1; // there should only be one network slot
+            // we force it to be one.
+        }
+
 
         for(int i = 0; i < numberOfSlots; i++) {
 
