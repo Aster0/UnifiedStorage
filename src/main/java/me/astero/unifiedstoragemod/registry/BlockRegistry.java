@@ -55,17 +55,17 @@ public class BlockRegistry  {
 
 
 
-    public static final Map<String, RegistryObject<Block>> STORAGE_CONTROLLER_BLOCK_COLORED = registerStorageControllerColored();
+    public static final Map<DyeColor, RegistryObject<Block>> STORAGE_CONTROLLER_BLOCK_COLORED = registerStorageControllerColored();
 
-    public static Map<String, RegistryObject<Block>> registerStorageControllerColored() {
+    public static Map<DyeColor, RegistryObject<Block>> registerStorageControllerColored() {
 
-        Map<String, RegistryObject<Block>> blocks = new HashMap<>();
+        Map<DyeColor, RegistryObject<Block>> blocks = new HashMap<>();
 
         for(DyeColor color : DyeColor.values()) {
 
             String dyeName = color.name().toLowerCase();
 
-            blocks.put(dyeName, ObjectRegistry.registerObject
+            blocks.put(color, ObjectRegistry.registerObject
                     ("storage_controller" + (dyeName.equals("white") ? "" : "_" + dyeName), new BlockData<>(() ->
                             new StorageControllerBlock(BlockBehaviour.Properties.of().lightLevel(value -> 10)
                                     .strength(0.2f).requiresCorrectToolForDrops())), true));

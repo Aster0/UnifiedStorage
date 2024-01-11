@@ -318,7 +318,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 //                        }
 
 
-                        String dyeColor = dye.getDyeColor().toString();
+                        DyeColor dyeColor = dye.getDyeColor();
 
                         RegistryObject<Block> targetColoredBlock =
                                 BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(dyeColor);

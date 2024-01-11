@@ -1,22 +1,26 @@
 package me.astero.unifiedstoragemod.integrations.jei;
 
 
+import me.astero.unifiedstoragemod.blocks.colors.StorageControllerColors;
 import me.astero.unifiedstoragemod.integrations.jei.crafting.CraftingRecipeTransfer;
+import me.astero.unifiedstoragemod.integrations.jei.recipes.StorageControllerColorCategory;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerBlockMenu;
-import me.astero.unifiedstoragemod.menu.storage.StorageControllerItemMenu;
-import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
+import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import mezz.jei.api.IModPlugin;
 import mezz.jei.api.JeiPlugin;
 
 import mezz.jei.api.constants.RecipeTypes;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IRecipeManager;
-import mezz.jei.api.recipe.transfer.IRecipeTransferManager;
+import mezz.jei.api.constants.VanillaTypes;
+import mezz.jei.api.registration.IRecipeCatalystRegistration;
+import mezz.jei.api.registration.IRecipeCategoryRegistration;
+import mezz.jei.api.registration.IRecipeRegistration;
 import mezz.jei.api.registration.IRecipeTransferRegistration;
-import mezz.jei.api.runtime.*;
-import mezz.jei.api.runtime.config.IJeiConfigManager;
+import net.minecraft.client.Minecraft;
+import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.item.DyeColor;
+import net.minecraft.world.item.ItemStack;
 
 @JeiPlugin
 public class JEIPlugin implements IModPlugin {
@@ -34,6 +38,29 @@ public class JEIPlugin implements IModPlugin {
                         registration.getTransferHelper()),
                 RecipeTypes.CRAFTING);
     }
+
+    @Override
+    public void registerCategories(IRecipeCategoryRegistration registration) {
+        System.out.println("JEI REGISTER");
+        registration.addRecipeCategories(new StorageControllerColorCategory(registration.getJeiHelpers().getGuiHelper()));
+
+    }
+
+    @Override
+    public void registerRecipes(IRecipeRegistration registration) {
+
+
+//        registration.addIngredientInfo(new
+//                ItemStack(BlockRegistry.STORAGE_CONTROLLER_BLOCK_COLORED.get(DyeColor.WHITE").get()),
+//                VanillaTypes.ITEM_STACK, Component.literal("hi"));
+
+        registration.addRecipes(StorageControllerColorCategory.RECIPE_TYPE,
+                StorageControllerColorCategory.getRecipes());
+
+
+    }
+
+
 }
 
 
