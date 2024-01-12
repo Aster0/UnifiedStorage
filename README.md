@@ -2,7 +2,7 @@
 ![](https://cf.way2muchnoise.eu/title/943647.svg) ![](https://cf.way2muchnoise.eu/versions/943647.svg) ![](https://cf.way2muchnoise.eu/full_943647_downloads.svg)
 
 <br>
-<p align="center"><img src="https://github.com/Aster0/UnifiedStorage/assets/40921567/64ef283f-7f33-41e1-b26c-74c7e715a89c" height="300" ></p>
+<p align="center"><img src="https://i.imgur.com/88yICGA.png" height="300" ></p>
 <p align="center">Management of items has never been easier!</p>
 
 <br>
