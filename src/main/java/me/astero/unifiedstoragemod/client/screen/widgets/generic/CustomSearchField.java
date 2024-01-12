@@ -56,5 +56,4 @@ public class CustomSearchField extends CustomEditBox {
         super.setCanLoseFocus(p_94191_);
     }
 
-
 }

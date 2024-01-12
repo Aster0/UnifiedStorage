@@ -68,6 +68,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
 
+
     }
 
 
@@ -284,6 +285,11 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     }
 
     @Override
+    public int getLightEmission(BlockState state, BlockGetter level, BlockPos pos) {
+        return state.getValue(STATUS) ? 12 : 0;
+    }
+
+    @Override
     public InteractionResult use(BlockState state, Level level,
                                  BlockPos pos, Player player,
                                  InteractionHand interactionHand, BlockHitResult blockHitResult) {
@@ -336,6 +342,9 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
                                 level.setBlockAndUpdate(pos, newState);
+
+                                if(!player.isCreative())
+                                    player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
 
 
 

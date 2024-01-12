@@ -111,7 +111,7 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
     }
 
     @Override
-    public void onMouseClick(double mouseX, double mouseY) {
+    public void onMouseClick(double mouseX, double mouseY, int mode) {
 
 
         if(disabled && !draggable)

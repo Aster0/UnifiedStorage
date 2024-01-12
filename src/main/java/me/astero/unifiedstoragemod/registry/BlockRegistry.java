@@ -67,7 +67,7 @@ public class BlockRegistry  {
 
             blocks.put(color, ObjectRegistry.registerObject
                     ("storage_controller" + (dyeName.equals("white") ? "" : "_" + dyeName), new BlockData<>(() ->
-                            new StorageControllerBlock(BlockBehaviour.Properties.of().lightLevel(value -> 10)
+                            new StorageControllerBlock(BlockBehaviour.Properties.of()
                                     .strength(0.2f).requiresCorrectToolForDrops())), true));
 
         }

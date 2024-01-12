@@ -151,7 +151,7 @@ public class UpgradeSlotGUI<T extends Menu> extends BaseUpgradeSlot implements I
     }
 
     @Override
-    public void onMouseClick(double mouseX, double mouseY) {
+    public void onMouseClick(double mouseX, double mouseY, int mode) {
 
     }
 

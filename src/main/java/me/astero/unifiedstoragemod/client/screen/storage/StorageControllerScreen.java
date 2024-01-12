@@ -266,16 +266,16 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     }
 
     @Override
-    public boolean mouseClicked(double mouseX, double mouseY, int p_97750_) {
+    public boolean mouseClicked(double mouseX, double mouseY, int mode) {
 
 
         if(customScrollWheel != null)
-            customScrollWheel.onMouseClick(mouseX, mouseY);
+            customScrollWheel.onMouseClick(mouseX, mouseY, mode);
 
         if(searchField != null)
             searchField.setFocused(false);
 
-        return super.mouseClicked(mouseX, mouseY, p_97750_);
+        return super.mouseClicked(mouseX, mouseY, mode);
 
 
     }

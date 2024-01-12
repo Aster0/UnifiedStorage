@@ -61,7 +61,7 @@ public class ItemLogsGUI implements ICustomWidgetComponent {
     }
 
     @Override
-    public void onMouseClick(double mouseX, double mouseY) {
+    public void onMouseClick(double mouseX, double mouseY, int mode) {
 
     }
 

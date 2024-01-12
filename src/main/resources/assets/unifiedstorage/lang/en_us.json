@@ -62,6 +62,8 @@
   "container.unifiedstorage.crafting_clear_tooltip" : "§fClear Crafting Grid\n§7Returns the items to your storage.",
   "container.unifiedstorage.visualItemSlotDescription" : "§7Providing an item gives a visual for\n§7this controller block like an item frame.\n\n§7§o* Putting more of the same\n§7§o  items changes the visual.\n§7§o  (Only for Blocks)",
   "creative.unifiedstorage.tabName" : "Unified Storage",
-  "jei.unifiedstorage.crafting_not_enabled" : "Crafting not upgraded"
+  "jei.unifiedstorage.crafting_not_enabled" : "Crafting not upgraded",
+  "jei.unifiedstorage.storage_color_recipe_instruction" : "Right click a Storage\nController with a dye",
+  "gui.unifiedstorage.right_click.lang" : "Right Click"
 
 }

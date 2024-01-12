@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
+import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.resources.ResourceLocation;
@@ -107,8 +108,16 @@ public abstract class CustomEditBox extends EditBox implements ICustomWidgetComp
     }
 
     @Override
-    public void onMouseClick(double mouseX, double mouseY) {
+    public void onMouseClick(double mouseX, double mouseY, int mode) {
 
+
+
+        Rect2i scrollbarBounds = new Rect2i(
+                this.getX(), this.getY(), 12, 15);
+
+        if (scrollbarBounds.contains(((int) mouseX), (int) mouseY)) {
+            System.out.println(mode);
+        }
     }
 
     @Override
@@ -137,5 +146,27 @@ public abstract class CustomEditBox extends EditBox implements ICustomWidgetComp
         }
 
 
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mode) {
+
+
+
+
+        if(this.clicked(mouseX, mouseY)) {
+
+            if(mode == 1) { // right click
+
+                setValue("");
+            }
+
+        }
+        
+        return super.mouseClicked(mouseX, mouseY, mode);
     }
 }

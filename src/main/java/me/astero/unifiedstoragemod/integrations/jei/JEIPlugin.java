@@ -1,7 +1,6 @@
 package me.astero.unifiedstoragemod.integrations.jei;
 
 
-import me.astero.unifiedstoragemod.blocks.colors.StorageControllerColors;
 import me.astero.unifiedstoragemod.integrations.jei.crafting.CraftingRecipeTransfer;
 import me.astero.unifiedstoragemod.integrations.jei.recipes.StorageControllerColorCategory;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerBlockMenu;
@@ -41,7 +40,7 @@ public class JEIPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        System.out.println("JEI REGISTER");
+
         registration.addRecipeCategories(new StorageControllerColorCategory(registration.getJeiHelpers().getGuiHelper()));
 
     }
