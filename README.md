@@ -30,6 +30,8 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - Crafting Grid (saves when you exit the GUI)
 - Wireless - You can use your storage anywhere with a wireless controller!
 - Intensive Search - You can use & combine prefixes to search for specific items (e.g., @modname storage or @modname #ores or just #ores)
+- Smart Insert Algorithm - When inserting blocks into the Storage Network, it looks for pre-existing stacks to populate before using a new item slot.
+- Comes in 16 different dyeable colors
 
 ![image](https://i.imgur.com/FnMAnDp.png)
 
@@ -49,6 +51,16 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - In-game book guide
 
 <br>
+
+<details>
+  <summary>Recipes/Dyeing Storage Controllers</summary>
+  Recipes can be found in JEI
+
+<br>
+<br>
+  To dye Storage Controller blocks, simply right click a dye onto any colored Storage Controller Block. (Details can be found in JEI aswell)
+  <img src="https://i.imgur.com/hCK3alZ.png" height=300>
+</details>
 
 <details>
 <summary>Visual Item Structures/Animations</summary>
