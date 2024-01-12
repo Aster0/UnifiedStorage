@@ -1,0 +1,23 @@
+{
+  "replace" : false,
+  "values" : [
+
+    "unifiedstorage:storage_controller",
+    "unifiedstorage:storage_controller_orange",
+    "unifiedstorage:storage_controller_magenta",
+    "unifiedstorage:storage_controller_light_blue",
+    "unifiedstorage:storage_controller_yellow",
+    "unifiedstorage:storage_controller_lime",
+    "unifiedstorage:storage_controller_pink",
+    "unifiedstorage:storage_controller_gray",
+    "unifiedstorage:storage_controller_light_gray",
+    "unifiedstorage:storage_controller_cyan",
+    "unifiedstorage:storage_controller_purple",
+    "unifiedstorage:storage_controller_blue",
+    "unifiedstorage:storage_controller_brown",
+    "unifiedstorage:storage_controller_green",
+    "unifiedstorage:storage_controller_red",
+    "unifiedstorage:storage_controller_black"
+
+  ]
+}
