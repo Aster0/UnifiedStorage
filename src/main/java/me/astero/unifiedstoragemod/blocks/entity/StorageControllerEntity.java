@@ -25,18 +25,22 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.server.level.TicketType;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
@@ -60,6 +64,12 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     public List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
     private List<SavedStorageData> editedChestLocations = new ArrayList<>();
+
+    private final List<BlockEntity> cachedStorages = new ArrayList<>();
+
+    public List<BlockEntity> getCachedStorages() {
+        return cachedStorages;
+    }
 
     public StorageControllerMenu menu;
 
@@ -101,11 +111,21 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public void setChanged() {
         super.setChanged();
 
+
+
         boolean isNetworkInSlot = this.getNetworkInventory().getStackInSlot(0).getCount() == 1;
 
+
         if(level != null && this.getBlockState().getValue(StorageControllerBlock.STATUS) != isNetworkInSlot) {
-            level.setBlockAndUpdate(this.getBlockPos(), this.getBlockState().setValue(StorageControllerBlock.STATUS,
-                    this.getNetworkInventory().getStackInSlot(0).getCount() == 1));
+
+
+            if(!level.isClientSide) {
+                level.setBlockAndUpdate(this.getBlockPos(), this.getBlockState().setValue(StorageControllerBlock.STATUS,
+                        isNetworkInSlot));
+
+
+            }
+
         }
     }
 
@@ -127,14 +147,23 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     }
 
 
+    @Override
+    public void onLoad() {
+        super.onLoad();
 
 
 
-    public BlockEntity getStorageBlockAt(BlockPos blockPos) {
+        setChanged();
+    }
 
-        BlockEntity blockEntity = level.getBlockEntity(blockPos);
+    public BlockEntity getStorageBlockAt(SavedStorageData chestData) {
 
+        long time = System.currentTimeMillis();
 
+        Level storageLevel = getStorageLevel(chestData);
+        BlockEntity blockEntity = storageLevel.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
+
+        System.out.println("Finished: " + (System.currentTimeMillis() - time) + " " + this.getBlockPos());
         return blockEntity
                 .getCapability(ForgeCapabilities.ITEM_HANDLER).isPresent() ? blockEntity : null;
     }
@@ -168,21 +197,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         return itemIdentifier;
     }
 
-    public void addChestLocations(String location) {
 
-
-        if(!chestLocations.contains(location)) {
-
-            addChests(location);
-            this.setChanged();
-
-
-
-        }
-
-
-
-    }
 
     public ItemIdentifier getMergedStorageContents(int index, List<ItemIdentifier> searchedItemList, boolean useSearch) {
 
@@ -214,11 +229,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         return itemIdentifier;
     }
-    private void addChests(String location) {
-        chestLocations.add(location);
-        CustomBlockPosData customBlockPosData = ModUtils.convertStringToBlockData(location.split(", "));
-        editedChestLocations.add(new SavedStorageData(customBlockPosData));
-    }
+
 
 
 
@@ -243,14 +254,34 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     }
 
 
+    private Level getStorageLevel(SavedStorageData chestData) {
 
+
+        return chestData.getLevel() == null ? this.getLevel() : chestData.getLevel();
+
+    }
+
+    @Override
+    public void setLevel(Level p_155231_) {
+        super.setLevel(p_155231_);
+
+        System.out.println(getBlockState());
+    }
 
     private List<SavedStorageData> queueToRemoveChest = new ArrayList<>();
+
+    private void cacheStorages() {
+
+    }
     private void loadStorageContents(SavedStorageData chestData) {
 
+        long time = System.currentTimeMillis();
 
-        BlockEntity blockEntity = this.level.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
 
+        Level storageLevel = getStorageLevel(chestData);
+
+        BlockEntity blockEntity = storageLevel.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
+        System.out.println("Finished: " + (System.currentTimeMillis() - time) + " " + this.getBlockPos());
 
         if(blockEntity == null)  { // if the storage block is deleted, it will be null.
 
@@ -262,13 +293,24 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
+        ForgeChunkManager.forceChunk((ServerLevel) blockEntity.getLevel(), ModUtils.MODID, blockEntity.getBlockPos(),
+                0, 0, true, false); // for different dimensions
+
+
+        System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) blockEntity.getLevel()) + " LOAD");
+        cachedStorages.add(blockEntity);
+
         IItemHandler chestInventory = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
                 .orElse(new ItemStackHandler(0));
 
 
+        System.out.println(cachedStorages.size());
+
         for(int i = 0; i < chestInventory.getSlots(); i++) {
 
             ItemStack chestItemStack = chestInventory.getStackInSlot(i);
+
+
 
 
             if(chestItemStack.getItem() != Items.AIR) {
@@ -304,21 +346,17 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                 String blockName = ModUtils.capitalizeName(blockEntity.getBlockState().getBlock().asItem().toString());
 
 
-
-
                 itemIdentifier.getLocations().putIfAbsent(blockName, 0);
 
                 int oldValue = itemIdentifier.getLocations().get(blockName);
                 itemIdentifier.getLocations().put(blockName, oldValue + chestItemStack.getCount());
 
 
-
-
-
-
             }
 
         }
+
+
 
 
 
@@ -433,9 +471,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     @Override
     public void updateNetworkCardItems(ItemStack itemStack, Player player) {
 
-
-
-
         if(itemStack.getItem() instanceof NetworkItem networkItem) {
 
             if(networkItem.getUpgradeType() != UpgradeType.NETWORK)
@@ -449,7 +484,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-            networkItem.loadNbt(itemStack);
+            networkItem.loadNbt(itemStack, player);
 
 
             editedChestLocations = new ArrayList<>(networkItem.getStorageLocations());
@@ -493,6 +528,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         if(editedChestLocations == null)
             return;
 
+        getCachedStorages().clear();
+
         for(SavedStorageData customBlockPosData : editedChestLocations) {
 
 
@@ -534,6 +571,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         disabled = itemStack.equals(ItemStack.EMPTY, false);
 
 
+
         if(!disabled)
             updateNetworkCardItems(itemStack, player);
 
@@ -543,12 +581,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             ModNetwork.sendToClient(new UpdateStorageDisabledEntityPacket(disabled, this.getBlockPos()), serverPlayer);
         }
 
+        System.out.println(this.getLevel().dimension() + " BLOCK ENTITY ");
 
         StorageControllerBlockMenu storageControllerMenu = new
                 StorageControllerBlockMenu(pControllerId, pInventory, this);
 
         return storageControllerMenu;
     }
+
 
     @Nullable
     @Override

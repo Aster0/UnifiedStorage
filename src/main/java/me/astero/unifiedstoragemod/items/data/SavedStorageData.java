@@ -1,20 +1,31 @@
 package me.astero.unifiedstoragemod.items.data;
 
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.world.level.Level;
 
 public class SavedStorageData {
 
 
     private CustomBlockPosData customBlockPosData;
+    private Level level;
 
 
-    public SavedStorageData(CustomBlockPosData customBlockPosData) {
+    public SavedStorageData(CustomBlockPosData customBlockPosData, Level level) {
         this.customBlockPosData = customBlockPosData;
+        this.level = level;
     }
-
 
     public CustomBlockPosData getCustomBlockPosData() {
         return customBlockPosData;
+    }
+
+    public void setLevel(Level level) {
+        this.level = level;
+    }
+
+    public Level getLevel() {
+
+        return this.level;
     }
 
     @Override
@@ -35,4 +46,6 @@ public class SavedStorageData {
     public String toString() {
         return ModUtils.serializeBlockPosNbt(customBlockPosData.getBlockPos().toString());
     }
+
+
 }

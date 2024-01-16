@@ -279,6 +279,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
     }
+
     @Override
     protected void slotClicked(Slot slot, int slotIndex, int btn, ClickType clickType) {
 

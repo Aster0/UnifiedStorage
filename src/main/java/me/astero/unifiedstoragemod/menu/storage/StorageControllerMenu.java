@@ -15,9 +15,11 @@ import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.*;
 import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
+import me.astero.unifiedstoragemod.utils.ModUtils;
 import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -27,12 +29,14 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.SlotItemHandler;
@@ -1010,7 +1014,23 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
 
+    @Override
+    public void removed(Player p_38940_) {
+        super.removed(p_38940_);
 
+
+        for(BlockEntity entity : storageControllerEntity.getCachedStorages()) {
+
+
+            ForgeChunkManager.forceChunk((ServerLevel) entity.getLevel(), ModUtils.MODID, entity.getBlockPos(),
+                    0, 0, false, false);
+
+            System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) entity.getLevel()));
+
+
+        }
+
+    }
 
     public int updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
 
@@ -1029,8 +1049,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         for(SavedStorageData blockPosData : storageControllerEntity.getEditedChestLocations()) {
 
-            BlockEntity storageBlockEntity = storageControllerEntity.getStorageBlockAt(blockPosData
-                    .getCustomBlockPosData().getBlockPos());
+            BlockEntity storageBlockEntity = storageControllerEntity.getStorageBlockAt(blockPosData);
 
             if(storageBlockEntity != null) {
 

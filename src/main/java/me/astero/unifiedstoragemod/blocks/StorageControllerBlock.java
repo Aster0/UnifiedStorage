@@ -311,18 +311,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
                     if(player.getItemInHand(InteractionHand.MAIN_HAND).getItem() instanceof DyeItem dye) {
 
 
-//                        BlockState blockState = blockEntity.getBlockState();
-//                        if(!blockState.getValue(COLOR).equals(dye.getDyeColor())) { // only dye when it's not already that color.
-//                            level.setBlockAndUpdate(blockEntity.getBlockPos(),
-//                                    blockState.setValue(COLOR, dye.getDyeColor()));
-//
-//                            if(!player.isCreative())
-//                                player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
-//
-//
-//                            return InteractionResult.SUCCESS;
-//                        }
-
 
                         DyeColor dyeColor = dye.getDyeColor();
 

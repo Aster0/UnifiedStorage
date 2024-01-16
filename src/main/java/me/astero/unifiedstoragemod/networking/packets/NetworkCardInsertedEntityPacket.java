@@ -72,9 +72,7 @@ public class NetworkCardInsertedEntityPacket implements EntityPacket {
 
 
                     menu.getStorageControllerEntity().updateNetworkCardItems(menu.getCarried(),
-                            menu.getStorageControllerEntity().getLevel().getPlayerByUUID(
-                                    player.getUUID()
-                            ));
+                            player);
 
 
                 }

@@ -18,12 +18,12 @@ public class StorageControllerBlockMenu extends StorageControllerMenu {
 
 
 
-
     }
 
     public StorageControllerBlockMenu(int containerId, Inventory pInventory, BlockEntity blockEntity) {
 
         super(MENU_TYPE, containerId, pInventory, blockEntity);
+
 
 
     }

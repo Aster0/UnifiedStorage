@@ -3,7 +3,11 @@ package me.astero.unifiedstoragemod.utils;
 import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.Level;
 
+import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -145,5 +149,24 @@ public class ModUtils {
 
 
 
+    }
+
+
+    public static Level findLevel(String dimensionKey, ServerPlayer player) {
+
+        Level levelFound = null;
+
+
+        for(ServerLevel serverLevel : player.level().getServer().getAllLevels()) {
+
+
+            if(dimensionKey.equals(serverLevel.dimension().toString())) {
+
+                levelFound = serverLevel;
+
+            }
+        }
+
+        return levelFound;
     }
 }

@@ -5,9 +5,12 @@ import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.items.data.*;
 import me.astero.unifiedstoragemod.items.generic.BaseItem;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
@@ -69,13 +72,12 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
-
-
-
-
         for(int i = 0; i < storageLocations.size(); i++) {
             innerNbt.putString("storage" + i, storageLocations.get(i)
-                    .getCustomBlockPosData().toString());
+                    .getCustomBlockPosData().toString() + "; " + storageLocations.get(i).getLevel().dimension());
+
+
+
 
 
         }
@@ -87,7 +89,7 @@ public abstract class NetworkItem extends BaseItem {
 
     }
 
-    public void loadNbt(ItemStack itemStack) {
+    public void loadNbt(ItemStack itemStack, Player player) {
 
 
         CompoundTag nbt = itemStack.getTag();
@@ -110,18 +112,40 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
-            String rawPos = nbt.getString("storage" + i);
+            String rawParameter = nbt.getString("storage" + i);
 
 
 
-            if(rawPos.length() > 0) {
+            if(rawParameter.length() > 0) {
 
-                rawPos = ModUtils.serializeBlockPosNbt(rawPos);
+                List<String> parameters = new ArrayList<>(Arrays.asList(rawParameter.split("; ")));
+
+                String rawPos = ModUtils.serializeBlockPosNbt(parameters.get(0));
+
+
+                Level level = null;
+
+                if(player != null) {
+
+                    if(player instanceof ServerPlayer serverPlayer) {
+
+
+                        try {
+                            level = ModUtils.findLevel(parameters.get(1), serverPlayer);
+                        }
+                        catch(IndexOutOfBoundsException e) { // for old storage cards before inter-dimension update
+                            // keeps the level at null.
+                        }
+
+
+                    }
+
+                }
 
                 CustomBlockPosData customBlockPosData =
                         ModUtils.convertStringToBlockData(rawPos.split(", "));
 
-                SavedStorageData savedStorageData = new SavedStorageData(customBlockPosData);
+                SavedStorageData savedStorageData = new SavedStorageData(customBlockPosData, level);
 
 
                 saveToStorage(savedStorageData, null);
@@ -147,7 +171,7 @@ public abstract class NetworkItem extends BaseItem {
 
 
         SavedStorageData savedStorageData = new SavedStorageData(
-                ModUtils.convertStringToBlockData(blockCoordinate.split(", ")));
+                ModUtils.convertStringToBlockData(blockCoordinate.split(", ")), player.level());
 
 
         boolean added = false;
@@ -167,6 +191,7 @@ public abstract class NetworkItem extends BaseItem {
             removeFromStorage(savedStorageData, player);
 
         }
+
 
         saveNbt(itemStack);
 
@@ -238,7 +263,7 @@ public abstract class NetworkItem extends BaseItem {
     public void appendHoverText(ItemStack stack, @Nullable Level level, List<Component> components, TooltipFlag flag) {
         super.appendHoverText(stack, level, components, flag);
 
-        loadNbt(stack);
+        loadNbt(stack, null);
 
         if(networkBlockType == NetworkBlockType.STORAGE_CLONE) { // dont show the lore yet
             if(storageLocations.size() == 0) {
@@ -293,7 +318,7 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
-                    loadNbt(itemStack);
+                    loadNbt(itemStack, player);
 
 
 
@@ -315,7 +340,7 @@ public abstract class NetworkItem extends BaseItem {
 
             }
 
-            loadNbt(itemStack);
+            loadNbt(itemStack, player);
 
             if(onItemUse(this.storageLocations, player, itemStack) == null)
                 return super.use(level, player, interactionHand);

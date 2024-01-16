@@ -17,13 +17,10 @@ public class ItemRegistry {
 
 
 
-    // Create a Deferred Register to hold Items which will all be registered under the "mechanicaldrawers" namespace
+    // Create a Deferred Register to hold Items which will all be registered under the "unifiedstorage" namespace
     public static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, ModUtils.MODID);
 
 
-    private static RegistryObject<Item> GRID_WRENCH =
-            ObjectRegistry.registerObject("grid_wrench", new ItemData<Item>(
-                    () -> new GridWrenchItem(new Item.Properties())), true);
 
     public static RegistryObject<Item> STORAGE_WINGS =
             ObjectRegistry.registerObject("storage_wings", new ItemData<Item>(
