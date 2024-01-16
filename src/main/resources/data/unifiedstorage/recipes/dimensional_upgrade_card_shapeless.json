@@ -5,11 +5,11 @@
       "item": "unifiedstorage:blank_upgrade_card"
     },
     {
-      "item": "minecraft:ender_pearl"
+      "item": "minecraft:ender_eye"
     }
   ],
   "result": {
-    "item": "unifiedstorage:wireless_upgrade_card",
+    "item": "unifiedstorage:dimensional_upgrade_card",
     "count": 1
   }
 }

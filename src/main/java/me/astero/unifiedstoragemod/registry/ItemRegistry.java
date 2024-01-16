@@ -23,7 +23,7 @@ public class ItemRegistry {
 
     public static RegistryObject<Item> STORAGE_WINGS =
             ObjectRegistry.registerObject("storage_wings", new ItemData<Item>(
-                    () -> new StorageWings(new Item.Properties().stacksTo(1))), true);
+                    () -> new StorageWings(new Item.Properties().stacksTo(1))), false);
 
     public static RegistryObject<Item> NETWORK_CARD =
             ObjectRegistry.registerObject("network_card", new ItemData<Item>(

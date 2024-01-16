@@ -50,7 +50,7 @@ public class BlockRegistry  {
 
     public static final RegistryObject<Block> DRAWER_BLOCK = ObjectRegistry.registerObject
             ("drawer_block", new BlockData<>(() -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
-                    .strength(1f), 70)), true);
+                    .strength(1f), 70)), false);
 
 
 

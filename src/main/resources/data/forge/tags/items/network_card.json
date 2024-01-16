@@ -1,0 +1,10 @@
+{
+  "replace" : false,
+  "values" : [
+
+    "unifiedstorage:network_card",
+    "unifiedstorage:cloning_network_card"
+
+
+  ]
+}

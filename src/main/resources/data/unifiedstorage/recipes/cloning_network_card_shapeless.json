@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "unifiedstorage:cloning_network_card"
+    }
+  ],
+  "result": {
+    "item": "unifiedstorage:cloning_network_card",
+    "count": 1
+  }
+}

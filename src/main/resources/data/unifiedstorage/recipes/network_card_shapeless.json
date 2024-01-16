@@ -1,0 +1,12 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "ingredients": [
+    {
+      "item": "unifiedstorage:network_card"
+    }
+  ],
+  "result": {
+    "item": "unifiedstorage:network_card",
+    "count": 1
+  }
+}

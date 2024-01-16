@@ -10,7 +10,7 @@
       "item": "minecraft:iron_ingot"
     },
     "L": {
-      "tag": "minecraft:lapis_block"
+      "item": "minecraft:lapis_block"
     }
   },
   "result": {
