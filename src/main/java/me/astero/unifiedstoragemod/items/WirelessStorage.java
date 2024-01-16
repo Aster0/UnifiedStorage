@@ -7,6 +7,7 @@ import me.astero.unifiedstoragemod.menu.storage.StorageControllerItemMenu;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.*;
 import net.minecraft.world.entity.player.Inventory;
@@ -21,6 +22,7 @@ import net.minecraft.world.level.block.EnderChestBlock;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.EnderChestBlockEntity;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.network.NetworkContext;
 import org.jetbrains.annotations.Nullable;
 
@@ -66,7 +68,9 @@ public class WirelessStorage extends NetworkItem implements MenuProvider{
                     return null;
                 }
 
+
                 if(player instanceof ServerPlayer serverPlayer) {
+
 
                     serverPlayer.openMenu(new SimpleMenuProvider((pContainerId, pInventory, player1) ->
                             storageControllerEntity.buildMenu(pContainerId, pInventory, player1),

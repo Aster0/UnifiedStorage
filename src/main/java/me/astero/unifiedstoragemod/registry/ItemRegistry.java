@@ -3,8 +3,7 @@ package me.astero.unifiedstoragemod.registry;
 import me.astero.unifiedstoragemod.data.ItemData;
 import me.astero.unifiedstoragemod.items.*;
 
-import me.astero.unifiedstoragemod.items.upgrades.CraftingUpgradeCard;
-import me.astero.unifiedstoragemod.items.upgrades.WirelessUpgradeCard;
+import me.astero.unifiedstoragemod.items.upgrades.StorageUpgradeCard;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.Item;
 import net.minecraftforge.registries.DeferredRegister;
@@ -32,15 +31,19 @@ public class ItemRegistry {
 
     public static RegistryObject<Item> CRAFTING_UPGRADE_CARD =
             ObjectRegistry.registerObject("crafting_upgrade_card", new ItemData<Item>(
-                    () -> new CraftingUpgradeCard(new Item.Properties())), true);
+                    () -> new StorageUpgradeCard(new Item.Properties(), "crafting_upgrade")), true);
 
     public static RegistryObject<Item> BLANK_UPGRADE_CARD =
             ObjectRegistry.registerObject("blank_upgrade_card", new ItemData<Item>(
-                    () -> new CraftingUpgradeCard(new Item.Properties())), true);
+                    () -> new StorageUpgradeCard(new Item.Properties(), "blank_upgrade")), true);
+
+    public static RegistryObject<Item> DIMENSIONAL_UPGRADE_CARD =
+            ObjectRegistry.registerObject("dimensional_upgrade_card", new ItemData<Item>(
+                    () -> new StorageUpgradeCard(new Item.Properties(), "")), true);
 
     public static RegistryObject<Item> WIRELESS_UPGRADE_CARD =
             ObjectRegistry.registerObject("wireless_upgrade_card", new ItemData<Item>(
-                    () -> new WirelessUpgradeCard(new Item.Properties())), true);
+                    () -> new StorageUpgradeCard(new Item.Properties(), "wireless_upgrade")), true);
 
     public static RegistryObject<Item> WIRELESS_STORAGE =
             ObjectRegistry.registerObject("wireless_storage", new ItemData<Item>(

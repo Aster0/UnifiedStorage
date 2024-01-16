@@ -200,8 +200,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                 Optional<TagKey<Item>> tagKey = itemIdentifier.getItemStack().getTags().filter(itemTagKey ->
-                        itemTagKey.location().toString().toLowerCase()
-                                .contains(finalCurrentSearchString.substring(1)))
+                                itemTagKey.location().toString().toLowerCase()
+                                        .contains(finalCurrentSearchString.substring(1)))
                         .findAny();
 
 
@@ -656,7 +656,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
 
-                addSlot(new Slot(pInventory, 9 + column + (row * 9),
+                addSlot(new PlayerSlot(pInventory, 9 + column + (row * 9),
                         8 + (column * 18),
                         153 + (row * 18)));
 
@@ -703,7 +703,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     private void createPlayerHotbar(Inventory pInventory) {
         for (int column = 0; column < 9; column++) {
 
-            addSlot(new Slot(pInventory, column, 8 + (column * 18),
+            addSlot(new PlayerSlot(pInventory, column, 8 + (column * 18),
                     211));
         }
     }
@@ -746,6 +746,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             return ItemStack.EMPTY;
         }
 
+        if(fromSlot instanceof PlayerSlot) {
+
+
+
+            interactWithMenu(fromStack, false,
+                    fromStack.getCount(), true, fromSlot.getSlotIndex());
+
+            return ItemStack.EMPTY;
+        }
 
 
 
@@ -904,6 +913,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+            for(ItemIdentifier itemIdentifier : storageControllerEntity.mergedStorageContents) {
+                System.out.println(itemIdentifier.getItemStack());
+            }
+            System.out.println(index + " " + getPlayerInventory().player.level().isClientSide);
             if(index == -1) return;
 
             if(!getCarried().equals(ItemStack.EMPTY, false)) {
@@ -917,7 +930,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
             if(itemIdentifier.getCount() < value) {
-                return; // somehow we don't have enough value to take it out of the storage
+                return; // if somehow we don't have enough value to take it out of the storage
             }
 
 
@@ -975,7 +988,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             value = actualValue;
 
 
-            
+
             if(quickMove) {
 
 
@@ -1012,7 +1025,14 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
         else { // place in storage
 
-            updateAllStorages(getCarried(), value, false, quickMove, slotIndex);
+            ItemStack toPutIntoStorage = getCarried();
+
+
+            if(quickMove)
+                toPutIntoStorage = itemStack;
+
+
+            updateAllStorages(toPutIntoStorage, value, false, quickMove, slotIndex);
 
         }
     }
@@ -1026,8 +1046,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         for(BlockEntity entity : storageControllerEntity.getCachedStorages()) {
 
 
-            ForgeChunkManager.forceChunk((ServerLevel) entity.getLevel(), ModUtils.MODID, entity.getBlockPos(),
-                    0, 0, false, false);
+            storageControllerEntity.forceChunk(false, entity);
 
             System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) entity.getLevel()));
 
@@ -1163,7 +1182,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     remainingStack.getCount(), itemStack, slotIndex, quickMove, false), (ServerPlayer) pInventory.player);
 
             updateInsertVisual(storageControllerEntity, itemStack,
-                   remainingStack.getCount(), quickMove, slotIndex, false);
+                    remainingStack.getCount(), quickMove, slotIndex, false);
 
 
 
@@ -1194,8 +1213,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void updateInsertVisual(StorageControllerEntity d, ItemStack itemStack, int value, boolean quickMove,
                                    int slotIndex, boolean take) {
 
+
         int index = d.mergedStorageContents
                 .indexOf(new ItemIdentifier(itemStack, 1));
+
 
 
         if(index != -1) {
@@ -1227,22 +1248,27 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
 
+
             return;
         }
 
 
         int itemCountLeft = itemStack.getCount() - value;
 
+
         if(itemCountLeft != 0) {
 
 
-            ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack,
+            ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack.copy(),
                     itemCountLeft);
 
             d.mergedStorageContents.add(itemIdentifier);
 
 
+
             checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
+
+            System.out.println(itemStack + " TEST");
 
             regenerateCurrentPage();
 
@@ -1257,8 +1283,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
     private void checkToRemoveInSlotForQuickMove(boolean quickMove, int itemCountLeft, int slotIndex, int value, ItemStack itemStack) {
-       if(slotIndex == -1)
-           return;
+        if(slotIndex == -1)
+            return;
 
         if(quickMove) {
 

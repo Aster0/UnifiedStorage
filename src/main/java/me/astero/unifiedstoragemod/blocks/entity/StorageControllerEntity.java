@@ -20,6 +20,7 @@ import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
@@ -270,7 +271,17 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     private List<SavedStorageData> queueToRemoveChest = new ArrayList<>();
 
-    private void cacheStorages() {
+    public void forceChunk(boolean force, BlockEntity blockEntity) {
+
+        int chunkX = SectionPos.blockToSectionCoord(blockEntity.getBlockPos().getX());
+        int chunkZ = SectionPos.blockToSectionCoord(blockEntity.getBlockPos().getZ());
+
+
+        ForgeChunkManager.forceChunk((ServerLevel) blockEntity.getLevel(), ModUtils.MODID, blockEntity.getBlockPos(),
+                chunkX,
+                chunkZ, force, false); // for different dimensions
+
+
 
     }
     private void loadStorageContents(SavedStorageData chestData) {
@@ -292,10 +303,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
 
 
-//
-//        ForgeChunkManager.forceChunk((ServerLevel) blockEntity.getLevel(), ModUtils.MODID, blockEntity.getBlockPos(),
-//                0, 0, true, false); // for different dimensions
 
+
+
+        forceChunk(true, blockEntity);
 
         System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) blockEntity.getLevel()) + " LOAD");
         cachedStorages.add(blockEntity);

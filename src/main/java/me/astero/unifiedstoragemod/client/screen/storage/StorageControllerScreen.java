@@ -341,6 +341,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         if(slot instanceof ItemVisualSlot v) {
 
 
+
             if(menu.getCarried().equals(ItemStack.EMPTY, false)) { // means we are taking out smth from the storage
 
 
@@ -475,25 +476,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             super.slotClicked(slot, slotIndex, btn, clickType);
             return;
         }
-//        else if(slot instanceof ResultSlot resultSlot) {
-//
-//            super.slotClicked(slot, slotIndex, btn, clickType);
-//            return;
-//            if(!menu.getStorageControllerEntity().isCraftingEnabled()) // dont allow crafting
-//                return;
-//
-//            ItemStack resultStack = resultSlot.getItem();
-//
-//
-//            boolean quickMove = clickType == ClickType.QUICK_MOVE;
-//
-//            menu.onItemCrafted(resultStack, quickMove);
-//            ModNetwork.sendToServer(new CraftItemEntityPacket(resultStack, quickMove));
-//
-//
-//
-//            return;
-//        }
 
         if(clickType == ClickType.QUICK_MOVE) {
 
@@ -520,12 +502,12 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             }
 
 
-
-            ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
-                    modifiedValue, true, slot.getSlotIndex()));
-
-            menu.interactWithMenu(itemToPutIn, false,
-                    modifiedValue, true, slot.getSlotIndex());
+//
+//            ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
+//                    modifiedValue, true, slot.getSlotIndex()));
+//
+//            menu.interactWithMenu(itemToPutIn, false,
+//                    modifiedValue, true, slot.getSlotIndex());
 
 
 

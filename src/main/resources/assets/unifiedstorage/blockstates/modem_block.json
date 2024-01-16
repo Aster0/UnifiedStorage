@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "unifiedstorage:block/modem_block",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "unifiedstorage:block/modem_block"
+    },
+    "facing=south": {
+      "model": "unifiedstorage:block/modem_block",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "unifiedstorage:block/modem_block",
+      "y": 270
+    }
+  }
+
+}

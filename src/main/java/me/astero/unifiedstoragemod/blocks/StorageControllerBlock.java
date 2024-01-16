@@ -52,9 +52,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
     public static final BooleanProperty
             STATUS = BooleanProperty.create("status");
 
-    public static final EnumProperty<DyeColor>
-            COLOR = EnumProperty.create("color", DyeColor.class);
-
 
     private final String BULLET_POINT = " - ";
 
@@ -259,7 +256,6 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
         builder.add(FACING);
         builder.add(STATUS);
-        builder.add(COLOR);
 
 
     }

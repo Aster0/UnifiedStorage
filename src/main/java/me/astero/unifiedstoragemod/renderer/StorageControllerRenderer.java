@@ -40,16 +40,22 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
                        MultiBufferSource buffer,
                        int packedLight, int packedOverlay) {
 
+        ItemRenderer itemRenderer = context.getItemRenderer();
+        renderVisualItem(itemRenderer, storageControllerEntity, poseStack, buffer, partialTicks);
+
+        
 
 
 
+    }
 
+
+    private void renderVisualItem(ItemRenderer itemRenderer, StorageControllerEntity storageControllerEntity, PoseStack poseStack, MultiBufferSource buffer, float partialTicks) {
         ItemStack renderItem = storageControllerEntity.getVisualItemInventory().getStackInSlot(0);
 
 
         if(!renderItem.equals(ItemStack.EMPTY, false)) {
 
-            ItemRenderer itemRenderer = context.getItemRenderer();
 
             boolean item = !(renderItem.getItem() instanceof BlockItem);
 
@@ -88,9 +94,6 @@ public class StorageControllerRenderer implements BlockEntityRenderer<StorageCon
 
 
         }
-
-
-
     }
 
 
