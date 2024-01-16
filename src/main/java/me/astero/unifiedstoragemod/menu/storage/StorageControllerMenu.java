@@ -746,16 +746,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             return ItemStack.EMPTY;
         }
 
-        if(fromSlot instanceof PlayerSlot) {
-
-
-
-            interactWithMenu(fromStack, false,
-                    fromStack.getCount(), true, fromSlot.getSlotIndex());
-
-            return ItemStack.EMPTY;
-        }
-
 
 
         if(fromStack.getItem() instanceof NetworkItem || fromStack.getItem() instanceof UpgradeCardItem) {
@@ -777,14 +767,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                                 ));
                     }
 
-
-
-
                 }
 
 
+                if(moveItemStackTo(fromStack, 63, 67, false))
 
-                moveItemStackTo(fromStack, 63, 67, false);
+                    return ItemStack.EMPTY;
 
 
             }
@@ -807,6 +795,17 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             if(fromSlot.container instanceof TransientCraftingContainer) {
                 slotsChanged(fromSlot.container);
             }
+        }
+
+        if(fromSlot instanceof PlayerSlot) {
+
+
+            System.out.println(fromStack + " AIRRRR");
+
+            interactWithMenu(fromStack, false,
+                    fromStack.getCount(), true, fromSlot.getSlotIndex());
+
+            return ItemStack.EMPTY;
         }
 
 

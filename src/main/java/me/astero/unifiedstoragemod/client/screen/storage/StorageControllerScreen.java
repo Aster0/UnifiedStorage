@@ -477,43 +477,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             return;
         }
 
-        if(clickType == ClickType.QUICK_MOVE) {
-
-
-
-            ItemStack itemToPutIn = slot.getItem();
-            int modifiedValue = itemToPutIn.getCount();
-
-            if(itemToPutIn.getItem() instanceof UpgradeCardItem) {
-
-
-                int upgradeSlots = menu.getStorageControllerEntity().getUpgradeInventory().getSlots();
-
-                for(int i = 0; i < upgradeSlots; i++) {
-
-                    ItemStack stack = menu.getStorageControllerEntity().getUpgradeInventory().getStackInSlot(i);
-
-                    if(stack.equals(ItemStack.EMPTY, false)) {
-                        super.slotClicked(slot, slotIndex, btn, clickType);
-                        return; // we dont want to put into the storage if we can SHIFT CLICK upgrades into the slots.
-                    }
-
-                }
-            }
-
-
-//
-//            ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
-//                    modifiedValue, true, slot.getSlotIndex()));
-//
-//            menu.interactWithMenu(itemToPutIn, false,
-//                    modifiedValue, true, slot.getSlotIndex());
-
-
-
-
-
-        }
 
 
 
