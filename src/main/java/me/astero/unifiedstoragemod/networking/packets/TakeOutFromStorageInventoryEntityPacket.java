@@ -97,8 +97,10 @@ public class TakeOutFromStorageInventoryEntityPacket implements EntityPacket {
                 if(serverPlayer.containerMenu instanceof StorageControllerMenu menu) {
 
 
+
                     menu.interactWithMenu(packet.itemStack, packet.take,
                             packet.value, packet.quickMove, packet.slotIndex);
+
 
 
 

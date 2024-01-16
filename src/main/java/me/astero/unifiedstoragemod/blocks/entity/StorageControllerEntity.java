@@ -292,9 +292,9 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         }
 
 
-
-        ForgeChunkManager.forceChunk((ServerLevel) blockEntity.getLevel(), ModUtils.MODID, blockEntity.getBlockPos(),
-                0, 0, true, false); // for different dimensions
+//
+//        ForgeChunkManager.forceChunk((ServerLevel) blockEntity.getLevel(), ModUtils.MODID, blockEntity.getBlockPos(),
+//                0, 0, true, false); // for different dimensions
 
 
         System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) blockEntity.getLevel()) + " LOAD");

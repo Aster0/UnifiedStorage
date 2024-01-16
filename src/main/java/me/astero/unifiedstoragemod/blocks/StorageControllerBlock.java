@@ -347,7 +347,7 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
                     sPlayer.openMenu(storageControllerEntity, pos);
-                    return InteractionResult.SUCCESS;
+                    return InteractionResult.CONSUME;
                 }
 
             }

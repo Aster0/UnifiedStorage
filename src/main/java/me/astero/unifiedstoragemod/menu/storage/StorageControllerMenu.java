@@ -906,6 +906,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             if(index == -1) return;
 
+            if(!getCarried().equals(ItemStack.EMPTY, false)) {
+                return;
+            }
+
             ItemIdentifier itemIdentifier = storageControllerEntity.mergedStorageContents.get(
                     index);
 
@@ -1008,7 +1012,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
         else { // place in storage
 
-            updateAllStorages(itemStack, value, false, quickMove, slotIndex);
+            updateAllStorages(getCarried(), value, false, quickMove, slotIndex);
 
         }
     }
