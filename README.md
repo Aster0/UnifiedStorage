@@ -37,7 +37,7 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 
 |                             |                             |
 | ----------------------------------- | ----------------------------------- |
-| ![image](https://i.imgur.com/oYJqyUw.png)  |![image](https://i.imgur.com/bK3oBup.png) |
+| ![image](https://i.imgur.com/OMHacCi.png)  |![image](https://i.imgur.com/bK3oBup.png) |
 
 ![image](https://i.imgur.com/dMUMSkH.png)
 
