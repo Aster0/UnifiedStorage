@@ -31,6 +31,7 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - Wireless - You can use your storage anywhere with a wireless controller!
 - Intensive Search - You can use & combine prefixes to search for specific items (e.g., @modname storage or @modname #ores or just #ores)
 - Smart Insert Algorithm - When inserting blocks into the Storage Network, it looks for pre-existing stacks to populate before using a new item slot.
+- Inter-dimension Support - Easily link storages that are in another dimension (should work with modded dimensions as well)
 - Comes in 16 different dyeable colors
 
 ![image](https://i.imgur.com/FnMAnDp.png)
@@ -45,7 +46,6 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 - Range limiter for chests
 - Exporter/Importer/Placer/Breaker blocks
 - Storage Controller upgrades to hold more chests (currently no limit now)
-- Inter-dimension Storage & other upgrades (Planned in the future) 
 - Energy System? (Planned in the future)
 - Fluid Storage
 - In-game book guide
