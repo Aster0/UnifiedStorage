@@ -7,6 +7,7 @@ import me.astero.unifiedstoragemod.integrations.jei.JEIPlugin;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
+import me.astero.unifiedstoragemod.items.upgrades.IBlockUpdater;
 import me.astero.unifiedstoragemod.menu.CustomResultSlot;
 import me.astero.unifiedstoragemod.menu.Menu;
 import me.astero.unifiedstoragemod.menu.data.*;
@@ -276,8 +277,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     private void createInventory(Inventory pInventory) {
 
+        storageControllerEntity.setDisabled(true);
         createPlayerHotbar(pInventory);
         createPlayerInventory(pInventory);
+
         createBlockEntityInventory();
         createUpgradeSlots();
 
@@ -290,6 +293,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void createBlockEntityInventory() {
 
+        System.out.println(storageControllerEntity.mergedStorageContents.size() + " MERGE SIZE!");
         //drawerGridControllerEntity.getOptional();
         generateStartPage();
 
@@ -316,6 +320,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void regenerateCurrentPage() {
         generateSlots(scrollPage);
+        System.out.println("regen?");
     }
 
     public int previousPage() {
@@ -588,6 +593,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void generateSlots(int page) {
 
 
+        System.out.println("GENERATING");
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
@@ -602,12 +608,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                 if(page == 1 && !finishedAdding) {
-                    addSlot( new ItemVisualSlot(itemIdentifier,
+                    addSlot(new ItemVisualSlot(itemIdentifier,
                             8 + (column * 18), 18 + (row * 18), currentIndex));
 
 
-
-
+                    System.out.println(itemIdentifier.getItemStack() + " ITEM STACK " +
+                            getPlayerInventory().player.level().isClientSide);
 
 
                     if(currentIndex == VISIBLE_CONTENT_HEIGHT - 1)
@@ -615,6 +621,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
 
                 else {
+
+                    System.out.println("yea");
 
                     int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
 
@@ -753,26 +761,33 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
             if(!(fromSlot instanceof UpgradeSlot) && !(fromSlot instanceof NetworkSlot)) {
-                if(fromStack.getItem() instanceof NetworkItem) {
+
+
+                ItemStack beforeMoveFromStack = fromStack.copy();
+
+                if(moveItemStackTo(fromStack, 63, 67, false))  {
+                    if(beforeMoveFromStack.getItem() instanceof NetworkItem) {
 
 
 
-                    if(player.level().isClientSide) {
-                        getStorageControllerEntity().setDisabled(false);
+                        if(player.level().isClientSide) {
+                            getStorageControllerEntity().setDisabled(false);
+                        }
+                        else {
+                            getStorageControllerEntity().updateNetworkCardItems(beforeMoveFromStack,
+                                    getStorageControllerEntity().getLevel().getPlayerByUUID(
+                                            player.getUUID()
+                                    ));
+                        }
+
                     }
-                    else {
-                        getStorageControllerEntity().updateNetworkCardItems(fromStack,
-                                getStorageControllerEntity().getLevel().getPlayerByUUID(
-                                        player.getUUID()
-                                ));
+                    else if(beforeMoveFromStack.getItem() instanceof IBlockUpdater blockUpdater) {
+                        blockUpdater.update(getStorageControllerEntity());
                     }
-
-                }
-
-
-                if(moveItemStackTo(fromStack, 63, 67, false))
 
                     return ItemStack.EMPTY;
+                }
+
 
 
             }
@@ -800,7 +815,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(fromSlot instanceof PlayerSlot) {
 
 
-            System.out.println(fromStack + " AIRRRR");
 
             interactWithMenu(fromStack, false,
                     fromStack.getCount(), true, fromSlot.getSlotIndex());
@@ -912,10 +926,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-            for(ItemIdentifier itemIdentifier : storageControllerEntity.mergedStorageContents) {
-                System.out.println(itemIdentifier.getItemStack());
-            }
-            System.out.println(index + " " + getPlayerInventory().player.level().isClientSide);
+
             if(index == -1) return;
 
             if(!getCarried().equals(ItemStack.EMPTY, false)) {
@@ -1267,7 +1278,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
 
-            System.out.println(itemStack + " TEST");
 
             regenerateCurrentPage();
 

@@ -34,7 +34,7 @@
   "lore.unifiedstorage.crafting_upgrade" : "\n§7\"This upgrade allows you to\n§7unlock the crafting grid\"",
   "lore.unifiedstorage.wireless_upgrade" : "\n§7\"This upgrade allows you to\n§7use the §eStorage Controller §7wirelessly\"",
   "lore.unifiedstorage.blank_upgrade" : "\n§7\"Used to craft upgrade cards\"",
-  "lore.unifiedstorage.blank_upgrade" : "\n§7\"This upgrade allows you to\n§7view storages from other dimensions",
+  "lore.unifiedstorage.dimensional_upgrade" : "\n§7\"This upgrade allows the §eStorage Controller\n§7to view storages from other dimensions\"",
   "lore.unifiedstorage.network_card_item" : "§8Network Card Item",
   "lore.unifiedstorage.upgrade_card_item" : "§8Upgrade Card Item",
   "lore.unifiedstorage.dropped_storage_controller_header" : "§e%header%",

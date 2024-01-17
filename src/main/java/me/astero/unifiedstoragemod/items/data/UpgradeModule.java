@@ -7,6 +7,7 @@ public enum UpgradeModule {
 
     CRAFTING(ItemRegistry.CRAFTING_UPGRADE_CARD.get()),
     WIRELESS(ItemRegistry.WIRELESS_UPGRADE_CARD.get()),
+    DIMENSIONAL(ItemRegistry.DIMENSIONAL_UPGRADE_CARD.get()),
     POWER(null);
 
 

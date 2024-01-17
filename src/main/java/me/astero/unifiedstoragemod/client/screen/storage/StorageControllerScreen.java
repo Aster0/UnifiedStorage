@@ -8,6 +8,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetCo
 import me.astero.unifiedstoragemod.items.data.UpgradeType;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
+import me.astero.unifiedstoragemod.items.upgrades.IBlockUpdater;
 import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.menu.data.ItemVisualSlot;
@@ -19,6 +20,7 @@ import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateCraftingSlotsEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.NetworkCardInsertedEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.TakeOutFromStorageInventoryEntityPacket;
+import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
@@ -445,6 +447,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
                     } // if hand is empty, just taking out the card.
                     else {
+                    
                         menu.getStorageControllerEntity().actionWhenNetworkTakenOut(
                                 menu.getStorageControllerEntity().getLevel().getPlayerByUUID(
                                         Minecraft.getInstance().player.getUUID()));
@@ -472,6 +475,27 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                     return;
             }
 
+            if(slot instanceof UpgradeSlot) {
+
+                IBlockUpdater blockUpdater = null;
+
+                if(slot.getItem().getItem() instanceof IBlockUpdater mBlockUpdater) {
+                    blockUpdater = mBlockUpdater;
+                }
+                else if(menu.getCarried().getItem() instanceof IBlockUpdater mBlockUpdater) {
+                    blockUpdater = mBlockUpdater;
+                }
+
+                if(blockUpdater != null) {
+                    super.slotClicked(slot, slotIndex, btn, clickType);
+                    blockUpdater.update(menu.getStorageControllerEntity());
+
+                    return;
+                }
+
+
+            }
+
 
             super.slotClicked(slot, slotIndex, btn, clickType);
             return;
@@ -492,7 +516,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     @Override
     public boolean mouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
 
-        customScrollWheel.onMouseScrolled(mouseX, mouseY, delta, rawDelta);
+        if(!menu.getStorageControllerEntity().isDisabled())
+            customScrollWheel.onMouseScrolled(mouseX, mouseY, delta, rawDelta);
+
         return super.mouseScrolled(mouseX, mouseY, delta, rawDelta);
     }
 

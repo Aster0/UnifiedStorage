@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
+import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import net.minecraft.client.Minecraft;
@@ -70,8 +71,13 @@ public class NetworkCardInsertedEntityPacket implements EntityPacket {
 
                 if(player.containerMenu instanceof StorageControllerMenu menu) {
 
+                    ItemStack itemStack = menu.getCarried();
+                    if(!(itemStack.getItem() instanceof NetworkItem)) {
 
-                    menu.getStorageControllerEntity().updateNetworkCardItems(menu.getCarried(),
+                        itemStack = menu.getStorageControllerEntity().getNetworkInventory().getStackInSlot(0);
+                    }
+
+                    menu.getStorageControllerEntity().updateNetworkCardItems(itemStack,
                             player);
 
 

@@ -58,6 +58,7 @@ public class UpdateStorageDisabledEntityPacket implements EntityPacket {
 
             if (context.isClientSide()) {
 
+                System.out.println("Disabled? " + packet.disabled);
 
                 BlockEntity blockEntity = Minecraft.getInstance().level.getBlockEntity(packet.blockPos);
 

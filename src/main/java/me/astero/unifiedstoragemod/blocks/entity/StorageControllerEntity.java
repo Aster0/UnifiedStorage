@@ -63,9 +63,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private static final Component MENU_TITLE = Component.translatable("container."
             + ModUtils.MODID + ".storage_controller_menu_title");
 
-    private boolean hasMenuLoaded = false;
-
-    public List<String> chestLocations = new ArrayList<>();;
+    private Queue<Player> menuLoadQueue = new LinkedList<>();
 
     public List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
     private List<SavedStorageData> editedChestLocations = new ArrayList<>();
@@ -78,17 +76,24 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     public StorageControllerMenu menu;
 
-    private boolean craftingEnabled = false;
+    private boolean craftingEnabled = false, dimensionalEnabled = false;
 
 
     public void setCraftingEnabled(boolean craftingEnabled) {
         this.craftingEnabled = craftingEnabled;
     }
 
+    public void setDimensionalEnabled(boolean dimensionalEnabled) {
+        this.dimensionalEnabled = dimensionalEnabled;
+    }
+
     public boolean isCraftingEnabled() {
         return craftingEnabled;
     }
 
+    public boolean isDimensionalEnabled() {
+        return dimensionalEnabled;
+    }
 
     private ItemStackHandler networkInventory =
             new NetworkCardItemStackHandler<>(this);
@@ -166,6 +171,13 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         long time = System.currentTimeMillis();
 
         Level storageLevel = getStorageLevel(chestData);
+
+        if(!isDimensionalEnabled()) {
+            if(!storageLevel.equals(this.getLevel())) { // means we won't load other dimensions chest
+                return null;
+            }
+        }
+
         BlockEntity blockEntity = storageLevel.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
 
         System.out.println("Finished: " + (System.currentTimeMillis() - time) + " " + this.getBlockPos());
@@ -205,6 +217,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
     public ItemIdentifier getMergedStorageContents(int index, List<ItemIdentifier> searchedItemList, boolean useSearch) {
+
 
 
         List<ItemIdentifier> itemIdentifiers = mergedStorageContents;
@@ -270,7 +283,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     public void setLevel(Level p_155231_) {
         super.setLevel(p_155231_);
 
-        System.out.println(getBlockState());
+
     }
 
     private List<SavedStorageData> queueToRemoveChest = new ArrayList<>();
@@ -376,10 +389,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         modNbt.put("upgrade_inventory", this.getUpgradeInventory().serializeNBT());
         modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
 
-        for(int i = 0; i < chestLocations.size(); i++) {
-            modNbt.putString("chest" + i, this.chestLocations.get(i));
 
-        }
 
 
 
@@ -467,6 +477,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     @Override
     public void updateNetworkCardItems(ItemStack itemStack, Player player) {
 
+        System.out.println(itemStack + " STACK!");
         if(itemStack.getItem() instanceof NetworkItem networkItem) {
 
             if(networkItem.getUpgradeType() != UpgradeType.NETWORK)
@@ -479,16 +490,16 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             queueToRemoveChest.clear();
 
 
+            this.setDimensionalEnabled(this.isUpgradeModuleInserted(UpgradeModule.DIMENSIONAL));
+
+            System.out.println(this.isUpgradeModuleInserted(UpgradeModule.DIMENSIONAL) + " DIMENSION ENABLED");
 
             networkItem.loadNbt(itemStack, player);
 
 
             editedChestLocations = new ArrayList<>(networkItem.getStorageLocations());
 
-
-
             updateStorageContents(player, networkItem, itemStack);
-
 
 
 
@@ -497,6 +508,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         if(player.containerMenu instanceof StorageControllerMenu menu) {
             menu.createBlockEntityInventory();
         }
+
+
     }
 
     @Override
@@ -526,18 +539,29 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         getCachedStorages().clear();
 
+
+
+
         for(SavedStorageData customBlockPosData : editedChestLocations) {
 
 
             Level storageLevel = getStorageLevel(customBlockPosData);
 
-            BlockEntity blockEntity = storageLevel.getBlockEntity(customBlockPosData.getCustomBlockPosData().getBlockPos());
+
+            if(!isDimensionalEnabled()) {
+                if(!storageLevel.equals(this.getLevel())) { // means we won't load other dimensions chest
+                    continue;
+                }
+            }
+
+
+            BlockEntity blockEntity = getStorageBlockAt(customBlockPosData);
 
 
             if(blockEntity == null)  { // if the storage block is deleted, it will be null.
 
 
-                System.out.println("added");
+
                 queueToRemoveChest.add(customBlockPosData);
                 continue;
 
@@ -558,9 +582,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             networkItem.saveNbt(itemStack);
 
 
-            chestLocations.remove("x=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getX() + ", y=" +
-                    customBlockPosData.getCustomBlockPosData().getBlockPos().getY()
-                    + ", z=" + customBlockPosData.getCustomBlockPosData().getBlockPos().getZ());
 
             editedChestLocations.remove(customBlockPosData);
 
@@ -570,7 +591,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     }
 
-    private Queue<Player> menuLoadQueue = new LinkedList<>();
+
     public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
 
 
@@ -578,8 +599,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             return;
 
         if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
+
+
             if(storageControllerEntity.menuLoadQueue.size() > 0) {
-                System.out.println("tick " + blockEntity);
+
                 IItemHandler iItemHandler = storageControllerEntity.getNetworkInventory();
 
                 ItemStack itemStack = iItemHandler.getStackInSlot(0);
@@ -600,12 +623,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             }
         }
 
-        // your code here
     }
     public StorageControllerMenu buildMenu(int pControllerId, Inventory pInventory, Player player) {
 
 
-        menuLoadQueue.add(player); // queue to load later, we'll open the menu first.
+        System.out.println("Before load " + mergedStorageContents.size());
+
+        if(!menuLoadQueue.contains(player)) // so the player can't request twice
+            menuLoadQueue.add(player); // queue to load later, we'll open the menu first.
 
         StorageControllerBlockMenu storageControllerMenu = new
                 StorageControllerBlockMenu(pControllerId, pInventory, this);

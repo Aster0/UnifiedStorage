@@ -3,6 +3,7 @@ package me.astero.unifiedstoragemod.registry;
 import me.astero.unifiedstoragemod.data.ItemData;
 import me.astero.unifiedstoragemod.items.*;
 
+import me.astero.unifiedstoragemod.items.upgrades.DimensionalUpgradeCard;
 import me.astero.unifiedstoragemod.items.upgrades.StorageUpgradeCard;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.Item;
@@ -39,7 +40,7 @@ public class ItemRegistry {
 
     public static RegistryObject<Item> DIMENSIONAL_UPGRADE_CARD =
             ObjectRegistry.registerObject("dimensional_upgrade_card", new ItemData<Item>(
-                    () -> new StorageUpgradeCard(new Item.Properties(), "")), true);
+                    () -> new DimensionalUpgradeCard(new Item.Properties())), true);
 
     public static RegistryObject<Item> WIRELESS_UPGRADE_CARD =
             ObjectRegistry.registerObject("wireless_upgrade_card", new ItemData<Item>(
