@@ -48,7 +48,9 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import java.util.function.Supplier;
 
 public class StorageControllerEntity extends BaseBlockEntity implements MenuProvider {
@@ -60,6 +62,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private int maxChests = 100;
     private static final Component MENU_TITLE = Component.translatable("container."
             + ModUtils.MODID + ".storage_controller_menu_title");
+
+    private boolean hasMenuLoaded = false;
 
     public List<String> chestLocations = new ArrayList<>();;
 
@@ -284,24 +288,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
     }
-    private void loadStorageContents(SavedStorageData chestData) {
-
-        long time = System.currentTimeMillis();
-
-
-        Level storageLevel = getStorageLevel(chestData);
-
-        BlockEntity blockEntity = storageLevel.getBlockEntity(chestData.getCustomBlockPosData().getBlockPos());
-        System.out.println("Finished: " + (System.currentTimeMillis() - time) + " " + this.getBlockPos());
-
-        if(blockEntity == null)  { // if the storage block is deleted, it will be null.
-
-
-            queueToRemoveChest.add(chestData);
-
-            return;
-        }
-
+    private void loadStorageContents(BlockEntity blockEntity) {
 
 
 
@@ -314,8 +301,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         IItemHandler chestInventory = blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER)
                 .orElse(new ItemStackHandler(0));
 
-
-        System.out.println(cachedStorages.size());
 
         for(int i = 0; i < chestInventory.getSlots(); i++) {
 
@@ -544,7 +529,21 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         for(SavedStorageData customBlockPosData : editedChestLocations) {
 
 
-            loadStorageContents(customBlockPosData);
+            Level storageLevel = getStorageLevel(customBlockPosData);
+
+            BlockEntity blockEntity = storageLevel.getBlockEntity(customBlockPosData.getCustomBlockPosData().getBlockPos());
+
+
+            if(blockEntity == null)  { // if the storage block is deleted, it will be null.
+
+
+                System.out.println("added");
+                queueToRemoveChest.add(customBlockPosData);
+                continue;
+
+            }
+
+            loadStorageContents(blockEntity);
 
         }
 
@@ -571,28 +570,42 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     }
 
+    private Queue<Player> menuLoadQueue = new LinkedList<>();
+    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
+
+
+        if(level.isClientSide)
+            return;
+
+        if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
+            if(storageControllerEntity.menuLoadQueue.size() > 0) {
+                System.out.println("tick " + blockEntity);
+                IItemHandler iItemHandler = storageControllerEntity.getNetworkInventory();
+
+                ItemStack itemStack = iItemHandler.getStackInSlot(0);
+
+
+                storageControllerEntity.disabled = itemStack.equals(ItemStack.EMPTY, false);
+
+                Player player = storageControllerEntity.menuLoadQueue.remove();
+
+                if(!storageControllerEntity.disabled)
+                    storageControllerEntity.updateNetworkCardItems(itemStack, player);
+
+
+                if(player instanceof ServerPlayer serverPlayer) {
+                    ModNetwork.sendToClient(new UpdateStorageDisabledEntityPacket(storageControllerEntity.disabled,
+                            storageControllerEntity.getBlockPos()), serverPlayer);
+                }
+            }
+        }
+
+        // your code here
+    }
     public StorageControllerMenu buildMenu(int pControllerId, Inventory pInventory, Player player) {
 
 
-        IItemHandler iItemHandler = getNetworkInventory();
-
-        ItemStack itemStack = iItemHandler.getStackInSlot(0);
-
-
-        disabled = itemStack.equals(ItemStack.EMPTY, false);
-
-
-
-        if(!disabled)
-            updateNetworkCardItems(itemStack, player);
-
-
-        if(player instanceof ServerPlayer serverPlayer) {
-
-            ModNetwork.sendToClient(new UpdateStorageDisabledEntityPacket(disabled, this.getBlockPos()), serverPlayer);
-        }
-
-        System.out.println(this.getLevel().dimension() + " BLOCK ENTITY ");
+        menuLoadQueue.add(player); // queue to load later, we'll open the menu first.
 
         StorageControllerBlockMenu storageControllerMenu = new
                 StorageControllerBlockMenu(pControllerId, pInventory, this);
