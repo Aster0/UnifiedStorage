@@ -49,7 +49,7 @@ import java.util.Optional;
 
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
-    public static final int VISIBLE_CONTENT_HEIGHT = 27, STARTING_SLOT_INDEX = 36;
+    public static final int VISIBLE_CONTENT_HEIGHT = 27;
 
 
     private boolean finishedAdding = false;
@@ -62,6 +62,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     private final ContainerLevelAccess containerLevelAccess;
 
     private Inventory pInventory;
+
+    private int storageStackStartSlot = 0;
+
     public final CraftingContainer craftSlots = new TransientCraftingContainer(this, 3, 3) {
         @Override
         public void setChanged() {
@@ -87,6 +90,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     private int craftSlotIndexStart = 0;
 
+    public int getStorageStackStartSlot() {
+        return storageStackStartSlot;
+    }
 
     public StorageControllerMenu(MenuType<?> type, int containerId, Inventory pInventory, BlockEntity blockEntity) {
         super(type, containerId);
@@ -293,7 +299,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void createBlockEntityInventory() {
 
-        System.out.println(storageControllerEntity.mergedStorageContents.size() + " MERGE SIZE!");
         //drawerGridControllerEntity.getOptional();
         generateStartPage();
 
@@ -320,7 +325,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void regenerateCurrentPage() {
         generateSlots(scrollPage);
-        System.out.println("regen?");
+
     }
 
     public int previousPage() {
@@ -593,7 +598,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void generateSlots(int page) {
 
 
-        System.out.println("GENERATING");
+
+        if(storageStackStartSlot == 0)
+            storageStackStartSlot = slots.size();
 
         for (int row = 0; row < 3; row++) {
             for (int column = 0; column < 9; column++) {
@@ -612,8 +619,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                             8 + (column * 18), 18 + (row * 18), currentIndex));
 
 
-                    System.out.println(itemIdentifier.getItemStack() + " ITEM STACK " +
-                            getPlayerInventory().player.level().isClientSide);
 
 
                     if(currentIndex == VISIBLE_CONTENT_HEIGHT - 1)
@@ -622,12 +627,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 else {
 
-                    System.out.println("yea");
 
                     int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
 
 
-                    int slotIndex = STARTING_SLOT_INDEX + currentIndex;
+                    int slotIndex = storageStackStartSlot + currentIndex;
 
 
 
@@ -1058,7 +1062,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             storageControllerEntity.forceChunk(false, entity);
 
-            System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) entity.getLevel()));
 
 
         }

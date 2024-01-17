@@ -111,13 +111,7 @@ public abstract class CustomEditBox extends EditBox implements ICustomWidgetComp
     public void onMouseClick(double mouseX, double mouseY, int mode) {
 
 
-
-        Rect2i scrollbarBounds = new Rect2i(
-                this.getX(), this.getY(), 12, 15);
-
-        if (scrollbarBounds.contains(((int) mouseX), (int) mouseY)) {
-            System.out.println(mode);
-        }
+        
     }
 
     @Override

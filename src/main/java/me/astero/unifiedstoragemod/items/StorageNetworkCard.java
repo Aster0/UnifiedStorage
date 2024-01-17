@@ -37,9 +37,6 @@ public class StorageNetworkCard extends NetworkItem {
     @Override
     public InteractionResultHolder<ItemStack> onItemUse(List<SavedStorageData> savedStorageData, Player player, ItemStack itemStack) {
 
-
-        System.out.println(ForgeChunkManager.hasForcedChunks((ServerLevel) player.level()) + " LOAD");
-
         return null;
     }
 }

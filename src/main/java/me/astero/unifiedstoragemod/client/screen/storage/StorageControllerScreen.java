@@ -526,14 +526,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
 
-
-        int startingIndex = (0 * StorageControllerMenu.VISIBLE_CONTENT_HEIGHT)
-                + StorageControllerMenu.STARTING_SLOT_INDEX;
-
-
-        // 36 (first slot) - 62 (last slot)
-        for(int i = startingIndex; i <
-                startingIndex + StorageControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
+        // e.g., 36 (first slot) - 62 (last slot)
+        for(int i = menu.getStorageStackStartSlot(); i <
+                menu.getStorageStackStartSlot() + StorageControllerMenu.VISIBLE_CONTENT_HEIGHT ; i++) {
 
             try {
 
