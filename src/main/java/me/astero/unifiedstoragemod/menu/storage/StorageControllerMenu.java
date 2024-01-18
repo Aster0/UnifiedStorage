@@ -35,6 +35,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.world.ForgeChunkManager;
@@ -113,7 +114,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         this.pInventory = pInventory;
 
         createInventory(pInventory);
-
 
 
 
@@ -1049,6 +1049,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             updateAllStorages(toPutIntoStorage, value, false, quickMove, slotIndex);
 
         }
+
+
+
+        if(!pInventory.player.level().isClientSide)
+            ModNetwork.sendToAllClient(new MergedStorageLocationEntityPacket(storageControllerEntity.mergedStorageContents,
+                    storageControllerEntity.getBlockPos(), false, pInventory.player.getUUID(), false));
     }
 
 

@@ -1,30 +1,28 @@
 package me.astero.unifiedstoragemod.networking.packets;
 
-import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
 import me.astero.unifiedstoragemod.networking.ClientPacketHandler;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.network.FriendlyByteBuf;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.event.network.CustomPayloadEvent;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class MergedStorageLocationEntityPacket implements EntityPacket {
 
     public List<ItemIdentifier> data;
     public BlockPos blockPos;
 
+    public boolean targetSelf = false, regenerateMenu;
+    public UUID senderUUID;
 
-    public MergedStorageLocationEntityPacket(List<ItemIdentifier> data, BlockPos blockPos) {
+
+    public MergedStorageLocationEntityPacket(List<ItemIdentifier> data, BlockPos blockPos, boolean targetSelf, UUID senderUUID, boolean regenerateMenu) {
         this.data = data;
         this.blockPos = blockPos;
+        this.targetSelf = targetSelf;
+        this.senderUUID = senderUUID;
+        this.regenerateMenu = regenerateMenu;
 
 
 
@@ -55,6 +53,9 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
 
         this.data = list;
         this.blockPos = buffer.readBlockPos();
+        this.targetSelf = buffer.readBoolean();
+        this.senderUUID = buffer.readUUID();
+        this.regenerateMenu = buffer.readBoolean();
 
 
 
@@ -82,6 +83,9 @@ public class MergedStorageLocationEntityPacket implements EntityPacket {
         }
 
         buffer.writeBlockPos(this.blockPos);
+        buffer.writeBoolean(this.targetSelf);
+        buffer.writeUUID(this.senderUUID);
+        buffer.writeBoolean(this.regenerateMenu);
 
     }
 

@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.InteractionHand;
@@ -37,6 +38,8 @@ public abstract class NetworkItem extends BaseItem {
     private NetworkBlockType networkBlockType;
 
     private int maxLinkedLimit;
+
+    private Map<Level, SavedStorageData> firstStoragePerLevel = new HashMap<>();
     public NetworkItem(Properties properties, MutableComponent shiftText,
                        int maxLinkedLimit, NetworkBlockType networkBlockType, UpgradeType upgradeType) {
         super(properties, upgradeType, shiftText);
@@ -72,9 +75,18 @@ public abstract class NetworkItem extends BaseItem {
 
 
 
+
         for(int i = 0; i < storageLocations.size(); i++) {
+
+            ResourceKey<Level> level = null;
+            if(storageLocations.get(i).getLevel() != null) {
+
+                level = storageLocations.get(i).getLevel().dimension();
+            }
+
             innerNbt.putString("storage" + i, storageLocations.get(i)
-                    .getCustomBlockPosData().toString() + "; " + storageLocations.get(i).getLevel().dimension());
+                    .getCustomBlockPosData().toString() + (level == null ? "" : "; " + level));
+
 
 
 
@@ -131,6 +143,7 @@ public abstract class NetworkItem extends BaseItem {
 
 
                         try {
+                            System.out.println(parameters.get(1) + " LEVEL");
                             level = ModUtils.findLevel(parameters.get(1), serverPlayer);
                         }
                         catch(IndexOutOfBoundsException e) { // for old storage cards before inter-dimension update

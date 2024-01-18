@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.math.RoundingMode;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -44,7 +45,7 @@ public class ModUtils {
             return new CustomBlockPosData(x, y, z);
         }
         catch(NumberFormatException e) {
-            throw new NumberFormatException("Check the inputted pos if it's numbers.");
+            throw new NumberFormatException("Check the inputted pos (" + Arrays.asList(value) + ") if it's numbers.");
         }
     }
 

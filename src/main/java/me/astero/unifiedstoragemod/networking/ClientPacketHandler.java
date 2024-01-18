@@ -19,14 +19,32 @@ public class ClientPacketHandler {
         mc.execute(() -> {
             BlockEntity blockEntity = mc.level.getBlockEntity(packet.blockPos);
 
+
+
             if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
+                Player player = mc.player;
+
+
+                if(player.getUUID().equals(packet.senderUUID) && !packet.targetSelf)
+                    return;
+
                 storageControllerEntity.setMergedStorageContents(packet.data);
 
 
-                Player player = mc.player;
+
+
+
 
                 if(player.containerMenu instanceof StorageControllerMenu menu) {
 
+
+
+                    if(!packet.regenerateMenu) {
+
+                        menu.regenerateCurrentPage();
+
+                        return;
+                    }
 
                     menu.createBlockEntityInventory();
                 }

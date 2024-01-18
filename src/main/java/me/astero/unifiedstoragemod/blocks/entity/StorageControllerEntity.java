@@ -1,11 +1,9 @@
 package me.astero.unifiedstoragemod.blocks.entity;
 
-import com.google.common.base.Suppliers;
 import me.astero.unifiedstoragemod.blocks.StorageControllerBlock;
 import me.astero.unifiedstoragemod.blocks.entity.handler.NetworkCardItemStackHandler;
 import me.astero.unifiedstoragemod.blocks.entity.handler.UpgradeCardItemStackHandler;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.items.StorageNetworkCard;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
 import me.astero.unifiedstoragemod.items.data.UpgradeModule;
 import me.astero.unifiedstoragemod.items.data.UpgradeType;
@@ -16,7 +14,6 @@ import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.MergedStorageLocationEntityPacket;
 import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntityPacket;
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
-import me.astero.unifiedstoragemod.items.data.CustomBlockPosData;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
@@ -28,7 +25,6 @@ import net.minecraft.network.protocol.game.ClientGamePacketListener;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.server.level.TicketType;
 import net.minecraft.world.MenuProvider;
 import net.minecraft.world.entity.player.Inventory;
 import net.minecraft.world.entity.player.Player;
@@ -51,7 +47,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.function.Supplier;
+
 
 public class StorageControllerEntity extends BaseBlockEntity implements MenuProvider {
 
@@ -302,6 +298,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
     }
+
     private void loadStorageContents(BlockEntity blockEntity) {
 
 
@@ -429,6 +426,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         return ClientboundBlockEntityDataPacket.create(this);
     }
 
+
+
     @Override
     public CompoundTag getUpdateTag() {
         return saveWithoutMetadata();
@@ -525,7 +524,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         if(player instanceof ServerPlayer serverPlayer) {
 
             ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
-                    this.getBlockPos()), serverPlayer);
+                    this.getBlockPos(), true, player.getUUID(), true), serverPlayer);
 
 
         }
@@ -539,7 +538,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         getCachedStorages().clear();
 
-
+        long time = System.currentTimeMillis();
 
 
         for(SavedStorageData customBlockPosData : editedChestLocations) {
@@ -568,7 +567,11 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
             loadStorageContents(blockEntity);
 
+
         }
+
+
+        AsteroLogger.info("Took " + (System.currentTimeMillis() - time) + "ms to load all chests from the Storage Controller.");
 
         updateMergedStorageClient(player);
 
@@ -587,6 +590,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             AsteroLogger.info("Storage Block detected missing: " + customBlockPosData
                     + " - Removed automatically from data");
         }
+
+
 
     }
 
@@ -624,8 +629,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     }
     public StorageControllerMenu buildMenu(int pControllerId, Inventory pInventory, Player player) {
-
-
 
 
 
