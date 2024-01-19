@@ -101,7 +101,7 @@ public class ModNetwork {
     }
 
     public static void sendToAllClient(Object message) {
-        INSTANCE.send(message, PacketDistributor.ALL.noArg());
+        INSTANCE.send(message, PacketDistributor.TRACKING_CHUNK.noArg());
     }
 
 

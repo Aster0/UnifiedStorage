@@ -116,6 +116,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         createInventory(pInventory);
 
 
+        storageControllerEntity.menu = this;
+
+
 
     }
 
@@ -1021,18 +1024,22 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-            if(!pInventory.player.level().isClientSide()) {
-                ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
-                        storageControllerEntity.getBlockPos(),
-                        value, itemStack, slotIndex, quickMove, true), (ServerPlayer) pInventory.player);
-            }
+//            if(!pInventory.player.level().isClientSide()) {
+//                ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
+//                        storageControllerEntity.getBlockPos(),
+//                        value, itemStack, slotIndex, quickMove, true), (ServerPlayer) pInventory.player);
+//            }
+
 
 
 
 
             // update visual was here last time
 
-            updateStorageContents(itemStack, -value);
+            if(!pInventory.player.level().isClientSide)
+                updateInsertVisual(storageControllerEntity, itemStack, value, false, slotIndex, true);
+
+
 
 
 
@@ -1052,9 +1059,20 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-        if(!pInventory.player.level().isClientSide)
-            ModNetwork.sendToAllClient(new MergedStorageLocationEntityPacket(storageControllerEntity.mergedStorageContents,
-                    storageControllerEntity.getBlockPos(), false, pInventory.player.getUUID(), false));
+        if(!pInventory.player.level().isClientSide) {
+
+
+            pInventory.player.level()
+                    .sendBlockUpdated(storageControllerEntity.getBlockPos(),
+                            storageControllerEntity.getBlockState(), storageControllerEntity.getBlockState(),
+                            Block.UPDATE_CLIENTS);
+
+        }
+
+        storageControllerEntity.setUpdateClients(true);
+
+//            ModNetwork.sendToAllClient(new MergedStorageLocationEntityPacket(storageControllerEntity.mergedStorageContents,
+//                    storageControllerEntity.getBlockPos(), false, pInventory.player.getUUID(), false));
     }
 
 
@@ -1196,9 +1214,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-            ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
-                    storageControllerEntity.getBlockPos(),
-                    remainingStack.getCount(), itemStack, slotIndex, quickMove, false), (ServerPlayer) pInventory.player);
 
             updateInsertVisual(storageControllerEntity, itemStack,
                     remainingStack.getCount(), quickMove, slotIndex, false);
@@ -1244,8 +1259,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     index);
 
 
-
-
             if(take) {
                 int valueToStay = itemIdentifier.getCount() - value;
                 itemIdentifier.setCount(valueToStay);
@@ -1257,43 +1270,47 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             }
 
 
-            int itemCountLeft = itemIdentifier.getCount()
+            int canInsertAmount = itemIdentifier.getCount()
                     + itemStack.getCount() - value;
 
 
 
-            itemIdentifier.setCount(itemCountLeft);
+            itemIdentifier.setCount(canInsertAmount);
 
 
-            checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
+            checkToRemoveInSlotForQuickMove(quickMove, canInsertAmount, slotIndex, value, itemStack);
 
 
             return;
         }
 
 
-        int itemCountLeft = itemStack.getCount() - value;
+        if(!take) {
+            int remainingValue = itemStack.getCount() - value;
 
 
-        if(itemCountLeft != 0) {
+            if(remainingValue != 0) {
 
 
-            ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack.copy(),
-                    itemCountLeft);
+                ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack.copy(),
+                        remainingValue);
 
-            d.mergedStorageContents.add(itemIdentifier);
-
-
-
-            checkToRemoveInSlotForQuickMove(quickMove, itemCountLeft, slotIndex, value, itemStack);
-
-
-            regenerateCurrentPage();
+                d.mergedStorageContents.add(itemIdentifier);
 
 
 
+                checkToRemoveInSlotForQuickMove(quickMove, remainingValue, slotIndex, value, itemStack);
 
+
+                regenerateCurrentPage();
+
+
+
+
+            }
         }
+
+
 
 
 
@@ -1417,10 +1434,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     if(!pInventory.player.level().isClientSide()) {
                         itemIdentifier.setCount(itemIdentifier.getCount() - value);
 
-
-                        ModNetwork.sendToClient(new UpdateStorageInventoryClientEntityPacket(
-                                storageControllerEntity.getBlockPos(),
-                                value, itemStack, 0, false, true), (ServerPlayer) pInventory.player);
 
 
                     }

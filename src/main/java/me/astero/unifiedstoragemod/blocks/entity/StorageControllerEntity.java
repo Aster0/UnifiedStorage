@@ -16,9 +16,12 @@ import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntit
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.ClientGamePacketListener;
@@ -72,7 +75,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     public StorageControllerMenu menu;
 
-    private boolean craftingEnabled = false, dimensionalEnabled = false;
+    private boolean craftingEnabled = false, dimensionalEnabled = false, updateClients = false;
 
 
     public void setCraftingEnabled(boolean craftingEnabled) {
@@ -150,6 +153,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     public List<SavedStorageData> getEditedChestLocations() {
         return editedChestLocations;
+    }
+
+    public void setUpdateClients(boolean updateClients) {
+        this.updateClients = updateClients;
+    }
+
+    public boolean isUpdateClients() {
+        return updateClients;
     }
 
 
@@ -249,24 +260,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-    @Override
-    public void load(CompoundTag nbt) {
-        super.load(nbt);
 
-
-        CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
-
-
-        this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
-        this.getVisualItemInventory().deserializeNBT(modNbt.getCompound("visual_item"));
-        this.getUpgradeInventory().deserializeNBT(modNbt.getCompound("upgrade_inventory"));
-        this.getCraftingInventory().deserializeNBT(modNbt.getCompound("crafting_inventory"));
-
-
-        //loadEditedChests(modNbt);
-
-
-    }
 
 
     private Level getStorageLevel(SavedStorageData chestData) {
@@ -386,16 +380,88 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         modNbt.put("visual_item", this.getVisualItemInventory().serializeNBT());
         modNbt.put("upgrade_inventory", this.getUpgradeInventory().serializeNBT());
         modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
+        System.out.println("not empty savedsadad");
 
 
+        if(isUpdateClients()) {
 
+
+            System.out.println("Sending");
+            setUpdateClients(false);
+
+            ListTag nbtTagList = new ListTag();
+            for(int i = 0; i < mergedStorageContents.size(); i++) {
+                ItemIdentifier itemIdentifier = mergedStorageContents.get(i);
+
+
+                CompoundTag itemTag = new CompoundTag();
+                itemTag.putInt("count", itemIdentifier.getCount());
+
+                itemIdentifier.getItemStack().save(itemTag);
+
+
+                nbtTagList.add(itemTag);
+
+            }
+
+
+            modNbt.put("storage_items", nbtTagList);
+
+        }
 
 
         nbt.put(ModUtils.MODID, modNbt);
     }
 
 
+    @Override
+    public void load(CompoundTag nbt) {
+        super.load(nbt);
 
+
+        CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
+
+        System.out.println(modNbt.getCompound("network_card") + " NETWORK CARD!");
+
+        this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
+        this.getVisualItemInventory().deserializeNBT(modNbt.getCompound("visual_item"));
+        this.getUpgradeInventory().deserializeNBT(modNbt.getCompound("upgrade_inventory"));
+        this.getCraftingInventory().deserializeNBT(modNbt.getCompound("crafting_inventory"));
+
+
+        ListTag tagList = modNbt.getList("storage_items", Tag.TAG_COMPOUND);
+
+        if(tagList.size() > 0) {
+            System.out.println(tagList);
+            List<ItemIdentifier> newItemIdentifier = new ArrayList<>();
+
+
+            for(int i = 0; i < tagList.size(); i++) {
+                CompoundTag tag = tagList.getCompound(i);
+                int count = tag.getInt("count");
+                System.out.println(count + " COunt");
+
+                ItemStack itemStack = ItemStack.of(tag);
+
+                newItemIdentifier.add(new ItemIdentifier(itemStack, count));
+            }
+            System.out.println("update");
+
+
+
+            //modNbt.put("storage_items", tagList);
+
+            mergedStorageContents = newItemIdentifier;
+
+            if(menu != null)
+                menu.regenerateCurrentPage();
+        }
+
+
+        //loadEditedChests(modNbt);
+
+
+    }
 
 
 
