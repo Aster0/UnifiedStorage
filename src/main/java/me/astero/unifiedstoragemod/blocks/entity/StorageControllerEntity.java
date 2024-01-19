@@ -129,6 +129,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         if(level != null && this.getBlockState().getValue(StorageControllerBlock.STATUS) != isNetworkInSlot) {
 
 
+
+
             if(!level.isClientSide) {
                 level.setBlockAndUpdate(this.getBlockPos(), this.getBlockState().setValue(StorageControllerBlock.STATUS,
                         isNetworkInSlot));
@@ -381,12 +383,9 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         modNbt.put("visual_item", this.getVisualItemInventory().serializeNBT());
         modNbt.put("upgrade_inventory", this.getUpgradeInventory().serializeNBT());
         modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
-        System.out.println("not empty savedsadad");
 
 
         if(isUpdateClients()) {
-
-
 
             setUpdateClients(false);
 
@@ -411,12 +410,21 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
-        System.out.println(modNbt.getCompound("network_card") + " NETWORK CARD!");
 
         this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
         this.getVisualItemInventory().deserializeNBT(modNbt.getCompound("visual_item"));
         this.getUpgradeInventory().deserializeNBT(modNbt.getCompound("upgrade_inventory"));
         this.getCraftingInventory().deserializeNBT(modNbt.getCompound("crafting_inventory"));
+
+
+        if(this.getNetworkInventory() != null) {
+                setDisabled(this.getNetworkInventory().getStackInSlot(0).equals(ItemStack.EMPTY, false));
+                
+                if(this.menu != null)
+                    menu.regenerateCurrentPage();
+
+
+        }
 
         List<ItemIdentifier> queuedStorageList = deserializeInventory(modNbt.getList("queued_items",
                 Tag.TAG_COMPOUND), false);
