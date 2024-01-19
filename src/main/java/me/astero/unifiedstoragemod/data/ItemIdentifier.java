@@ -1,5 +1,6 @@
 package me.astero.unifiedstoragemod.data;
 
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.fluids.FluidStack;
 
@@ -104,4 +105,6 @@ public class ItemIdentifier {
 
         this.fluidStack = fluidStack;
     }
+
+
 }

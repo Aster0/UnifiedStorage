@@ -5,6 +5,7 @@ import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomScrollWheel;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.CustomSearchField;
 import me.astero.unifiedstoragemod.client.screen.widgets.generic.ICustomWidgetComponent;
+import me.astero.unifiedstoragemod.data.ItemIdentifier;
 import me.astero.unifiedstoragemod.items.data.UpgradeType;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
@@ -42,6 +43,7 @@ import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import org.jetbrains.annotations.NotNull;
+import org.lwjgl.glfw.GLFW;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -256,6 +258,27 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
         return super.mouseDragged(mouseX, mouseY, button, dragX, dragY);
+    }
+
+    @Override
+    public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
+
+        System.out.println("released");
+
+        if(keyCode == GLFW.GLFW_KEY_LEFT_SHIFT || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT) {
+            System.out.println("SHIFT RELEASE");
+
+            for(ItemIdentifier itemIdentifier : menu.getStorageControllerEntity().queueToRemoveItems) {
+                menu.getStorageControllerEntity().mergedStorageContents.remove(itemIdentifier);
+
+
+            }
+
+            menu.getStorageControllerEntity().queueToRemoveItems.clear();
+            menu.regenerateCurrentPage();
+        }
+
+        return super.keyReleased(keyCode, scanCode, modifiers);
     }
 
     @Override

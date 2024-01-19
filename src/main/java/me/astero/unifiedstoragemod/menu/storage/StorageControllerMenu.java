@@ -1035,9 +1035,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
             // update visual was here last time
+            System.out.println(quickMove + " QUICK MOVE!");
 
             if(!pInventory.player.level().isClientSide)
-                updateInsertVisual(storageControllerEntity, itemStack, value, false, slotIndex, true);
+                updateInsertVisual(storageControllerEntity, itemStack, value, quickMove, slotIndex, true);
 
 
 
@@ -1244,24 +1245,36 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     }
 
-    public void updateInsertVisual(StorageControllerEntity d, ItemStack itemStack, int value, boolean quickMove,
+    public void updateInsertVisual(StorageControllerEntity controller, ItemStack itemStack, int value, boolean quickMove,
                                    int slotIndex, boolean take) {
 
 
-        int index = d.mergedStorageContents
+        int index = controller.mergedStorageContents
                 .indexOf(new ItemIdentifier(itemStack, 1));
 
 
 
         if(index != -1) {
 
-            ItemIdentifier itemIdentifier = d.mergedStorageContents.get(
+            ItemIdentifier itemIdentifier = controller.mergedStorageContents.get(
                     index);
 
 
             if(take) {
                 int valueToStay = itemIdentifier.getCount() - value;
                 itemIdentifier.setCount(valueToStay);
+
+                if(valueToStay <= 0) {
+
+
+                    if(quickMove) {
+                        controller.queueToRemoveItems.add(itemIdentifier);
+                    }
+                }
+
+
+
+
 
 
                 regenerateCurrentPage();
@@ -1295,7 +1308,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 ItemIdentifier itemIdentifier = new ItemIdentifier(itemStack.copy(),
                         remainingValue);
 
-                d.mergedStorageContents.add(itemIdentifier);
+                controller.mergedStorageContents.add(itemIdentifier);
 
 
 

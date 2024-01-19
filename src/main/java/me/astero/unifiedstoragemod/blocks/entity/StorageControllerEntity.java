@@ -65,6 +65,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private Queue<Player> menuLoadQueue = new LinkedList<>();
 
     public List<ItemIdentifier> mergedStorageContents = new ArrayList<>();
+    public List<ItemIdentifier> queueToRemoveItems = new ArrayList<>();
     private List<SavedStorageData> editedChestLocations = new ArrayList<>();
 
     private final List<BlockEntity> cachedStorages = new ArrayList<>();
@@ -386,27 +387,16 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         if(isUpdateClients()) {
 
 
-            System.out.println("Sending");
+
             setUpdateClients(false);
 
-            ListTag nbtTagList = new ListTag();
-            for(int i = 0; i < mergedStorageContents.size(); i++) {
-                ItemIdentifier itemIdentifier = mergedStorageContents.get(i);
 
 
-                CompoundTag itemTag = new CompoundTag();
-                itemTag.putInt("count", itemIdentifier.getCount());
-
-                itemIdentifier.getItemStack().save(itemTag);
+            modNbt.put("storage_items", serializeInventory(this.mergedStorageContents));
 
 
-                nbtTagList.add(itemTag);
-
-            }
-
-
-            modNbt.put("storage_items", nbtTagList);
-
+            modNbt.put("queued_items", serializeInventory(queueToRemoveItems));
+            this.queueToRemoveItems.clear();
         }
 
 
@@ -428,39 +418,80 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         this.getUpgradeInventory().deserializeNBT(modNbt.getCompound("upgrade_inventory"));
         this.getCraftingInventory().deserializeNBT(modNbt.getCompound("crafting_inventory"));
 
+        List<ItemIdentifier> queuedStorageList = deserializeInventory(modNbt.getList("queued_items",
+                Tag.TAG_COMPOUND), false);
 
-        ListTag tagList = modNbt.getList("storage_items", Tag.TAG_COMPOUND);
+        if(queuedStorageList != null) {
+            this.queueToRemoveItems = queuedStorageList;
+        }
 
-        if(tagList.size() > 0) {
-            System.out.println(tagList);
-            List<ItemIdentifier> newItemIdentifier = new ArrayList<>();
+        List<ItemIdentifier> newStorageList = deserializeInventory(modNbt.getList("storage_items",
+                Tag.TAG_COMPOUND), true);
 
-
-            for(int i = 0; i < tagList.size(); i++) {
-                CompoundTag tag = tagList.getCompound(i);
-                int count = tag.getInt("count");
-                System.out.println(count + " COunt");
-
-                ItemStack itemStack = ItemStack.of(tag);
-
-                newItemIdentifier.add(new ItemIdentifier(itemStack, count));
-            }
-            System.out.println("update");
-
-
-
-            //modNbt.put("storage_items", tagList);
-
-            mergedStorageContents = newItemIdentifier;
+        if(newStorageList != null) {
+            this.mergedStorageContents = newStorageList;
 
             if(menu != null)
                 menu.regenerateCurrentPage();
         }
 
 
+
+
         //loadEditedChests(modNbt);
 
 
+    }
+
+    private List<ItemIdentifier> deserializeInventory(ListTag listTag, boolean removeZeroCounts) {
+
+        List<ItemIdentifier> newItemIdentifier = null;
+
+        if(listTag.size() > 0) {
+
+            newItemIdentifier = new ArrayList<>();
+
+
+            for(int i = 0; i < listTag.size(); i++) {
+                CompoundTag tag = listTag.getCompound(i);
+                int count = tag.getInt("count");
+
+                if(queueToRemoveItems.isEmpty() && count <= 0 && removeZeroCounts)
+                    continue;
+
+                ItemStack itemStack = ItemStack.of(tag);
+
+                newItemIdentifier.add(new ItemIdentifier(itemStack, count));
+            }
+
+
+            //modNbt.put("storage_items", tagList);
+
+
+        }
+
+        return newItemIdentifier;
+    }
+
+    private ListTag serializeInventory(List<ItemIdentifier> list) {
+
+        ListTag nbtTagList = new ListTag();
+        for(int i = 0; i < list.size(); i++) {
+            ItemIdentifier itemIdentifier = list.get(i);
+
+
+            CompoundTag itemTag = new CompoundTag();
+            itemTag.putInt("count", itemIdentifier.getCount());
+
+            itemIdentifier.getItemStack().save(itemTag);
+
+
+            nbtTagList.add(itemTag);
+
+        }
+
+
+        return nbtTagList;
     }
 
 
