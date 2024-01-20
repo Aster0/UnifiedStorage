@@ -143,7 +143,7 @@ public abstract class NetworkItem extends BaseItem {
 
 
                         try {
-                            System.out.println(parameters.get(1) + " LEVEL");
+
                             level = ModUtils.findLevel(parameters.get(1), serverPlayer);
                         }
                         catch(IndexOutOfBoundsException e) { // for old storage cards before inter-dimension update

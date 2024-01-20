@@ -16,7 +16,6 @@ import me.astero.unifiedstoragemod.networking.packets.UpdateStorageDisabledEntit
 import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
@@ -46,10 +45,7 @@ import net.minecraftforge.items.ItemStackHandler;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 
 public class StorageControllerEntity extends BaseBlockEntity implements MenuProvider {
@@ -76,7 +72,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     public StorageControllerMenu menu;
 
-    private boolean craftingEnabled = false, dimensionalEnabled = false, updateClients = false;
+    private boolean craftingEnabled = false, dimensionalEnabled = false, updateClientsOnStorageChange = false;
 
 
     public void setCraftingEnabled(boolean craftingEnabled) {
@@ -158,12 +154,12 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         return editedChestLocations;
     }
 
-    public void setUpdateClients(boolean updateClients) {
-        this.updateClients = updateClients;
+    public void setUpdateClientsOnStorageChange(boolean updateClientsOnStorageChange) {
+        this.updateClientsOnStorageChange = updateClientsOnStorageChange;
     }
 
-    public boolean isUpdateClients() {
-        return updateClients;
+    public boolean isUpdateClientsOnStorageChange() {
+        return updateClientsOnStorageChange;
     }
 
 
@@ -385,9 +381,10 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
 
 
-        if(isUpdateClients()) {
+        boolean updateStorage = isUpdateClientsOnStorageChange();
+        if(isUpdateClientsOnStorageChange()) {
 
-            setUpdateClients(false);
+            setUpdateClientsOnStorageChange(false);
 
 
 
@@ -397,6 +394,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             modNbt.put("queued_items", serializeInventory(queueToRemoveItems));
             this.queueToRemoveItems.clear();
         }
+
+        modNbt.putBoolean("update_storage", updateStorage);
 
 
         nbt.put(ModUtils.MODID, modNbt);
@@ -410,6 +409,29 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
+        if(modNbt.getBoolean("update_storage")) {
+
+
+            List<ItemIdentifier> queuedStorageList = deserializeInventory(modNbt.getList("queued_items",
+                    Tag.TAG_COMPOUND), false);
+
+            if(queuedStorageList != null) {
+                this.queueToRemoveItems = queuedStorageList;
+            }
+
+            List<ItemIdentifier> newStorageList = deserializeInventory(modNbt.getList("storage_items",
+                    Tag.TAG_COMPOUND), true);
+
+            if(newStorageList != null) {
+                this.mergedStorageContents = newStorageList;
+
+                if(menu != null)
+                    menu.regenerateCurrentPage();
+            }
+
+            return;
+        }
+
 
         this.getNetworkInventory().deserializeNBT(modNbt.getCompound("network_card"));
         this.getVisualItemInventory().deserializeNBT(modNbt.getCompound("visual_item"));
@@ -419,29 +441,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         if(this.getNetworkInventory() != null) {
                 setDisabled(this.getNetworkInventory().getStackInSlot(0).equals(ItemStack.EMPTY, false));
-                
+
                 if(this.menu != null)
                     menu.regenerateCurrentPage();
 
 
         }
 
-        List<ItemIdentifier> queuedStorageList = deserializeInventory(modNbt.getList("queued_items",
-                Tag.TAG_COMPOUND), false);
 
-        if(queuedStorageList != null) {
-            this.queueToRemoveItems = queuedStorageList;
-        }
-
-        List<ItemIdentifier> newStorageList = deserializeInventory(modNbt.getList("storage_items",
-                Tag.TAG_COMPOUND), true);
-
-        if(newStorageList != null) {
-            this.mergedStorageContents = newStorageList;
-
-            if(menu != null)
-                menu.regenerateCurrentPage();
-        }
 
 
 
@@ -469,7 +476,21 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
                 ItemStack itemStack = ItemStack.of(tag);
 
-                newItemIdentifier.add(new ItemIdentifier(itemStack, count));
+                Map<String, Integer> locationMap = new HashMap<>();
+
+                for(String location : tag.getString("locations").split(", ")) {
+
+                    int amount = tag.getInt("location_" + location);
+
+                    locationMap.putIfAbsent(location, amount);
+
+
+                }
+
+
+
+
+                newItemIdentifier.add(new ItemIdentifier(itemStack, count, locationMap));
             }
 
 
@@ -490,6 +511,28 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
             CompoundTag itemTag = new CompoundTag();
             itemTag.putInt("count", itemIdentifier.getCount());
+
+
+            if(itemIdentifier.getLocations() != null) {
+                String locations = "";
+
+                for(String location : itemIdentifier.getLocations().keySet()) {
+
+                    locations += location + ", ";
+
+                    itemTag.putInt("location_" + location, itemIdentifier.getLocations().get(location));
+                }
+
+                if(locations.length() > 0) {
+                    locations.substring(0, locations.length() - 1); // remove ,
+                }
+
+                itemTag.putString("locations", locations);
+
+            }
+
+
+
 
             itemIdentifier.getItemStack().save(itemTag);
 

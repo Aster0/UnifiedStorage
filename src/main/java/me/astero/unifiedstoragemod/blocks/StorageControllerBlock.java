@@ -113,21 +113,23 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
 
                 if(item.startsWith("NET")) {
+
                     addLore(components, item, Component.translatable("lore." + ModUtils.MODID
                             + ".dropped_storage_controller_header").getString()
                             .replace("%header%", "§eInserted Network: "));
                 }
                 else if(item.startsWith("VISUAL")) {
+
                     addLore(components, item, Component.translatable("lore." + ModUtils.MODID
                                     + ".dropped_storage_controller_header").getString()
                             .replace("%header%", "§eInserted Visual Item: "));
                 }
                 else {
-                    if(i == 2) { // start of upgrade
+                    if(item.startsWith("UPGRADE")) { // start of upgrade
                         components.add(Component.literal("§eInserted Upgrades: "));
                     }
 
-                    components.add(Component.literal(BULLET_POINT + item));
+                    components.add(Component.literal(BULLET_POINT + item.replace("UPGRADE::", "")));
 
                 }
 
@@ -191,17 +193,28 @@ public class StorageControllerBlock extends BaseBlock implements EntityBlock {
 
                 boolean hasUpgrades = false;
 
+                String upgrades = "";
+
                 for(int i = 0; i < StorageControllerEntity.MAX_UPGRADES; i++) {
 
                     if(!upgradeItems.getStackInSlot(i).equals(ItemStack.EMPTY, false)) {
-                        hasUpgrades = true;
 
-                        storedItems += ModUtils.capitalizeName(upgradeItems.getStackInSlot(i).getHoverName().getString()) + ";";
+                        if(!hasUpgrades) {
+                            hasUpgrades = true;
+
+                            storedItems += "UPGRADE::";
+                        }
+
+
+                        upgrades += ModUtils.capitalizeName(upgradeItems.getStackInSlot(i).getHoverName().getString()) + ";";
                     }
                 }
 
+                storedItems += upgrades;
+
                 if(storedItems.length() > 1) {
                     storedItems = storedItems.substring(0, storedItems.length() - 1);
+
                     tag.putString("storage_items", storedItems);
 
                 }

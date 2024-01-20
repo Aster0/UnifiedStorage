@@ -45,7 +45,6 @@ public class ItemVisualSlot extends Slot {
 
         List<Component> components = new ArrayList<>();
 
-        components.add(Component.literal(" "));
 
         for(String key : itemIdentifier.getLocations().keySet()) {
 

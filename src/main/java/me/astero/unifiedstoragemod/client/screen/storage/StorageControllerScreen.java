@@ -263,10 +263,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     @Override
     public boolean keyReleased(int keyCode, int scanCode, int modifiers) {
 
-        System.out.println("released");
+
 
         if(keyCode == GLFW.GLFW_KEY_LEFT_SHIFT || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT) {
-            System.out.println("SHIFT RELEASE");
+
 
             for(ItemIdentifier itemIdentifier : menu.getStorageControllerEntity().queueToRemoveItems) {
                 menu.getStorageControllerEntity().mergedStorageContents.remove(itemIdentifier);

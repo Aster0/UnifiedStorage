@@ -91,7 +91,7 @@ public class UpdateStorageInventoryClientEntityPacket implements EntityPacket {
 
 
 
-                        menu.updateInsertVisual(d, packet.itemStack,
+                        menu.updateStorageNetwork(d, packet.itemStack,
                                 packet.amount, packet.quickMove, packet.slotIndex, packet.take);
 
                     }

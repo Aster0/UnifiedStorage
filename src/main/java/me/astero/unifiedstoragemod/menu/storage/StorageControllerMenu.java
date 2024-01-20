@@ -3,7 +3,6 @@ package me.astero.unifiedstoragemod.menu.storage;
 import me.astero.unifiedstoragemod.blocks.entity.StorageControllerEntity;
 import me.astero.unifiedstoragemod.client.screen.widgets.*;
 import me.astero.unifiedstoragemod.data.ItemIdentifier;
-import me.astero.unifiedstoragemod.integrations.jei.JEIPlugin;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.data.SavedStorageData;
@@ -14,13 +13,10 @@ import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.interfaces.IMenuInteractor;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.*;
-import me.astero.unifiedstoragemod.registry.BlockRegistry;
 import me.astero.unifiedstoragemod.registry.ItemRegistry;
 import me.astero.unifiedstoragemod.utils.ModUtils;
-import mezz.jei.api.JeiPlugin;
 import mezz.jei.api.gui.ingredient.IRecipeSlotsView;
 import net.minecraft.network.chat.Component;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.Container;
@@ -30,7 +26,6 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
@@ -38,13 +33,10 @@ import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
-import net.minecraftforge.common.world.ForgeChunkManager;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
-import net.minecraftforge.items.SlotItemHandler;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -1035,10 +1027,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
             // update visual was here last time
-            System.out.println(quickMove + " QUICK MOVE!");
+
 
             if(!pInventory.player.level().isClientSide)
-                updateInsertVisual(storageControllerEntity, itemStack, value, quickMove, slotIndex, true);
+                updateStorageNetwork(storageControllerEntity, itemStack, value, quickMove, slotIndex, true);
 
 
 
@@ -1070,7 +1062,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         }
 
-        storageControllerEntity.setUpdateClients(true);
+        storageControllerEntity.setUpdateClientsOnStorageChange(true);
 
 //            ModNetwork.sendToAllClient(new MergedStorageLocationEntityPacket(storageControllerEntity.mergedStorageContents,
 //                    storageControllerEntity.getBlockPos(), false, pInventory.player.getUUID(), false));
@@ -1089,6 +1081,22 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
+        }
+
+    }
+
+    private void updateLocationAmount(String storageName, ItemStack itemStack, int value) {
+
+        int index = storageControllerEntity.mergedStorageContents
+                .indexOf(new ItemIdentifier(itemStack, 1));
+
+
+        if(index != -1) { // found
+
+            ItemIdentifier itemIdentifier = storageControllerEntity.mergedStorageContents.get(index);
+            int valueBefore = itemIdentifier.getLocations().get(storageName);
+
+            itemIdentifier.getLocations().put(storageName, valueBefore + value);
         }
 
     }
@@ -1125,7 +1133,17 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                         ItemStack stackInSlot = chestInventory.getStackInSlot(i);
                         if(ItemStack.isSameItem(stackInSlot, itemStack)) {
 
+                            if(stackInSlot.getCount() >= stackInSlot.getMaxStackSize()) // means we can't insert, so just skip.
+                                continue;
+
+                            int previousRemainingStackCount = remainingStack.getCount();
+
                             remainingStack = chestInventory.insertItem(i, remainingStack, false);
+
+
+                            updateLocationAmount(ModUtils.capitalizeName(
+                                            storageBlockEntity.getBlockState().getBlock().asItem().toString()),
+                                    itemStack, previousRemainingStackCount - remainingStack.getCount());
 
 
                         }
@@ -1144,9 +1162,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                         // if not we put into empty slots
 
-
+                        int previousRemainingStackCount = remainingStack.getCount();
                         remainingStack = chestInventory.insertItem(i, remainingStack, false);
 
+                        updateLocationAmount(ModUtils.capitalizeName(
+                                        storageBlockEntity.getBlockState().getBlock().asItem().toString()),
+                                itemStack, previousRemainingStackCount - remainingStack.getCount());
 
                         if(remainingStack.equals(ItemStack.EMPTY, false)) break;
 
@@ -1174,6 +1195,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                             valueTakenOut  += extracted.getCount();
 
+
+                            updateLocationAmount(ModUtils.capitalizeName(
+                                    storageBlockEntity.getBlockState().getBlock().asItem().toString()),
+                                    itemStack, -extracted.getCount());
+
                             if(valueLeft == 0) break;
                         }
 
@@ -1185,7 +1211,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
 
 
+
+
             }
+
 
 
             if(valueLeft == 0) break;
@@ -1216,7 +1245,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-            updateInsertVisual(storageControllerEntity, itemStack,
+            updateStorageNetwork(storageControllerEntity, itemStack,
                     remainingStack.getCount(), quickMove, slotIndex, false);
 
 
@@ -1245,8 +1274,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     }
 
-    public void updateInsertVisual(StorageControllerEntity controller, ItemStack itemStack, int value, boolean quickMove,
-                                   int slotIndex, boolean take) {
+    public void updateStorageNetwork(StorageControllerEntity controller, ItemStack itemStack, int value, boolean quickMove,
+                                     int slotIndex, boolean take) {
 
 
         int index = controller.mergedStorageContents
