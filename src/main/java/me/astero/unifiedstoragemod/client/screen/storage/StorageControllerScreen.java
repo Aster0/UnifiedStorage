@@ -269,7 +269,18 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
             for(ItemIdentifier itemIdentifier : menu.getStorageControllerEntity().queueToRemoveItems) {
-                menu.getStorageControllerEntity().mergedStorageContents.remove(itemIdentifier);
+
+                int index = menu.getStorageControllerEntity().mergedStorageContents.indexOf(itemIdentifier);
+
+                if(index != -1) {
+
+                    ItemIdentifier existingItem = menu.getStorageControllerEntity().getMergedStorageContents(index);
+
+                    if(existingItem.getCount() <= 0)
+                        menu.getStorageControllerEntity().mergedStorageContents.remove(itemIdentifier);
+                }
+
+
 
 
             }
@@ -410,11 +421,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 }
 
 
-
                 ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemStack, true,
                         modifiedValue, quickMove));
 
-                menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
+                //menu.interactWithMenu(itemStack, true, modifiedValue, quickMove, 0);
 
 
 
@@ -435,8 +445,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 ModNetwork.sendToServer(new TakeOutFromStorageInventoryEntityPacket(itemToPutIn, false,
                         modifiedValue, false));
 
-                menu.interactWithMenu(itemToPutIn, false,
-                        modifiedValue, false, 0);
+
+                System.out.println("in");
+//                menu.interactWithMenu(itemToPutIn, false,
+//                        modifiedValue, false, 0);
 
 
 

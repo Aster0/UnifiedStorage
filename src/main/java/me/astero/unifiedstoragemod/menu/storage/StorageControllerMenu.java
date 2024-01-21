@@ -36,9 +36,7 @@ import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
@@ -925,12 +923,12 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-
             if(index == -1) return;
 
             if(!getCarried().equals(ItemStack.EMPTY, false)) {
                 return;
             }
+
 
             ItemIdentifier itemIdentifier = storageControllerEntity.mergedStorageContents.get(
                     index);
@@ -1094,14 +1092,33 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(index != -1) { // found
 
             ItemIdentifier itemIdentifier = storageControllerEntity.mergedStorageContents.get(index);
-            int valueBefore = itemIdentifier.getLocations().get(storageName);
 
-            itemIdentifier.getLocations().put(storageName, valueBefore + value);
+            int valueBefore = itemIdentifier.getLocations().get(storageName) == null ? 0 :
+                    Math.max(itemIdentifier.getLocations().get(storageName), 0);
+
+
+
+            if(value != 0)
+                itemIdentifier.getLocations().put(storageName, valueBefore + value);
+
+            return;
+
+
         }
+
+
+        if(value != 0) {
+            Map<String, Integer> locations = new HashMap<>();
+            locations.put(storageName, value);
+            storageControllerEntity.mergedStorageContents.add(new ItemIdentifier(itemStack.copy(), 0, locations));
+        }
+
+
 
     }
 
     public int updateAllStorages(ItemStack itemStack, int value, boolean take, boolean quickMove, int slotIndex) {
+
 
 
         int valueTakenOut = 0;
@@ -1112,7 +1129,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         int valueLeft = value;
         remainingStack.setCount(value);
-
 
 
 
@@ -1132,6 +1148,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                         // we find slots that have this item stack first to put in
                         ItemStack stackInSlot = chestInventory.getStackInSlot(i);
                         if(ItemStack.isSameItem(stackInSlot, itemStack)) {
+
 
                             if(stackInSlot.getCount() >= stackInSlot.getMaxStackSize()) // means we can't insert, so just skip.
                                 continue;
@@ -1238,6 +1255,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             if(!quickMove) {
 
+
                 setCarried(remainingStack);
 
             }
@@ -1258,6 +1276,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
             if(!quickMove) {
+
                 setCarried(remainingStack); // we take whatever that was clicked in the slot
 
             }

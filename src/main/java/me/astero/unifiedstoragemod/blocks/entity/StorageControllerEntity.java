@@ -295,8 +295,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     private void loadStorageContents(BlockEntity blockEntity) {
 
 
-
-
         forceChunk(true, blockEntity);
 
 
@@ -309,8 +307,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
         for(int i = 0; i < chestInventory.getSlots(); i++) {
 
             ItemStack chestItemStack = chestInventory.getStackInSlot(i);
-
-
 
 
             if(chestItemStack.getItem() != Items.AIR) {
