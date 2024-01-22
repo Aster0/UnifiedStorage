@@ -30,7 +30,9 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
@@ -66,7 +68,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             if(!getPlayerInventory().player.level().isClientSide) {
 
                 ModNetwork.sendToAllClient(new UpdateAllCraftingSlotsClientEntityPacket(this.getItems(),
-                        getStorageControllerEntity().getBlockPos(), getPlayerInventory().player.getUUID()));
+                        getStorageControllerEntity().getBlockPos(), getPlayerInventory().player.getUUID()),
+                        getPlayerInventory().player.level().getChunkAt(storageControllerEntity.getBlockPos()));
+
+                storageControllerEntity.sendStorageUpdateToClient(getPlayerInventory().player.level());
 
                 for(int i = 0; i < craftSlots.getItems().size(); i++) {
 
@@ -412,11 +417,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 craftSlots.setChanged();
 
 
-
-
-
-
-
                 return 0;
             }
 
@@ -675,7 +675,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         this.addSlot(new CustomResultSlot<>(pInventory.player,
                 this.craftSlots, this.resultSlots, 0, 131, 103, this));
 
-
         for(int row = 0; row < 3; row++) {
             for (int column = 0; column < 3; column++) {
 
@@ -747,8 +746,15 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
         if(fromSlot instanceof CustomResultSlot resultSlot) {
-            resultSlot.onQuickStackCraft(player, fromStack);
-            return ItemStack.EMPTY;
+
+            if(!player.level().isClientSide) {
+
+                resultSlot.onQuickStackCraft(player, fromStack);
+                return ItemStack.EMPTY;
+            }
+
+
+
         }
 
 
@@ -847,12 +853,9 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(container instanceof TransientCraftingContainer) {
 
 
-
-
             if(!getPlayerInventory().player.level().isClientSide) {
 
                 updateRecipeResult(getPlayerInventory().player);
-
 
             }
 
@@ -1043,28 +1046,23 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             if(quickMove)
                 toPutIntoStorage = itemStack;
 
+            if(toPutIntoStorage.equals(ItemStack.EMPTY, false))
+                return;
+
+
 
             updateAllStorages(toPutIntoStorage, value, false, quickMove, slotIndex);
 
         }
 
 
-
-        if(!pInventory.player.level().isClientSide) {
-
-
-            pInventory.player.level()
-                    .sendBlockUpdated(storageControllerEntity.getBlockPos(),
-                            storageControllerEntity.getBlockState(), storageControllerEntity.getBlockState(),
-                            Block.UPDATE_CLIENTS);
-
-        }
-
-        storageControllerEntity.setUpdateClientsOnStorageChange(true);
+        storageControllerEntity.sendStorageUpdateToClient(pInventory.player.level());
 
 //            ModNetwork.sendToAllClient(new MergedStorageLocationEntityPacket(storageControllerEntity.mergedStorageContents,
 //                    storageControllerEntity.getBlockPos(), false, pInventory.player.getUUID(), false));
     }
+
+
 
 
     @Override
@@ -1094,7 +1092,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             ItemIdentifier itemIdentifier = storageControllerEntity.mergedStorageContents.get(index);
 
             int valueBefore = itemIdentifier.getLocations().get(storageName) == null ? 0 :
-                    Math.max(itemIdentifier.getLocations().get(storageName), 0);
+                    itemIdentifier.getLocations().get(storageName);
 
 
 

@@ -5,6 +5,7 @@ import me.astero.unifiedstoragemod.networking.packets.*;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.level.chunk.LevelChunk;
 import net.minecraftforge.network.*;
 
 public class ModNetwork {
@@ -100,8 +101,8 @@ public class ModNetwork {
         INSTANCE.send(message, PacketDistributor.SERVER.noArg());
     }
 
-    public static void sendToAllClient(Object message) {
-        INSTANCE.send(message, PacketDistributor.TRACKING_CHUNK.noArg());
+    public static void sendToAllClient(Object message, LevelChunk levelChunk) {
+        INSTANCE.send(message, PacketDistributor.TRACKING_CHUNK.with(levelChunk));
     }
 
 

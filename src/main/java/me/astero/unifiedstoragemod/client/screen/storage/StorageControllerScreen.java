@@ -326,6 +326,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             return;
         }
         else if(slot instanceof ResultSlot) {
+
+            if(clickType == ClickType.PICKUP_ALL)
+                clickType = ClickType.PICKUP;
+
             super.slotClicked(slot, slotIndex, btn, clickType); // just do normal things
             return;
         }
@@ -446,7 +450,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                         modifiedValue, false));
 
 
-                System.out.println("in");
 //                menu.interactWithMenu(itemToPutIn, false,
 //                        modifiedValue, false, 0);
 

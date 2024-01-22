@@ -38,6 +38,7 @@ public class CustomResultSlot<T extends StorageControllerMenu> extends ResultSlo
 
             triggerAchievements(result, result.getCount());
             menu.onItemCrafted(result, false);
+
         }
 
     }
@@ -48,6 +49,8 @@ public class CustomResultSlot<T extends StorageControllerMenu> extends ResultSlo
         if(!player.level().isClientSide) {
             int count = menu.onItemCrafted(result, true);
             triggerAchievements(result, count);
+
+
         }
 
     }

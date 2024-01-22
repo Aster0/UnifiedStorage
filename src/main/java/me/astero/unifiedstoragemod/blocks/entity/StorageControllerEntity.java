@@ -34,6 +34,7 @@ import net.minecraft.world.inventory.AbstractContainerMenu;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.common.capabilities.Capability;
@@ -116,6 +117,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
     @Override
     public void setChanged() {
         super.setChanged();
+
 
 
 
@@ -370,12 +372,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-        CompoundTag modNbt = new CompoundTag();
-        modNbt.put("network_card", this.getNetworkInventory().serializeNBT());
-        modNbt.put("visual_item", this.getVisualItemInventory().serializeNBT());
-        modNbt.put("upgrade_inventory", this.getUpgradeInventory().serializeNBT());
-        modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
 
+        CompoundTag modNbt = new CompoundTag();
 
         boolean updateStorage = isUpdateClientsOnStorageChange();
         if(isUpdateClientsOnStorageChange()) {
@@ -389,6 +387,13 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
             modNbt.put("queued_items", serializeInventory(queueToRemoveItems));
             this.queueToRemoveItems.clear();
+        }
+        else {
+
+            modNbt.put("network_card", this.getNetworkInventory().serializeNBT());
+            modNbt.put("visual_item", this.getVisualItemInventory().serializeNBT());
+            modNbt.put("upgrade_inventory", this.getUpgradeInventory().serializeNBT());
+            modNbt.put("crafting_inventory", this.getCraftingInventory().serializeNBT());
         }
 
         modNbt.putBoolean("update_storage", updateStorage);
@@ -574,6 +579,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
     @Override
     public CompoundTag getUpdateTag() {
+
         return saveWithoutMetadata();
     }
 
@@ -648,10 +654,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         }
 
-        if(player.containerMenu instanceof StorageControllerMenu menu) {
-            menu.createBlockEntityInventory();
-        }
-
 
     }
 
@@ -662,15 +664,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         if(player.containerMenu instanceof StorageControllerMenu menu) {
             menu.createBlockEntityInventory();
-        }
-    }
-    private void updateMergedStorageClient(Player player) {
-        if(player instanceof ServerPlayer serverPlayer) {
-
-            ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
-                    this.getBlockPos(), true, player.getUUID(), true), serverPlayer);
-
-
         }
     }
 
@@ -717,7 +710,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         AsteroLogger.info("Took " + (System.currentTimeMillis() - time) + "ms to load all chests from the Storage Controller.");
 
-        updateMergedStorageClient(player);
+        sendStorageUpdateToClient(level);
+        //updateMergedStorageClient(player);
 
 
 
@@ -737,6 +731,19 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
+    }
+
+    public void sendStorageUpdateToClient(Level level) {
+        if(!level.isClientSide) {
+
+
+            level.sendBlockUpdated(getBlockPos(),
+                    getBlockState(), getBlockState(),
+                    Block.UPDATE_CLIENTS);
+
+        }
+
+        setUpdateClientsOnStorageChange(true);
     }
 
 
