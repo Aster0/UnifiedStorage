@@ -30,6 +30,7 @@ import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.item.crafting.CraftingRecipe;
 import net.minecraft.world.item.crafting.RecipeHolder;
 import net.minecraft.world.item.crafting.RecipeType;
+import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -39,6 +40,7 @@ import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemStackHandler;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
@@ -863,6 +865,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             if(!getPlayerInventory().player.level().isClientSide) {
 
+//                System.out.println("ya");
+//
+//                for(int i = 0; i < container.getContainerSize(); i++) {
+//                    System.out.println("current item " + i + " " + container.getItem(i));
+//                }
                 updateRecipeResult(getPlayerInventory().player);
 
             }
@@ -883,6 +890,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public ItemStack updateRecipeResult(Player player) {
 
+        System.out.println("CRAFTING");
         if(!(player instanceof ServerPlayer)) {
             return ItemStack.EMPTY;
         }
@@ -897,10 +905,27 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(optional.isPresent()) {
             RecipeHolder<CraftingRecipe> recipeHolder = optional.get();
             CraftingRecipe craftingRecipe = recipeHolder.value();
-            ItemStack result = craftingRecipe.assemble(craftSlots, player.level().registryAccess());
 
-            itemResult = result;
-            changeCraftingResult(result,  (ServerPlayer) player);
+
+            boolean resultUsed = this.resultSlots.setRecipeUsed(player.level(), (ServerPlayer) player, recipeHolder);
+            System.out.println(resultUsed + " RESULT USED ");
+
+            System.out.println(((ServerPlayer) player).getRecipeBook().contains(recipeHolder) + " RECIPE BOOK");
+            System.out.println(!recipeHolder.value().isSpecial() + " IS SPECIAL");
+            System.out.println(player.level().getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING) + " GAMEMODE");
+
+            if(this.resultSlots.setRecipeUsed(player.level(), (ServerPlayer) player, recipeHolder)) {
+                ItemStack result = craftingRecipe.assemble(craftSlots, player.level().registryAccess());
+
+                if (result.isItemEnabled(player.level().enabledFeatures())) {
+                    itemResult = result;
+                }
+
+
+            }
+
+            System.out.println(itemResult + " RESULT");
+            changeCraftingResult(itemResult,  (ServerPlayer) player);
         }
 
         return itemResult;
@@ -1394,13 +1419,69 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         }
     }
 
+
     public void onRecipeTransfer(IRecipeSlotsView recipeSlots) {
 
 
         for(int i = 1; i < recipeSlots.getSlotViews().size(); i++) {
 
-            Optional<ItemStack> currentItemStack = recipeSlots.getSlotViews().get(i).getDisplayedItemStack();
 
+            int finalI = i - 1;
+
+            // we look into the crafting slots first
+            Optional<ItemStack> currentItemStack = recipeSlots.getSlotViews().get(i).getItemStacks().filter((itemStack -> {
+
+                System.out.println(craftSlots.getItem(finalI) + " ITEM " + finalI);
+                return craftSlots.getItem(finalI).equals(itemStack, false);
+            })).findFirst();
+
+
+            if(currentItemStack.isEmpty()) {
+
+                // check storage network
+                currentItemStack = recipeSlots.getSlotViews().get(i).getItemStacks().filter((itemStack) -> {
+
+                            int index = this.storageControllerEntity.mergedStorageContents.indexOf(new ItemIdentifier(itemStack, 1));
+
+                            if(index != -1) {
+                                ItemIdentifier itemIdentifier = this.storageControllerEntity.mergedStorageContents.get(index);
+
+                                if(itemIdentifier.getCount() > 0) {
+                                    return true;
+                                }
+                            }
+
+                            return false;
+
+                        })
+                        .findFirst();
+
+
+                if(currentItemStack.isPresent()) { // we found it
+                    int index = this.storageControllerEntity.mergedStorageContents.indexOf(
+                            new ItemIdentifier(currentItemStack.get(), 1));
+
+                    if(index != -1) {
+
+                        this.storageControllerEntity.mergedStorageContents.get(index).setCount(
+                                this.storageControllerEntity.mergedStorageContents.get(index).getCount() - 1
+                        );
+
+
+                    }
+                }
+
+            }
+
+
+            if(currentItemStack.isEmpty()) {
+                // we search the player's inventory
+
+                // check player inventory
+                currentItemStack = recipeSlots.getSlotViews().get(i).getItemStacks().filter((itemStack) ->
+                                this.getPlayerInventory().contains(itemStack))
+                        .findFirst();
+            }
 
 
 
@@ -1409,6 +1490,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             // remove item from the crafting grid first before transferring
             if(currentItemStack.isPresent()) {
+
 
                 findRecipe(currentItemStack.get().copy(), i - 1, craftingGridItem.copy()); // server
 

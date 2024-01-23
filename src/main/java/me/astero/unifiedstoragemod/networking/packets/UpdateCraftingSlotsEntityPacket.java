@@ -80,6 +80,7 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
 
                     if(packet.populateCraftingSlot) {
 
+
                         // try to store first whatever is in the crafting slot
                         if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
                                 packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
@@ -95,7 +96,7 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
                         }
 
 
-                        // check if enough
+                        // check if enough to put in crafting grid
                         if(menu.canRemoveItemFromInventory(packet.itemStack, true, true, 1)) {
                             menu.populateCraftSlots(packet.itemStack, packet.slot);
                         }
