@@ -87,7 +87,11 @@ public class ModNetwork {
                 .consumerNetworkThread(UpdateAllCraftingSlotsClientEntityPacket::handle)
                 .add();
 
-
+        INSTANCE.messageBuilder(UpdateQueueToRemoveItemEntityPacket.class, NetworkDirection.PLAY_TO_SERVER)
+                .encoder(UpdateQueueToRemoveItemEntityPacket::encode)
+                .decoder(UpdateQueueToRemoveItemEntityPacket::new)
+                .consumerNetworkThread(UpdateQueueToRemoveItemEntityPacket::handle)
+                .add();
 
 
 

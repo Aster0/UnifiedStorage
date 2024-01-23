@@ -417,7 +417,7 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                     Tag.TAG_COMPOUND), false);
 
             if(queuedStorageList != null) {
-                this.queueToRemoveItems = queuedStorageList;
+                this.queueToRemoveItems.addAll(queuedStorageList);
             }
 
             List<ItemIdentifier> newStorageList = deserializeInventory(modNbt.getList("storage_items",
@@ -451,9 +451,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
-
-
-
         //loadEditedChests(modNbt);
 
 
@@ -472,10 +469,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                 CompoundTag tag = listTag.getCompound(i);
                 int count = tag.getInt("count");
 
-                if(queueToRemoveItems.isEmpty() && count <= 0 && removeZeroCounts)
-                    continue;
+
+
 
                 ItemStack itemStack = ItemStack.of(tag);
+
+
+                if(!queueToRemoveItems.contains(new ItemIdentifier(itemStack, 1)) && count <= 0 && removeZeroCounts)
+                    continue;
 
                 Map<String, Integer> locationMap = new HashMap<>();
 
@@ -710,8 +711,8 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         AsteroLogger.info("Took " + (System.currentTimeMillis() - time) + "ms to load all chests from the Storage Controller.");
 
-        sendStorageUpdateToClient(level);
-        //updateMergedStorageClient(player);
+        //sendStorageUpdateToClient(level);
+        updateMergedStorageClient(player);
 
 
 
@@ -731,6 +732,16 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
 
+    }
+
+    private void updateMergedStorageClient(Player player) {
+        if(player instanceof ServerPlayer serverPlayer) {
+
+            ModNetwork.sendToClient(new MergedStorageLocationEntityPacket(mergedStorageContents,
+                    this.getBlockPos(), true, player.getUUID(), true), serverPlayer);
+
+
+        }
     }
 
     public void sendStorageUpdateToClient(Level level) {
