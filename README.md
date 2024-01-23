@@ -25,14 +25,16 @@ _* This mod is inspired by Applied Energistics 2 & Refined Storage. However, I f
 
 ## Features
 - Easy to learn - Just use a network card & link up all your storages!
-- Decorate each Storage Controller with your own blocks/items.
+- Decorate each Storage Controller with your own blocks/items
 - Ability to link with any storage blocks (even furnaces/other mod storages)
-- Crafting Grid (saves when you exit the GUI)
+- Crafting Grid (saves when you exit the GUI) - w/ a smart algorithm to use up items in your Storage Network first as you craft
 - Wireless - You can use your storage anywhere with a wireless controller!
 - Intensive Search - You can use & combine prefixes to search for specific items (e.g., @modname storage or @modname #ores or just #ores)
-- Smart Insert Algorithm - When inserting blocks into the Storage Network, it looks for pre-existing stacks to populate before using a new item slot.
+- Smart Insert Algorithm - When inserting blocks into the Storage Network, it looks for pre-existing stacks to populate before using a new item slot. 
 - Inter-dimension Support - Easily link storages that are in another dimension (should work with modded dimensions as well)
+- JEI Integration - Easily transfer recipes using JEI, if a recipe accepts many kind of wood, it'll match the items in your inventory/Storage Network and populate accordingly.
 - Comes in 16 different dyeable colors
+- Server Ready - All item insertion & extraction is confirmed on the server, thus, no duplications can be made. Server-Client sync is also implemented well.
 
 ![image](https://i.imgur.com/FnMAnDp.png)
 
