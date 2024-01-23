@@ -75,20 +75,22 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
                 if(player.containerMenu instanceof StorageControllerMenu menu) {
 
 
-
                     if(packet.populateCraftingSlot) {
 
 
-                        if(!packet.itemStack.equals(packet.itemStackToStore, false)) { // if it's the same item, leave it
-
-                            // try to store first whatever is in the crafting slot
-                            if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
-                                    packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
-
-                                menu.craftSlots.setChanged();
-                                return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
-                            }
+                        if(packet.itemStack.equals(packet.itemStackToStore, false)) {
+                            // if it's the same item, leave it, we don't need to take out of the storage or anything
+                            return;
                         }
+
+                        // try to store first whatever is in the crafting slot
+                        if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
+                                packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
+
+                            menu.craftSlots.setChanged();
+                            return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
+                        }
+
 
 
 

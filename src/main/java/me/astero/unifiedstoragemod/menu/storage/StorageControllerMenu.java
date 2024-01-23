@@ -1507,6 +1507,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             }
 
 
+            System.out.println(currentItemStack + " ITEMST");
             ItemStack craftingGridItem = this.craftSlots.getItem(i - 1);
 
             // remove item from the crafting grid first before transferring
