@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "unifiedstorage:cloning_network_card"
+    },
+    "title": "Clone a Storage Controller",
+    "description": "Craft a Cloning Network Card to quickly clone a Storage Controller's storage network card details",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "unifiedstorage:storage_network_card",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "unifiedstorage:cloning_network_card"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

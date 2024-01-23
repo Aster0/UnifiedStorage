@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "unifiedstorage:wireless_storage"
+    },
+    "title": "Wireless Unified Storage",
+    "description": "Craft a Wireless Storage Controller to use your Unified Storage from a distance!",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "unifiedstorage:wireless_upgrade_card",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "unifiedstorage:wireless_storage"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

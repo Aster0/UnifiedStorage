@@ -426,8 +426,14 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
             if(newStorageList != null) {
                 this.mergedStorageContents = newStorageList;
 
-                if(menu != null)
-                    menu.regenerateCurrentPage();
+                if(menu != null) {
+
+                    if(menu.getStorageSearchData().isSearching())
+                        menu.onStorageSearch(menu.getCachedSearchString(), true);
+                    else
+                        menu.regenerateCurrentPage();
+                }
+
             }
 
             return;

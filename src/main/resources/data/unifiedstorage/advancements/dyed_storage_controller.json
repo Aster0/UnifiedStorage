@@ -1,0 +1,71 @@
+{
+  "display": {
+    "icon": {
+      "item": "unifiedstorage:storage_controller_purple"
+    },
+    "title": "Dyeing your Storage Controller",
+    "description": "Dye your Storage Controller by right clicking using one of the 12 dyes.",
+    "background": "minecraft:textures/block/copper_block.png",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "unifiedstorage:storage_controller",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:item_used_on_block",
+      "conditions": {
+        "location": [
+          {
+            "condition": "minecraft:match_tool",
+            "predicate": {
+              "items": [
+                "minecraft:black_dye",
+                "minecraft:blue_dye",
+                "minecraft:brown_dye",
+                "minecraft:cyan_dye",
+                "minecraft:gray_dye",
+                "minecraft:green_dye",
+                "minecraft:light_blue_dye",
+                "minecraft:light_gray_dye",
+                "minecraft:lime_dye",
+                "minecraft:magenta_dye",
+                "minecraft:orange_dye",
+                "minecraft:pink_dye",
+                "minecraft:purple_dye",
+                "minecraft:red_dye",
+                "minecraft:white_dye",
+                "minecraft:yellow_dye"
+              ]
+            }
+          },
+          {
+            "condition": "minecraft:location_check",
+            "predicate": {
+              "block": {
+                "blocks": [
+                  "unifiedstorage:storage_controller",
+                  "unifiedstorage:storage_controller_black",
+                  "unifiedstorage:storage_controller_orange",
+                  "unifiedstorage:storage_controller_brown",
+                  "unifiedstorage:storage_controller_red",
+                  "unifiedstorage:storage_controller_lime",
+                  "unifiedstorage:storage_controller_green",
+                  "unifiedstorage:storage_controller_yellow",
+                  "unifiedstorage:storage_controller_light_blue",
+                  "unifiedstorage:storage_controller_blue",
+                  "unifiedstorage:storage_controller_cyan",
+                  "unifiedstorage:storage_controller_light_gray",
+                  "unifiedstorage:storage_controller_gray",
+                  "unifiedstorage:storage_controller_purple",
+                  "unifiedstorage:storage_controller_magenta",
+                  "unifiedstorage:storage_controller_pink"
+                ]
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}

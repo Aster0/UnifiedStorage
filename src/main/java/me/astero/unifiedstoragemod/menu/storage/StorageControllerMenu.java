@@ -49,6 +49,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     private StorageSearchData storageSearchData = new StorageSearchData();
 
+    private String cachedSearchString;
+
     private int scrollPage;
 
     private final StorageControllerEntity storageControllerEntity;
@@ -88,6 +90,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public int getStorageStackStartSlot() {
         return storageStackStartSlot;
+    }
+
+    public String getCachedSearchString() {
+        return cachedSearchString;
     }
 
     public StorageControllerMenu(MenuType<?> type, int containerId, Inventory pInventory, BlockEntity blockEntity) {
@@ -152,19 +158,18 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public int getTotalPages(List<ItemIdentifier> itemIdentifiers) {
 
-
-
         double value = (double) itemIdentifiers.size() / VISIBLE_CONTENT_HEIGHT;
 
 
         return (int) Math.ceil(value);
     }
 
-    public void onStorageSearch(String entry) {
+    public void onStorageSearch(String entry, boolean regenPage) {
 
-
+        System.out.println(getPlayerInventory().player.level().isClientSide + " LEVEL");
         storageSearchData.getSearchedStorageList().clear();
 
+        cachedSearchString = entry;
 
         storageSearchData.setSearching(true);
 
@@ -224,7 +229,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             String itemName = itemIdentifier.getItemStack().getDisplayName().getString().toLowerCase();
             // [Compass]
-            // TODO: search by lore
 
 
             if(itemName.substring(1, itemName.length() - 1)
@@ -272,7 +276,10 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-        generateStartPage();
+        if(!regenPage)
+            generateStartPage();
+        else
+            regenerateCurrentPage();
 
 
 
@@ -306,6 +313,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     private void generateStartPage() {
         scrollPage = 1;
         generateSlots(scrollPage);
+
     }
 
     public int nextPage() {
@@ -591,7 +599,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void generateSlots(int page) {
 
 
-
         if(storageStackStartSlot == 0)
             storageStackStartSlot = slots.size();
 
@@ -619,6 +626,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
 
                 else {
+
 
 
                     int slotToFetch = ((page - 1) * VISIBLE_CONTENT_HEIGHT) + currentIndex;
@@ -1318,12 +1326,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                     }
                 }
 
-
-
-
-
-
-                regenerateCurrentPage();
 
                 return;
             }

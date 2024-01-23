@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "unifiedstorage:wireless_upgrade_card"
+    },
+    "title": "Wireless Signal",
+    "description": "Craft a Wireless Upgrade Card to allow your Storage Controller to produce wireless signals for you to use it anywhere.",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "unifiedstorage:blank_upgrade_card",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "unifiedstorage:wireless_upgrade_card"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

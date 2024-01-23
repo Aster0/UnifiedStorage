@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "unifiedstorage:dimensional_upgrade_card"
+    },
+    "title": "Connecting Storages from Another Dimension",
+    "description": "Craft a Dimensional Upgrade Card to allow your Storage Controller to read storages that are from another dimension!",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "unifiedstorage:blank_upgrade_card",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "unifiedstorage:dimensional_upgrade_card"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "display": {
+    "icon": {
+      "item": "unifiedstorage:crafting_upgrade_card"
+    },
+    "title": "Whaaaat... I can craft?",
+    "description": "Craft a Crafting Upgrade Card to unlock the crafting grid in your Storage Controller",
+    "frame": "task",
+    "show_toast": true,
+    "announce_to_chat": true
+  },
+  "parent": "unifiedstorage:blank_upgrade_card",
+  "criteria": {
+    "requirement": {
+      "trigger": "minecraft:inventory_changed",
+      "conditions": {
+        "items": [
+          {
+            "items": [
+              "unifiedstorage:crafting_upgrade_card"
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

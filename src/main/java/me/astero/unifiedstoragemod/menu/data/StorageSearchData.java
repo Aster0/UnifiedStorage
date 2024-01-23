@@ -20,8 +20,10 @@ public class StorageSearchData {
     }
 
     public void setSearching(boolean searching) {
+
         isSearching = searching;
     }
+
 
     public boolean isSearching() {
         return isSearching;
