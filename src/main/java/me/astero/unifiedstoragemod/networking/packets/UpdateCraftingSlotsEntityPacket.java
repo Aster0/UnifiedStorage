@@ -66,8 +66,6 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
         context.enqueueWork(() -> {
 
 
-
-
             if (!context.isClientSide()) {
 
 
@@ -81,13 +79,17 @@ public class UpdateCraftingSlotsEntityPacket implements EntityPacket {
                     if(packet.populateCraftingSlot) {
 
 
-                        // try to store first whatever is in the crafting slot
-                        if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
-                                packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
+                        if(!packet.itemStack.equals(packet.itemStackToStore, false)) { // if it's the same item, leave it
 
-                            menu.craftSlots.setChanged();
-                            return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
+                            // try to store first whatever is in the crafting slot
+                            if(!menu.canInsertItemIntoInventory(packet.itemStackToStore,
+                                    packet.itemStackToStore.getCount(), packet.slot, packet.moveToPlayer)) {
+
+                                menu.craftSlots.setChanged();
+                                return; // if we cannot store, we shouldn't move forward to putting a new item on the grid.
+                            }
                         }
+
 
 
 

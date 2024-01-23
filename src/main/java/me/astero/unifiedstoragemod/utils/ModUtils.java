@@ -146,7 +146,12 @@ public class ModUtils {
         DecimalFormat format = new DecimalFormat("0.#");
         format.setRoundingMode(RoundingMode.DOWN); // Note this extra step
 
-        return format.format(finalValue) + units;
+
+        String revisedString = format.format(finalValue);
+        if(revisedString.length() >= 5) {
+            revisedString = revisedString.substring(0, 3);
+        }
+        return revisedString + units;
 
 
 

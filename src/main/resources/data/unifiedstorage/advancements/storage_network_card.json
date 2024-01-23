@@ -3,7 +3,7 @@
     "icon": {
       "item": "unifiedstorage:network_card"
     },
-    "title": "Get Connected!",
+    "title": "Getting Connected!",
     "description": "Craft a Storage Network Card to connect all inventories as ONE.",
     "frame": "task",
     "show_toast": true,
@@ -12,15 +12,9 @@
   "parent": "unifiedstorage:storage_controller",
   "criteria": {
     "requirement": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:recipe_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "unifiedstorage:network_card"
-            ]
-          }
-        ]
+        "recipe_id": "unifiedstorage:network_card"
       }
     }
   }

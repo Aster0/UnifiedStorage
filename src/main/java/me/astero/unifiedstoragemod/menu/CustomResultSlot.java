@@ -63,12 +63,7 @@ public class CustomResultSlot<T extends StorageControllerMenu> extends ResultSlo
         ItemStack resultCopy = result.copy(); // reflects correctly, so when I quick_move craft a stack,
         // it'll show up correctly as 64 or so in the crafting event,
 
-        System.out.println(this.container);
 
-
-        if((container instanceof RecipeCraftingHolder recipecraftingholder)) {
-            System.out.println(recipecraftingholder.getRecipeUsed());
-        }
         resultCopy.setCount(count);
 
         this.checkTakeAchievements(resultCopy);

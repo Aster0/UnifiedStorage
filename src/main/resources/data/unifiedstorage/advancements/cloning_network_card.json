@@ -9,18 +9,12 @@
     "show_toast": true,
     "announce_to_chat": true
   },
-  "parent": "unifiedstorage:storage_network_card",
+  "parent": "unifiedstorage:storage_controller",
   "criteria": {
     "requirement": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:recipe_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "unifiedstorage:cloning_network_card"
-            ]
-          }
-        ]
+        "recipe_id": "unifiedstorage:cloning_network_card"
       }
     }
   }

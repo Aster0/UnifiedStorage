@@ -12,15 +12,9 @@
   "parent": "unifiedstorage:wireless_upgrade_card",
   "criteria": {
     "requirement": {
-      "trigger": "minecraft:inventory_changed",
+      "trigger": "minecraft:recipe_crafted",
       "conditions": {
-        "items": [
-          {
-            "items": [
-              "unifiedstorage:wireless_storage"
-            ]
-          }
-        ]
+        "recipe_id": "unifiedstorage:wireless_storage"
       }
     }
   }

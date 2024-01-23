@@ -168,7 +168,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void onStorageSearch(String entry, boolean regenPage) {
 
-        System.out.println(getPlayerInventory().player.level().isClientSide + " LEVEL");
         storageSearchData.getSearchedStorageList().clear();
 
         cachedSearchString = entry;
@@ -890,7 +889,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public ItemStack updateRecipeResult(Player player) {
 
-        System.out.println("CRAFTING");
         if(!(player instanceof ServerPlayer)) {
             return ItemStack.EMPTY;
         }
@@ -907,13 +905,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             CraftingRecipe craftingRecipe = recipeHolder.value();
 
 
-            boolean resultUsed = this.resultSlots.setRecipeUsed(player.level(), (ServerPlayer) player, recipeHolder);
-            System.out.println(resultUsed + " RESULT USED ");
-
-            System.out.println(((ServerPlayer) player).getRecipeBook().contains(recipeHolder) + " RECIPE BOOK");
-            System.out.println(!recipeHolder.value().isSpecial() + " IS SPECIAL");
-            System.out.println(player.level().getGameRules().getBoolean(GameRules.RULE_LIMITED_CRAFTING) + " GAMEMODE");
-
             if(this.resultSlots.setRecipeUsed(player.level(), (ServerPlayer) player, recipeHolder)) {
                 ItemStack result = craftingRecipe.assemble(craftSlots, player.level().registryAccess());
 
@@ -924,7 +915,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
             }
 
-            System.out.println(itemResult + " RESULT");
             changeCraftingResult(itemResult,  (ServerPlayer) player);
         }
 
@@ -1423,6 +1413,8 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void onRecipeTransfer(IRecipeSlotsView recipeSlots) {
 
 
+        List<ItemIdentifier> playerInventory = new ArrayList<>();
+
         for(int i = 1; i < recipeSlots.getSlotViews().size(); i++) {
 
 
@@ -1431,7 +1423,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             // we look into the crafting slots first
             Optional<ItemStack> currentItemStack = recipeSlots.getSlotViews().get(i).getItemStacks().filter((itemStack -> {
 
-                System.out.println(craftSlots.getItem(finalI) + " ITEM " + finalI);
                 return craftSlots.getItem(finalI).equals(itemStack, false);
             })).findFirst();
 
@@ -1478,24 +1469,49 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 // we search the player's inventory
 
                 // check player inventory
-                currentItemStack = recipeSlots.getSlotViews().get(i).getItemStacks().filter((itemStack) ->
-                                this.getPlayerInventory().contains(itemStack))
-                        .findFirst();
+                currentItemStack = recipeSlots.getSlotViews().get(i).getItemStacks().filter((itemStack) -> {
+
+
+                    int index = playerInventory.indexOf(new ItemIdentifier(itemStack, 1));
+
+                    int value = index != -1
+                            ? playerInventory.get(index).getCount() : 0;
+
+
+                    return this.getPlayerInventory().contains(itemStack) &&
+                            getPlayerInventory().getItem(getPlayerInventory().findSlotMatchingItem(itemStack)).getCount() - value
+                                    > 0;
+
+                }).findFirst();
+
+
+                if(currentItemStack.isPresent()) {
+                    ItemStack itemStack = currentItemStack.get();
+
+
+                    int index = playerInventory.indexOf(new ItemIdentifier(itemStack, 1));
+
+                    if(index != -1) {
+
+                        ItemIdentifier itemIdentifier = playerInventory.get(index);
+                        itemIdentifier.setCount(itemIdentifier.getCount() + 1);
+                    }
+                    else {
+                        playerInventory.add(new ItemIdentifier(itemStack, 1));
+                    }
+
+
+                }
+
+
             }
-
-
 
 
             ItemStack craftingGridItem = this.craftSlots.getItem(i - 1);
 
             // remove item from the crafting grid first before transferring
-            if(currentItemStack.isPresent()) {
-
-
-                findRecipe(currentItemStack.get().copy(), i - 1, craftingGridItem.copy()); // server
-
-
-            }
+            findRecipe(currentItemStack.isPresent() ? currentItemStack.get().copy()
+                    : ItemStack.EMPTY, i - 1, craftingGridItem.copy()); // server
 
 
         }
