@@ -410,8 +410,9 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
         CompoundTag modNbt = nbt.getCompound(ModUtils.MODID);
 
-        if(modNbt.getBoolean("update_storage")) {
 
+
+        if(modNbt.getBoolean("update_storage") && menu != null) { // check if the player is in a menu, then load this cache.
 
             List<ItemIdentifier> queuedStorageList = deserializeInventory(modNbt.getList("queued_items",
                     Tag.TAG_COMPOUND), false);
@@ -427,7 +428,6 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                 this.mergedStorageContents = newStorageList;
 
                 if(menu != null) {
-
                     if(menu.getStorageSearchData().isSearching())
                         menu.onStorageSearch(menu.getCachedSearchString(), true);
                     else

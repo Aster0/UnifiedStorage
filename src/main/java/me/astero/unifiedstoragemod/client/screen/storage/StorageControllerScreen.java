@@ -293,6 +293,13 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     }
 
     @Override
+    public void removed() {
+        super.removed();
+
+        menu.getStorageControllerEntity().menu = null;
+    }
+
+    @Override
     public boolean mouseReleased(double p_97812_, double p_97813_, int p_97814_) {
 
         if(customScrollWheel != null)
