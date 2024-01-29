@@ -296,7 +296,11 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
     public void removed() {
         super.removed();
 
-        menu.getStorageControllerEntity().menu = null;
+        if(!(menu.getPlayerInventory().player.containerMenu instanceof StorageControllerMenu)) {
+            menu.getStorageControllerEntity().menu = null;
+            System.out.println("removed!");
+        }
+
     }
 
     @Override

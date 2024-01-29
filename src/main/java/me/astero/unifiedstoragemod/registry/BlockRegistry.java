@@ -3,7 +3,9 @@ package me.astero.unifiedstoragemod.registry;
 
 import me.astero.unifiedstoragemod.blocks.DrawerBlock;
 import me.astero.unifiedstoragemod.blocks.StorageControllerBlock;
+import me.astero.unifiedstoragemod.blocks.StorageDrawerBlock;
 import me.astero.unifiedstoragemod.data.BlockData;
+import me.astero.unifiedstoragemod.menu.enums.StorageDrawerType;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.world.item.DyeColor;
 import net.minecraft.world.level.block.Block;
@@ -52,7 +54,9 @@ public class BlockRegistry  {
             ("drawer_block", new BlockData<>(() -> new DrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
                     .strength(1f), 70)), false);
 
-
+    public static final RegistryObject<Block> STORAGE_DRAWER_BLOCK = ObjectRegistry.registerObject
+            ("storage_drawer_single", new BlockData<>(() -> new StorageDrawerBlock(BlockBehaviour.Properties.of().mapColor(MapColor.STONE)
+                    .strength(1f), StorageDrawerType.SINGLE)), true);
 
 
     public static final Map<DyeColor, RegistryObject<Block>> STORAGE_CONTROLLER_BLOCK_COLORED = registerStorageControllerColored();

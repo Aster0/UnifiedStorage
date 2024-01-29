@@ -1,0 +1,20 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "unifiedstorage:block/storage_drawer_single",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "unifiedstorage:block/storage_drawer_single"
+    },
+    "facing=south": {
+      "model": "unifiedstorage:block/storage_drawer_single",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "unifiedstorage:block/storage_drawer_single",
+      "y": 270
+    }
+  }
+
+}
