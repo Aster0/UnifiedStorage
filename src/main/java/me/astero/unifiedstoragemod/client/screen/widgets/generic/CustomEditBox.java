@@ -48,8 +48,8 @@ public abstract class CustomEditBox extends EditBox implements ICustomWidgetComp
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int p_93658_, int p_93659_, float p_93660_) {
-        super.render(guiGraphics, p_93658_, p_93659_, p_93660_);
+    public void renderWidget(GuiGraphics guiGraphics, int p_93658_, int p_93659_, float p_93660_) {
+        super.renderWidget(guiGraphics, p_93658_, p_93659_, p_93660_);
 
 
         guiGraphics.blit(TEXT_FIELD, getX()- 5, getY() - 2,   122, 3,
