@@ -1092,7 +1092,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     public void removed(Player p_38940_) {
         super.removed(p_38940_);
 
-
         for(BlockEntity entity : storageControllerEntity.getCachedStorages()) {
 
 

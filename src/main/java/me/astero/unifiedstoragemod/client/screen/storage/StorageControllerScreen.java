@@ -299,6 +299,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         if(!(menu.getPlayerInventory().player.containerMenu instanceof StorageControllerMenu)) {
             menu.getStorageControllerEntity().menu = null;
         }
+
     }
 
     @Override
