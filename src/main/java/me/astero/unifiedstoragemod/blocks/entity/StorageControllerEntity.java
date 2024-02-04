@@ -17,6 +17,7 @@ import me.astero.unifiedstoragemod.registry.BlockEntityRegistry;
 import me.astero.unifiedstoragemod.utils.AsteroLogger;
 import me.astero.unifiedstoragemod.utils.ModUtils;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.core.SectionPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -557,12 +558,19 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
     @Override
-    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap) {
+    public @NotNull <T> LazyOptional<T> getCapability(@NotNull Capability<T> cap, Direction side) {
 
 
+        if(cap == ForgeCapabilities.ITEM_HANDLER) {
+            if(side == Direction.WEST || side == Direction.EAST) {
+                return this.optionalUpgradeItem.cast();
+            }
 
-        return cap == ForgeCapabilities.ITEM_HANDLER ? this.optional.cast()
-                : super.getCapability(cap);
+            return this.optional.cast();
+        }
+
+
+        return this.optional.cast(); // prevent memory overflow if someone ask for something other than ITEM_HANDLER
     }
 
     @Override

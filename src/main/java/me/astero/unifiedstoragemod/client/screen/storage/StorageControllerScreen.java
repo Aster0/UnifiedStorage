@@ -38,10 +38,6 @@ import net.minecraft.world.inventory.*;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.item.TooltipFlag;
-import net.minecraft.world.level.material.Fluids;
-import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.templates.FluidHandlerItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.glfw.GLFW;
 
@@ -190,7 +186,11 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                     this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
 
+            System.out.println("yea");
 
+            if(menu.getTotalPages() < savedPages) { // if item is removed that made current pages lesser,
+                menu.generateSlots(menu.getTotalPages());
+            }
 
             savedPages = menu.getTotalPages();
 

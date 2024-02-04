@@ -105,6 +105,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
             this.storageControllerEntity = storageControllerEntity;
 
+
         }
         else {
             throw new IllegalStateException("Incorrect block entity class, please check again. (%s)"
@@ -149,8 +150,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
     public int getTotalPages() {
-
-
 
         double value = (double) storageControllerEntity.mergedStorageContents.size() / VISIBLE_CONTENT_HEIGHT;
 
@@ -599,6 +598,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void generateSlots(int page) {
 
+        if(page == 0)
+            return;
+
+
+        scrollPage = page;
 
         if(storageStackStartSlot == 0)
             storageStackStartSlot = slots.size();
