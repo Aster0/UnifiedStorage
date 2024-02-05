@@ -10,11 +10,8 @@ import me.astero.unifiedstoragemod.items.data.UpgradeType;
 import me.astero.unifiedstoragemod.items.generic.NetworkItem;
 import me.astero.unifiedstoragemod.items.generic.UpgradeCardItem;
 import me.astero.unifiedstoragemod.items.upgrades.IBlockUpdater;
-import me.astero.unifiedstoragemod.menu.data.UpgradeSlot;
+import me.astero.unifiedstoragemod.menu.data.*;
 import me.astero.unifiedstoragemod.menu.storage.StorageControllerMenu;
-import me.astero.unifiedstoragemod.menu.data.ItemVisualSlot;
-import me.astero.unifiedstoragemod.menu.data.NetworkSlot;
-import me.astero.unifiedstoragemod.menu.data.VisualItemSlot;
 import me.astero.unifiedstoragemod.menu.enums.MouseAction;
 import me.astero.unifiedstoragemod.networking.ModNetwork;
 import me.astero.unifiedstoragemod.networking.packets.CraftItemEntityPacket;
@@ -183,16 +180,19 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         if(savedPages != menu.getTotalPages()) {
 
+            int currentPages = menu.getTotalPages();
+
+
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
-                    this.topPos + 17, this.topPos + 54, menu.getTotalPages(), menu);
+                    this.topPos + 17, this.topPos + 54, currentPages, menu);
 
-            System.out.println("yea");
 
-            if(menu.getTotalPages() < savedPages) { // if item is removed that made current pages lesser,
-                menu.generateSlots(menu.getTotalPages());
+            if(currentPages < savedPages) { // if item is removed that made current pages lesser,
+                if(menu.getScrollPage() == savedPages)
+                    menu.generateSlots(currentPages);
             }
 
-            savedPages = menu.getTotalPages();
+            savedPages = currentPages;
 
 
         }
@@ -353,6 +353,9 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             if(slot instanceof ItemVisualSlot) {
                 return;
             }
+            else if(slot instanceof PlayerSlot && clickType == ClickType.QUICK_MOVE &&
+                    !(slot.getItem().getItem() instanceof NetworkItem))
+                return;
 
             if(!(slot.container instanceof TransientCraftingContainer)) { // cant use the crafting if it's not with a network card
 
@@ -655,7 +658,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             int actualSlotX = leftPos + slotIndex.x;
             int actualSlotY = topPos + slotIndex.y;
-
 
 
             if(menu.getStorageControllerEntity().isDisabled()) {

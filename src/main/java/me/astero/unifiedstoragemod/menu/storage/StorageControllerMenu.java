@@ -86,6 +86,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         }
     };
+
+    public int getScrollPage() {
+        return scrollPage;
+    }
+
     private final ResultContainer resultSlots = new ResultContainer();
 
     private int craftSlotIndexStart = 0;
@@ -830,7 +835,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         if(fromSlot instanceof PlayerSlot) {
 
-
+            
 
             interactWithMenu(fromStack, false,
                     fromStack.getCount(), true, fromSlot.getSlotIndex());
