@@ -72,7 +72,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             if(!getPlayerInventory().player.level().isClientSide) {
 
                 ModNetwork.sendToAllClient(new UpdateAllCraftingSlotsClientEntityPacket(this.getItems(),
-                        getStorageControllerEntity().getBlockPos(), getPlayerInventory().player.getUUID()),
+                                getStorageControllerEntity().getBlockPos(), getPlayerInventory().player.getUUID()),
                         getPlayerInventory().player.level().getChunkAt(storageControllerEntity.getBlockPos()));
 
                 storageControllerEntity.sendStorageUpdateToClient(getPlayerInventory().player.level());
@@ -86,6 +86,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         }
     };
+
+    public int getScrollPage() {
+        return scrollPage;
+    }
+
     private final ResultContainer resultSlots = new ResultContainer();
 
     private int craftSlotIndexStart = 0;
@@ -104,6 +109,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
         if(blockEntity instanceof StorageControllerEntity storageControllerEntity) {
             this.storageControllerEntity = storageControllerEntity;
+
 
         }
         else {
@@ -149,8 +155,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
     }
 
     public int getTotalPages() {
-
-
 
         double value = (double) storageControllerEntity.mergedStorageContents.size() / VISIBLE_CONTENT_HEIGHT;
 
@@ -599,6 +603,11 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
     public void generateSlots(int page) {
 
+        if(page == 0)
+            return;
+
+
+        scrollPage = page;
 
         if(storageStackStartSlot == 0)
             storageStackStartSlot = slots.size();
@@ -1234,7 +1243,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
                             updateLocationAmount(ModUtils.capitalizeName(
-                                    storageBlockEntity.getBlockState().getBlock().asItem().toString()),
+                                            storageBlockEntity.getBlockState().getBlock().asItem().toString()),
                                     itemStack, -extracted.getCount());
 
                             if(valueLeft == 0) break;

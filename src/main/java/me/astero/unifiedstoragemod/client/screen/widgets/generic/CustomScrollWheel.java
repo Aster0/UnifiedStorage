@@ -102,7 +102,6 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
                 12, 15);
 
 
-
         if(System.currentTimeMillis() - savedTime > 10) {
             draggable = true;
         }
@@ -200,12 +199,11 @@ public abstract class CustomScrollWheel implements ICustomWidgetComponent {
     public void onMouseScrolled(double mouseX, double mouseY, double delta, double rawDelta) {
 
 
-
         if(pages <= 1)
             return;
 
 
-        if(rawDelta == -1) { // scroll down
+        if(rawDelta <= -1) { // scroll down
 
             forceHitThreshold(0);
 

@@ -37,6 +37,8 @@ public class StorageNetworkCard extends NetworkItem {
     @Override
     public InteractionResultHolder<ItemStack> onItemUse(List<SavedStorageData> savedStorageData, Player player, ItemStack itemStack) {
 
+
+        System.out.println(savedStorageData.get(0).getCustomBlockPosData().getBlockPos());
         return null;
     }
 }
