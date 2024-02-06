@@ -131,7 +131,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
                 if(!text.isEmpty()) {
 
                     menu.onStorageSearch(text, false);
-
+                    savedPages = -1;
                     return;
                 }
 
@@ -176,22 +176,27 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         ICustomWidgetComponent.tickAll(menu.getWidgets(), guiGraphics, leftPos, topPos);
 
+        int currentPages = !menu.getStorageSearchData().isSearching() ? menu.getTotalPages() :
+                menu.getTotalPages(menu.getStorageSearchData().getSearchedStorageList());
 
-        if((!menu.getStorageSearchData().isSearching() && savedPages != menu.getTotalPages())
+        if((!menu.getStorageSearchData().isSearching() && savedPages != currentPages)
                 || (menu.getStorageSearchData().isSearching()
-                && savedPages != menu.getTotalPages(menu.getStorageSearchData().getSearchedStorageList()))) {
+                && savedPages != currentPages)) {
 
-            int currentPages = !menu.getStorageSearchData().isSearching() ? menu.getTotalPages() :
-                    menu.getTotalPages(menu.getStorageSearchData().getSearchedStorageList());
 
-            System.out.println("current pages " + menu.getStorageSearchData().isSearching());
 
 
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                     this.topPos + 17, this.topPos + 54, currentPages, menu);
 
+            System.out.println(menu.getScrollPage());
+            System.out.println(savedPages);
 
             if(currentPages < savedPages) { // if item is removed that made current pages lesser,
+
+
+                System.out.println(savedPages  + "SAVE");
+
                 if(menu.getScrollPage() == savedPages)
                     menu.generateSlots(currentPages);
             }
