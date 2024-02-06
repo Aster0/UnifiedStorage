@@ -448,10 +448,11 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
 
 
         if(this.getNetworkInventory() != null) {
-                setDisabled(this.getNetworkInventory().getStackInSlot(0).equals(ItemStack.EMPTY, false));
 
-                if(this.menu != null)
-                    menu.regenerateCurrentPage();
+            setDisabled(this.getNetworkInventory().getStackInSlot(0).equals(ItemStack.EMPTY, false));
+
+            if(this.menu != null)
+                menu.regenerateCurrentPage();
 
 
         }

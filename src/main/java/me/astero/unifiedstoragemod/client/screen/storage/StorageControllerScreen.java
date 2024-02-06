@@ -178,9 +178,15 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
         ICustomWidgetComponent.tickAll(menu.getWidgets(), guiGraphics, leftPos, topPos);
 
-        if(savedPages != menu.getTotalPages()) {
 
-            int currentPages = menu.getTotalPages();
+        if((!menu.getStorageSearchData().isSearching() && savedPages != menu.getTotalPages())
+                || (menu.getStorageSearchData().isSearching()
+                && savedPages != menu.getTotalPages(menu.getStorageSearchData().getSearchedStorageList()))) {
+
+            int currentPages = !menu.getStorageSearchData().isSearching() ? menu.getTotalPages() :
+                    menu.getTotalPages(menu.getStorageSearchData().getSearchedStorageList());
+
+            System.out.println("current pages " + menu.getStorageSearchData().isSearching());
 
 
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,

@@ -199,12 +199,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         for(ItemIdentifier itemIdentifier : storageControllerEntity.mergedStorageContents) {
 
 
-
-
-
-
-
-
             if(currentSearchString.startsWith("#")) {
 
                 String finalCurrentSearchString = currentSearchString;
