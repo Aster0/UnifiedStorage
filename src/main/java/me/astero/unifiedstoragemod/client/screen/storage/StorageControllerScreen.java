@@ -132,8 +132,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
                     menu.onStorageSearch(text, false);
 
-                    customScrollWheel.setPages(menu.getTotalPages(menu.getStorageSearchData()
-                            .getSearchedStorageList()));
                     return;
                 }
 
