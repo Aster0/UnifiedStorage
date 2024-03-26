@@ -274,16 +274,53 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
         if(keyCode == GLFW.GLFW_KEY_LEFT_SHIFT || keyCode == GLFW.GLFW_KEY_RIGHT_SHIFT) {
 
 
+
+            boolean isSearching = menu.getStorageControllerEntity().menu.getStorageSearchData().isSearching();
+
+            System.out.println(isSearching + " OUTSIDE SEARCH");
             for(ItemIdentifier itemIdentifier : menu.getStorageControllerEntity().queueToRemoveItems) {
 
-                int index = menu.getStorageControllerEntity().mergedStorageContents.indexOf(itemIdentifier);
+                int index = -1;
+
+
+                if(isSearching) {
+
+                    index = menu.getStorageControllerEntity().menu.getStorageSearchData()
+                            .getSearchedStorageList().indexOf(itemIdentifier);
+                }
+                else
+                    index = menu.getStorageControllerEntity().mergedStorageContents.indexOf(itemIdentifier);
+
+
 
                 if(index != -1) {
 
-                    ItemIdentifier existingItem = menu.getStorageControllerEntity().getMergedStorageContents(index);
+                    ItemIdentifier existingItem = null;
 
-                    if(existingItem.getCount() <= 0)
-                        menu.getStorageControllerEntity().mergedStorageContents.remove(itemIdentifier);
+                    if(!isSearching)
+                        existingItem = menu.getStorageControllerEntity().getMergedStorageContents(index);
+                    else
+                        existingItem = menu.getStorageControllerEntity().menu.getStorageSearchData()
+                                .getSearchedStorageList().get(index);
+
+
+                    if(existingItem != null) {
+                        if(existingItem.getCount() <= 0) {
+
+
+                            System.out.println(isSearching + " IS SEARCHING");
+
+                            menu.getStorageControllerEntity().mergedStorageContents.remove(itemIdentifier);
+
+                            if(isSearching) {
+
+                                menu.getStorageControllerEntity().menu.getStorageSearchData()
+                                        .getSearchedStorageList().remove(itemIdentifier);
+                            }
+                        }
+                    }
+
+
                 }
 
 

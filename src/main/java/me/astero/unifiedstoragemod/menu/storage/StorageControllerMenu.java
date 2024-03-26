@@ -287,7 +287,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         if(!updateSearchEntries) {
 
 
-
             if(storageSearchData.getSearchedStorageList().size() > oldStorageList.size()) {
 
 
