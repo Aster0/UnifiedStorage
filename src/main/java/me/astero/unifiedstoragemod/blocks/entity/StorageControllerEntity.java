@@ -426,11 +426,19 @@ public class StorageControllerEntity extends BaseBlockEntity implements MenuProv
                     Tag.TAG_COMPOUND), true);
 
             if(newStorageList != null) {
+
+                System.out.println(mergedStorageContents.size() + " OLD");
+                System.out.println(newStorageList.size() + " NEW");
+
+                boolean isInventorySizeDifferent = newStorageList.size() > mergedStorageContents.size();
                 this.mergedStorageContents = newStorageList;
 
                 if(menu != null) {
-                    if(menu.getStorageSearchData().isSearching())
-                        menu.onStorageSearch(menu.getCachedSearchString(), true);
+                    if(menu.getStorageSearchData().isSearching()) {
+
+                        menu.onStorageSearch(menu.getCachedSearchString(), true,
+                                isInventorySizeDifferent);
+                    }
                     else
                         menu.regenerateCurrentPage();
                 }

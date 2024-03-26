@@ -130,7 +130,7 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
                 if(!text.isEmpty()) {
 
-                    menu.onStorageSearch(text, false);
+                    menu.onStorageSearch(text, false, true);
                     savedPages = -1;
                     return;
                 }
@@ -189,13 +189,10 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
             customScrollWheel = new StorageGUIScrollWheel(this.leftPos + 179,
                     this.topPos + 17, this.topPos + 54, currentPages, menu);
 
-            System.out.println(menu.getScrollPage());
-            System.out.println(savedPages);
 
             if(currentPages < savedPages) { // if item is removed that made current pages lesser,
 
 
-                System.out.println(savedPages  + "SAVE");
 
                 if(menu.getScrollPage() == savedPages)
                     menu.generateSlots(currentPages);
@@ -678,10 +675,6 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
 
             if(itemVisualSlot.getActualItem().equals(ItemStack.EMPTY , false)) return;
-
-
-
-
 
 
             PoseStack poseStack = guiGraphics.pose();

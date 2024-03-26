@@ -170,13 +170,23 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
         return (int) Math.ceil(value);
     }
 
-    public void onStorageSearch(String entry, boolean regenPage) {
+    public void onStorageSearch(String entry, boolean regenCurrentPage, boolean updateSearchEntries) {
+
+        List<ItemIdentifier> oldStorageList = null;
+
+
+        if(!updateSearchEntries)  {
+            oldStorageList = new ArrayList<>(storageSearchData.getSearchedStorageList());;
+        }
+
 
         storageSearchData.getSearchedStorageList().clear();
 
         cachedSearchString = entry;
 
         storageSearchData.setSearching(true);
+
+
 
 
         String currentSearchString = entry.toLowerCase();
@@ -196,6 +206,7 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
             currentSearchString = currentSearchString.trim();
         }
 
+
         for(ItemIdentifier itemIdentifier : storageControllerEntity.mergedStorageContents) {
 
 
@@ -205,7 +216,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
                 if(finalCurrentSearchString.substring(1).length() == 0)
                     return;
-
 
 
                 Optional<TagKey<Item>> tagKey = itemIdentifier.getItemStack().getTags().filter(itemTagKey ->
@@ -265,7 +275,6 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
                 }
                 catch (ArrayIndexOutOfBoundsException e) {
 
-
                 }
             }
 
@@ -275,7 +284,29 @@ public class StorageControllerMenu extends Menu implements IMenuInteractor {
 
 
 
-        if(!regenPage)
+        if(!updateSearchEntries) {
+
+
+
+            if(storageSearchData.getSearchedStorageList().size() > oldStorageList.size()) {
+
+
+                List<ItemIdentifier> tempList = new ArrayList<>();
+
+                for(ItemIdentifier itemIdentifier : storageSearchData.getSearchedStorageList()) {
+
+                    if(oldStorageList.contains(itemIdentifier)) {
+                        tempList.add(itemIdentifier);
+                    }
+                }
+                storageSearchData.setSearchedStorageList(tempList);
+
+            }
+
+
+        }
+
+        if(!regenCurrentPage)
             generateStartPage();
         else
             regenerateCurrentPage();
