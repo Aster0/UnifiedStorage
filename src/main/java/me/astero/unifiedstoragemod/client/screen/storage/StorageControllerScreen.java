@@ -277,31 +277,23 @@ public class StorageControllerScreen extends AbstractContainerScreen<StorageCont
 
             boolean isSearching = menu.getStorageControllerEntity().menu.getStorageSearchData().isSearching();
 
+            List<ItemIdentifier> itemIdentifierList = menu.getStorageControllerEntity().mergedStorageContents;
+            if(isSearching) {
+                itemIdentifierList = menu.getStorageControllerEntity().menu.getStorageSearchData()
+                        .getSearchedStorageList();
+            }
+
             System.out.println(isSearching + " OUTSIDE SEARCH");
             for(ItemIdentifier itemIdentifier : menu.getStorageControllerEntity().queueToRemoveItems) {
 
-                int index = -1;
+                int index = itemIdentifierList.indexOf(itemIdentifier);
 
 
-                if(isSearching) {
-
-                    index = menu.getStorageControllerEntity().menu.getStorageSearchData()
-                            .getSearchedStorageList().indexOf(itemIdentifier);
-                }
-                else
-                    index = menu.getStorageControllerEntity().mergedStorageContents.indexOf(itemIdentifier);
-
-
-
+                
                 if(index != -1) {
 
-                    ItemIdentifier existingItem = null;
+                    ItemIdentifier existingItem = itemIdentifierList.get(index);
 
-                    if(!isSearching)
-                        existingItem = menu.getStorageControllerEntity().getMergedStorageContents(index);
-                    else
-                        existingItem = menu.getStorageControllerEntity().menu.getStorageSearchData()
-                                .getSearchedStorageList().get(index);
 
 
                     if(existingItem != null) {
